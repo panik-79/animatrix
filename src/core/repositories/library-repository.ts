@@ -8,7 +8,7 @@ export interface UpsertLibraryEntryInput {
   title: string;
   imageUrl?: string | null;
   bannerUrl?: string | null;
-  status?: WatchStatus;
+  status?: WatchStatus | null;
   score?: number | null;
   progress?: number;
   totalEpisodes?: number | null;
@@ -42,16 +42,25 @@ export class LibraryRepository {
 
   static async upsertEntry(input: UpsertLibraryEntryInput) {
     const { animeId, ...data } = input;
+    
+    // Clean null/undefined values
+    const updateData: any = { updatedAt: new Date() };
+    if (data.title) updateData.title = data.title;
+    if (data.status) updateData.status = data.status;
+    if (typeof data.score === 'number' || data.score === null) updateData.score = data.score;
+    if (typeof data.progress === 'number') updateData.progress = data.progress;
+    if (typeof data.totalEpisodes === 'number' || data.totalEpisodes === null) updateData.totalEpisodes = data.totalEpisodes;
+    if (typeof data.isFavorite === 'boolean') updateData.isFavorite = data.isFavorite;
+    if (data.imageUrl) updateData.imageUrl = data.imageUrl;
+    if (data.bannerUrl) updateData.bannerUrl = data.bannerUrl;
+    if (data.notes !== undefined) updateData.notes = data.notes;
 
     return prisma.libraryEntry.upsert({
       where: { animeId },
-      update: {
-        ...data,
-        updatedAt: new Date(),
-      },
+      update: updateData,
       create: {
         animeId,
-        title: input.title,
+        title: input.title || "Anime Entry",
         status: input.status ?? "WATCHING",
         progress: input.progress ?? 0,
         malId: input.malId,
@@ -60,18 +69,18 @@ export class LibraryRepository {
         bannerUrl: input.bannerUrl,
         score: input.score,
         totalEpisodes: input.totalEpisodes,
-        isFavorite: input.isFavorite,
+        isFavorite: input.isFavorite ?? false,
         notes: input.notes,
       },
     });
   }
 
-  static async updateProgress(animeId: string, progress: number) {
-    const entry = await prisma.libraryEntry.findUnique({ where: { animeId } });
-    if (!entry) return null;
+  static async updateProgress(animeId: string, progress: number, title?: string, imageUrl?: string | null, bannerUrl?: string | null) {
+    const existing = await prisma.libraryEntry.findUnique({ where: { animeId } });
 
-    const isCompleted = entry.totalEpisodes && progress >= entry.totalEpisodes;
-    const newStatus = isCompleted ? "COMPLETED" : entry.status;
+    const totalEpisodes = existing?.totalEpisodes ?? null;
+    const isCompleted = totalEpisodes && progress >= totalEpisodes;
+    const newStatus = isCompleted ? "COMPLETED" : (existing?.status ?? "WATCHING");
 
     // Track watch history
     await prisma.watchHistory.create({
@@ -81,24 +90,44 @@ export class LibraryRepository {
       },
     });
 
-    return prisma.libraryEntry.update({
+    return prisma.libraryEntry.upsert({
       where: { animeId },
-      data: {
+      update: {
         progress,
         status: newStatus,
-        completedDate: isCompleted ? new Date() : entry.completedDate,
+        completedDate: isCompleted ? new Date() : existing?.completedDate,
+        updatedAt: new Date(),
+      },
+      create: {
+        animeId,
+        title: title || "Anime Entry",
+        progress,
+        status: newStatus,
+        imageUrl,
+        bannerUrl,
+        completedDate: isCompleted ? new Date() : null,
       },
     });
   }
 
-  static async toggleFavorite(animeId: string) {
-    const entry = await prisma.libraryEntry.findUnique({ where: { animeId } });
-    if (!entry) return null;
+  static async toggleFavorite(animeId: string, title?: string, imageUrl?: string | null, bannerUrl?: string | null) {
+    const existing = await prisma.libraryEntry.findUnique({ where: { animeId } });
+    const nextFavoriteState = existing ? !existing.isFavorite : true;
 
-    return prisma.libraryEntry.update({
+    return prisma.libraryEntry.upsert({
       where: { animeId },
-      data: {
-        isFavorite: !entry.isFavorite,
+      update: {
+        isFavorite: nextFavoriteState,
+        updatedAt: new Date(),
+      },
+      create: {
+        animeId,
+        title: title || "Anime Entry",
+        status: "WATCHING",
+        progress: 0,
+        isFavorite: true,
+        imageUrl,
+        bannerUrl,
       },
     });
   }

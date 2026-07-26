@@ -236,17 +236,17 @@ export function HeroSection({
                 </div>
               </div>
 
-              {/* SECONDARY CTA: Favorite Outlined Button */}
+              {/* SECONDARY CTA: Favorite Button */}
               <button
                 onClick={onFavoriteToggle}
                 className={cn(
-                  "px-3.5 py-2 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer",
+                  "px-3.5 py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm",
                   isFavorite
-                    ? "bg-rose-500/15 border-rose-500/30 text-rose-400"
+                    ? "bg-rose-500/25 border-rose-500/60 text-rose-300 shadow-rose-500/25 hover:bg-rose-500/35"
                     : "bg-white/10 border-white/15 text-white hover:bg-white/15 hover:border-white/25"
                 )}
               >
-                <Heart className={cn("w-3.5 h-3.5", isFavorite && "fill-current text-rose-500")} />
+                <Heart className={cn("w-3.5 h-3.5 transition-colors", isFavorite ? "fill-rose-500 text-rose-500" : "text-white/80")} />
                 <span>{isFavorite ? "Favorited" : "Favorite"}</span>
               </button>
 

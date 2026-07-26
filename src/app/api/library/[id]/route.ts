@@ -33,12 +33,12 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     const body = await request.json();
 
     if (body.action === "toggleFavorite") {
-      const updated = await LibraryRepository.toggleFavorite(decodedId);
+      const updated = await LibraryRepository.toggleFavorite(decodedId, body.title, body.imageUrl, body.bannerUrl);
       return NextResponse.json({ entry: updated });
     }
 
     if (typeof body.progress === "number") {
-      const updated = await LibraryRepository.updateProgress(decodedId, body.progress);
+      const updated = await LibraryRepository.updateProgress(decodedId, body.progress, body.title, body.imageUrl, body.bannerUrl);
       return NextResponse.json({ entry: updated });
     }
 
