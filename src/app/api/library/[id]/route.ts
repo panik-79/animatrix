@@ -5,10 +5,20 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
+function cleanDecode(str: string): string {
+  let prev = str;
+  let decoded = decodeURIComponent(str);
+  while (decoded !== prev) {
+    prev = decoded;
+    decoded = decodeURIComponent(decoded);
+  }
+  return decoded;
+}
+
 export async function GET(request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const decodedId = decodeURIComponent(id);
+    const decodedId = cleanDecode(id);
     const entry = await LibraryRepository.getByAnimeId(decodedId);
     return NextResponse.json({ entry });
   } catch (error: any) {
@@ -19,7 +29,7 @@ export async function GET(request: Request, { params }: RouteParams) {
 export async function PATCH(request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const decodedId = decodeURIComponent(id);
+    const decodedId = cleanDecode(id);
     const body = await request.json();
 
     if (body.action === "toggleFavorite") {
@@ -48,7 +58,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 export async function DELETE(request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const decodedId = decodeURIComponent(id);
+    const decodedId = cleanDecode(id);
     await LibraryRepository.deleteEntry(decodedId);
     return NextResponse.json({ success: true });
   } catch (error: any) {

@@ -37,10 +37,10 @@ export class JikanMapper {
         ? (data.season.charAt(0).toUpperCase() + data.season.slice(1)) as AnimeSeason
         : null),
       year: data.year,
-      studios: data.studios.map(s => ({ id: s.mal_id, name: s.name })),
-      genres: data.genres.map(g => ({ id: g.mal_id, name: g.name })),
-      themes: data.themes.map(t => ({ id: t.mal_id, name: t.name })),
-      demographics: data.demographics.map(d => ({ id: d.mal_id, name: d.name })),
+      studios: (data.studios || []).map(s => ({ id: s.mal_id, name: s.name })),
+      genres: (data.genres || []).map(g => ({ id: g.mal_id, name: g.name })),
+      themes: (data.themes || []).map(t => ({ id: t.mal_id, name: t.name })),
+      demographics: (data.demographics || []).map(d => ({ id: d.mal_id, name: d.name })),
       rating: this.mapRating(data.rating),
       source: data.source,
       trailer: data.trailer ? {

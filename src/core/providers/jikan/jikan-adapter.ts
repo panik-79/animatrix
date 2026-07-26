@@ -69,9 +69,13 @@ export class JikanAdapter implements AnimeProvider {
    * appears in a path segment.
    */
   private extractMalId(id: string): string {
-    // Decode percent-encoding first, then strip the provider prefix.
-    const decoded = decodeURIComponent(id);
-    return decoded.replace(/^jikan:/, '');
+    let prev = id;
+    let decoded = decodeURIComponent(id);
+    while (decoded !== prev) {
+      prev = decoded;
+      decoded = decodeURIComponent(decoded);
+    }
+    return decoded.replace(/^(jikan|anilist|kitsu):/i, '');
   }
 
   async searchAnime(params: SearchParams): Promise<PaginatedResult<Anime>> {
@@ -137,14 +141,23 @@ export class JikanAdapter implements AnimeProvider {
       );
       return JikanMapper.mapAnime(res.data);
     } catch (error) {
-      console.warn(`Jikan getAnimeById (${malId}) failed. Attempting Kitsu fallback...`, error);
+      console.warn(`Jikan getAnimeById /full (${malId}) failed. Trying basic /anime/${malId}...`, error);
       try {
-        const searchRes = await this.searchAnimeViaKitsuFallback({ q: malId, limit: 1 });
-        if (searchRes.data.length > 0 && searchRes.data[0]) {
-          return searchRes.data[0];
+        const basicRes = await httpClient.get<JikanResponse<JikanAnime>>(
+          `${this.baseUrl}/anime/${malId}`,
+          { provider: this.id }
+        );
+        return JikanMapper.mapAnime(basicRes.data);
+      } catch (basicErr) {
+        console.warn(`Jikan getAnimeById basic (${malId}) failed. Attempting Kitsu fallback...`, basicErr);
+        try {
+          const searchRes = await this.searchAnimeViaKitsuFallback({ q: malId, limit: 1 });
+          if (searchRes.data.length > 0 && searchRes.data[0]) {
+            return searchRes.data[0];
+          }
+        } catch {
+          // Fallthrough to default fallback object
         }
-      } catch {
-        // Fallthrough to default fallback object
       }
 
       // Safe fallback object so page renders gracefully without crashing
