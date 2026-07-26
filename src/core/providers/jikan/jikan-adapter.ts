@@ -18,6 +18,26 @@ export class JikanAdapter implements AnimeProvider {
   private readonly baseUrl = API_CONFIG.JIKAN.BASE_URL;
 
   async searchAnime(params: SearchParams): Promise<PaginatedResult<Anime>> {
+    // If no search query and no filters, fallback to top/anime endpoint.
+    // MAL's dynamic search endpoint frequently times out (504), but top/anime is highly cached and reliable.
+    const hasFilters = !!(
+      params.q ||
+      params.genres ||
+      params.type ||
+      params.status ||
+      params.rating ||
+      params.score ||
+      params.min_score ||
+      params.max_score
+    );
+
+    if (!hasFilters) {
+      return this.getTopAnime({
+        page: params.page,
+        limit: params.limit,
+      });
+    }
+
     const query = new URLSearchParams();
     if (params.q) query.append('q', params.q);
     if (params.page) query.append('page', params.page.toString());
