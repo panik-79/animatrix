@@ -17,37 +17,44 @@ export function FranchiseTimeline({ relations, isLoading }: FranchiseTimelinePro
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white">Relations</h3>
-        <span className="text-xs text-muted-foreground">{relations.length} Items</span>
+        <h3 className="text-sm font-semibold text-white">Relations & Timeline</h3>
+        <span className="text-xs text-muted-foreground">{relations.length} Relations</span>
       </div>
 
-      {/* Compact Relation Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-        {relations.map((rel) =>
-          rel.entry.map((entry) => (
-            <Link
-              key={`${rel.relation}-${entry.malId}`}
-              href={ROUTES.ANIME_DETAIL(`jikan:${entry.malId}`)}
-              className="p-2.5 rounded-lg bg-card/40 hover:bg-card/70 border border-white/10 flex items-center justify-between transition-colors cursor-pointer group"
-            >
-              <div className="space-y-0.5 min-w-0 pr-2">
-                <span className="text-[10px] font-medium text-primary uppercase tracking-wide block">
-                  {rel.relation}
-                </span>
-                <span className="text-xs font-medium text-white group-hover:text-primary transition-colors block truncate">
-                  {entry.name}
-                </span>
-              </div>
+      {/* Connected Vertical Timeline */}
+      <div className="relative pl-5 border-l border-white/15 space-y-4 py-1">
+        {relations.map((rel, idx) => (
+          <div key={`${rel.relation}-${idx}`} className="relative group">
+            {/* Timeline Node Dot */}
+            <div className="absolute -left-[25px] top-1.5 w-2.5 h-2.5 rounded-full bg-violet-400 ring-4 ring-violet-500/20 transition-transform group-hover:scale-125" />
 
-              <div className="flex items-center gap-1 shrink-0">
-                <span className="text-[10px] text-muted-foreground font-mono uppercase">{entry.type}</span>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+            <div className="space-y-1.5">
+              {/* Relation Category Badge */}
+              <span className="text-[11px] font-semibold text-violet-400 uppercase tracking-wider block">
+                {rel.relation}
+              </span>
+
+              {/* Entry Pills */}
+              <div className="flex flex-wrap gap-2">
+                {rel.entry.map((entry) => (
+                  <Link
+                    key={`${entry.malId}-${entry.name}`}
+                    href={ROUTES.ANIME_DETAIL(`jikan:${entry.malId}`)}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card/50 hover:bg-card border border-white/10 hover:border-violet-500/40 text-xs font-medium text-white transition-all cursor-pointer shadow-sm hover:shadow-md group/link"
+                  >
+                    <span className="text-[10px] text-muted-foreground font-mono uppercase">{entry.type}</span>
+                    <span className="text-white/90 group-hover/link:text-white font-medium">
+                      {entry.name}
+                    </span>
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover/link:text-violet-400 group-hover/link:translate-x-0.5 transition-all" />
+                  </Link>
+                ))}
               </div>
-            </Link>
-          ))
-        )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

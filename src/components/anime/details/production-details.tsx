@@ -93,7 +93,7 @@ export function ProductionDetails({ anime }: ProductionDetailsProps) {
                   {item.label}
                 </span>
                 <span
-                  className="font-semibold text-white block truncate group-hover:text-primary transition-colors"
+                  className="font-semibold text-white block truncate group-hover:text-white transition-colors"
                   title={item.value}
                 >
                   {item.value}
