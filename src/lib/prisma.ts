@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
-import { createClient } from "@libsql/client";
 import path from "path";
 
 const globalForPrisma = globalThis as unknown as {
@@ -8,7 +7,8 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
-  const dbPath = path.resolve(process.cwd(), "prisma/dev.db");
+  // dev.db lives at the project root (same level as prisma.config.ts)
+  const dbPath = path.resolve(process.cwd(), "dev.db");
   const adapter = new PrismaLibSql({
     url: `file:${dbPath}`,
   });
