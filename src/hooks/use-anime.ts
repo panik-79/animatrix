@@ -32,6 +32,8 @@ export function useAnimeById(id: string) {
     queryFn: () => animeService.getAnimeById(id),
     staleTime: API_CONFIG.CACHE.TTL_LONG,
     enabled: !!id,
+    retry: 1,
+    retryDelay: 1000,
   });
 }
 
@@ -41,6 +43,8 @@ export function useAnimeCharacters(id: string) {
     queryFn: () => animeService.getAnimeCharacters(id),
     staleTime: API_CONFIG.CACHE.TTL_LONG,
     enabled: !!id,
+    retry: 1,
+    retryDelay: 1000,
   });
 }
 
@@ -50,6 +54,8 @@ export function useAnimeRecommendations(id: string) {
     queryFn: () => animeService.getAnimeRecommendations(id),
     staleTime: API_CONFIG.CACHE.TTL_LONG,
     enabled: !!id,
+    retry: 1,
+    retryDelay: 1000,
   });
 }
 
@@ -59,6 +65,8 @@ export function useAnimeRelations(id: string) {
     queryFn: () => animeService.getAnimeRelations(id),
     staleTime: API_CONFIG.CACHE.TTL_LONG,
     enabled: !!id,
+    retry: 1,
+    retryDelay: 1000,
   });
 }
 

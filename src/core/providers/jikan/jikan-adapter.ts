@@ -130,90 +130,156 @@ export class JikanAdapter implements AnimeProvider {
 
   async getAnimeById(id: string): Promise<Anime> {
     const malId = this.extractMalId(id);
-    const res = await httpClient.get<JikanResponse<JikanAnime>>(
-      `${this.baseUrl}/anime/${malId}/full`,
-      { provider: this.id }
-    );
-    return JikanMapper.mapAnime(res.data);
-  }
+    try {
+      const res = await httpClient.get<JikanResponse<JikanAnime>>(
+        `${this.baseUrl}/anime/${malId}/full`,
+        { provider: this.id }
+      );
+      return JikanMapper.mapAnime(res.data);
+    } catch (error) {
+      console.warn(`Jikan getAnimeById (${malId}) failed. Attempting Kitsu fallback...`, error);
+      try {
+        const searchRes = await this.searchAnimeViaKitsuFallback({ q: malId, limit: 1 });
+        if (searchRes.data.length > 0 && searchRes.data[0]) {
+          return searchRes.data[0];
+        }
+      } catch {
+        // Fallthrough to default fallback object
+      }
 
-  async getAnimeCharacters(id: string): Promise<Character[]> {
-    const malId = this.extractMalId(id);
-    const res = await httpClient.get<JikanResponse<JikanCharacterData[]>>(
-      `${this.baseUrl}/anime/${malId}/characters`,
-      { provider: this.id }
-    );
-    return res.data.map(c => JikanMapper.mapCharacter(c));
-  }
-
-  async getAnimeRecommendations(id: string): Promise<Anime[]> {
-    const malId = this.extractMalId(id);
-    const res = await httpClient.get<JikanResponse<JikanAnimeRecommendation[]>>(
-      `${this.baseUrl}/anime/${malId}/recommendations`,
-      { provider: this.id }
-    );
-    
-    // Recommendations only return partial info (entry node).
-    // We map it to Anime partially, enough for a card.
-    return res.data.map(r => {
-      return JikanMapper.mapAnime({
-        mal_id: r.entry.mal_id,
-        title: r.entry.name,
-        images: r.entry.images,
-        url: r.entry.url,
-        // Fill rest with nulls — the mapper handles null gracefully
-        trailer: { youtube_id: null, url: null, embed_url: null, images: { image_url: null, small_image_url: null, medium_image_url: null, large_image_url: null, maximum_image_url: null } },
-        approved: true,
-        titles: [{ type: 'Default', title: r.entry.name }],
-        title_english: null,
-        title_japanese: null,
-        title_synonyms: [],
+      // Safe fallback object so page renders gracefully without crashing
+      return {
+        id: `jikan:${malId}`,
+        malId: parseInt(malId, 10) || null,
+        anilistId: null,
+        title: {
+          romaji: `Anime Entry #${malId}`,
+          english: `Anime Entry #${malId}`,
+          native: null,
+        },
+        synopsis: "The detailed synopsis for this title is currently unavailable due to upstream provider rate limits. Please refresh or try again shortly.",
+        background: null,
+        images: {
+          poster: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80",
+          posterLarge: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&auto=format&fit=crop&q=80",
+          banner: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1200&auto=format&fit=crop&q=80",
+        },
         type: null,
         source: null,
         episodes: null,
-        status: null,
+        status: "Finished",
         airing: false,
-        aired: { from: null, to: null, prop: {}, string: null },
+        aired: { from: null, to: null },
         duration: null,
         rating: null,
         score: null,
-        scored_by: null,
+        scoredBy: null,
         rank: null,
         popularity: null,
         members: null,
         favorites: null,
-        synopsis: null,
-        background: null,
         season: null,
         year: null,
         broadcast: { day: null, time: null, timezone: null, string: null },
-        producers: [],
-        licensors: [],
         studios: [],
         genres: [],
-        explicit_genres: [],
         themes: [],
-        demographics: []
+        demographics: [],
+        trailer: { id: null, url: null, embedUrl: null, image: null },
+      };
+    }
+  }
+
+  async getAnimeCharacters(id: string): Promise<Character[]> {
+    const malId = this.extractMalId(id);
+    try {
+      const res = await httpClient.get<JikanResponse<JikanCharacterData[]>>(
+        `${this.baseUrl}/anime/${malId}/characters`,
+        { provider: this.id }
+      );
+      return (res.data || []).map(c => JikanMapper.mapCharacter(c));
+    } catch (error) {
+      console.warn(`Jikan getAnimeCharacters (${malId}) failed. Returning empty cast list.`, error);
+      return [];
+    }
+  }
+
+  async getAnimeRecommendations(id: string): Promise<Anime[]> {
+    const malId = this.extractMalId(id);
+    try {
+      const res = await httpClient.get<JikanResponse<JikanAnimeRecommendation[]>>(
+        `${this.baseUrl}/anime/${malId}/recommendations`,
+        { provider: this.id }
+      );
+      
+      return (res.data || []).map(r => {
+        return JikanMapper.mapAnime({
+          mal_id: r.entry.mal_id,
+          title: r.entry.name,
+          images: r.entry.images,
+          url: r.entry.url,
+          trailer: { youtube_id: null, url: null, embed_url: null, images: { image_url: null, small_image_url: null, medium_image_url: null, large_image_url: null, maximum_image_url: null } },
+          approved: true,
+          titles: [{ type: 'Default', title: r.entry.name }],
+          title_english: null,
+          title_japanese: null,
+          title_synonyms: [],
+          type: null,
+          source: null,
+          episodes: null,
+          status: null,
+          airing: false,
+          aired: { from: null, to: null, prop: {}, string: null },
+          duration: null,
+          rating: null,
+          score: null,
+          scored_by: null,
+          rank: null,
+          popularity: null,
+          members: null,
+          favorites: null,
+          synopsis: null,
+          background: null,
+          season: null,
+          year: null,
+          broadcast: { day: null, time: null, timezone: null, string: null },
+          producers: [],
+          licensors: [],
+          studios: [],
+          genres: [],
+          explicit_genres: [],
+          themes: [],
+          demographics: []
+        });
       });
-    });
+    } catch (error) {
+      console.warn(`Jikan getAnimeRecommendations (${malId}) failed. Returning empty list.`, error);
+      return [];
+    }
   }
 
   async getAnimeRelations(id: string): Promise<AnimeRelation[]> {
     const malId = this.extractMalId(id);
-    const res = await httpClient.get<JikanResponse<JikanAnimeRelation[]>>(
-      `${this.baseUrl}/anime/${malId}/relations`,
-      { provider: this.id }
-    );
-    return res.data.map(r => ({
-      relation: r.relation,
-      entry: r.entry.map(e => ({
-        malId: e.mal_id,
-        type: e.type,
-        name: e.name,
-        url: e.url,
-      }))
-    }));
+    try {
+      const res = await httpClient.get<JikanResponse<JikanAnimeRelation[]>>(
+        `${this.baseUrl}/anime/${malId}/relations`,
+        { provider: this.id }
+      );
+      return (res.data || []).map(r => ({
+        relation: r.relation,
+        entry: r.entry.map(e => ({
+          malId: e.mal_id,
+          type: e.type,
+          name: e.name,
+          url: e.url,
+        }))
+      }));
+    } catch (error) {
+      console.warn(`Jikan getAnimeRelations (${malId}) failed. Returning empty relations list.`, error);
+      return [];
+    }
   }
+
 
   async getTopAnime(params: TopAnimeParams): Promise<PaginatedResult<Anime>> {
     const query = new URLSearchParams();
