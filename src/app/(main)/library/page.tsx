@@ -164,9 +164,12 @@ export default function UserLibraryPage() {
                       isFavorite: !entry.isFavorite,
                     })
                   }
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 backdrop-blur-md text-white/80 hover:text-white transition-all cursor-pointer"
+                  className={cn(
+                    "absolute top-2 right-2 p-1.5 rounded-full backdrop-blur-md transition-all cursor-pointer shadow-sm",
+                    entry.isFavorite ? "bg-rose-500 text-white shadow-rose-500/40" : "bg-black/60 text-white/80 hover:text-white"
+                  )}
                 >
-                  <Heart className={cn("w-3.5 h-3.5", entry.isFavorite && "fill-current text-rose-500")} />
+                  <Heart className={cn("w-3.5 h-3.5", entry.isFavorite ? "fill-white text-white" : "text-white/80")} />
                 </button>
 
                 {/* Bottom Episode Increment Overlay Bar */}

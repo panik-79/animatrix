@@ -44,8 +44,9 @@ export default function AnimeDetailPage({ params }: PageProps) {
   const updateLibraryMutation = useUpdateLibrary();
   const removeLibraryMutation = useRemoveFromLibrary();
 
-  // Local State
+  // Local State & Optimistic Feedback
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+  const [optimisticFavorite, setOptimisticFavorite] = useState<boolean | null>(null);
 
   if (isAnimeLoading) {
     return (
@@ -82,7 +83,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
   const title = anime.title.english || anime.title.romaji;
   const currentStatus = libraryEntry?.status || null;
   const currentEpisodes = libraryEntry?.progress || 0;
-  const isFavorite = libraryEntry?.isFavorite || false;
+  const isFavorite = optimisticFavorite !== null ? optimisticFavorite : (libraryEntry?.isFavorite || false);
 
   const handleShare = () => {
     if (typeof window !== "undefined") {
@@ -123,14 +124,25 @@ export default function AnimeDetailPage({ params }: PageProps) {
   };
 
   const handleFavoriteToggle = () => {
-    updateLibraryMutation.mutate({
-      animeId: id,
-      title,
-      imageUrl: anime.images.posterLarge || anime.images.poster,
-      bannerUrl: anime.images.banner,
-      isFavorite: !isFavorite,
-    });
-    toast.success(!isFavorite ? "Added to Favorites" : "Removed from Favorites", title);
+    const nextState = !isFavorite;
+    setOptimisticFavorite(nextState);
+
+    updateLibraryMutation.mutate(
+      {
+        animeId: id,
+        title,
+        imageUrl: anime.images.posterLarge || anime.images.poster,
+        bannerUrl: anime.images.banner,
+        isFavorite: nextState,
+      },
+      {
+        onError: () => {
+          setOptimisticFavorite(!nextState);
+        },
+      }
+    );
+
+    toast.success(nextState ? "Added to Favorites!" : "Removed from Favorites");
   };
 
   return (
