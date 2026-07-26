@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Sparkles,
   Check,
   ChevronRight,
   ChevronLeft,
@@ -12,7 +11,6 @@ import {
   CheckCircle2,
   Zap,
   Flame,
-  Heart,
   ShieldAlert,
   Clock,
   Calendar,
@@ -187,7 +185,7 @@ export default function OnboardingPage() {
         throw new Error("Failed to save onboarding preferences");
       }
 
-      toast.success("Profile Personalization Ready!", "Redirecting to your home feed...");
+      toast.success("Profile Preferences Ready!", "Redirecting to your home feed...");
       setTimeout(() => {
         router.push("/");
       }, 1500);
@@ -219,19 +217,19 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between p-4 md:p-8 relative overflow-hidden">
-      {/* Glow Effects */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-600/15 rounded-full blur-[140px] pointer-events-none" />
+      {/* Background Lighting */}
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-950/20 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-950/20 rounded-full blur-[160px] pointer-events-none" />
 
-      {/* Header & Progress Bar */}
+      {/* Header & Progress Track */}
       <div className="max-w-3xl w-full mx-auto space-y-4 relative z-10 pt-2">
         <div className="flex items-center justify-between text-xs text-slate-400">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-bold">
+            <div className="w-7 h-7 rounded-lg bg-slate-900 border border-white/10 flex items-center justify-center text-white font-bold">
               {step}
             </div>
             <span className="font-semibold text-slate-200">
-              Step {step} of 8 — {step === 1 ? "Welcome" : step === 8 ? "Initializing" : "Personalization"}
+              Step {step} of 8 — {step === 1 ? "Welcome" : step === 8 ? "Finishing" : "Personalization"}
             </span>
           </div>
           {step > 1 && step < 8 && (
@@ -247,52 +245,52 @@ export default function OnboardingPage() {
         {/* Step Progress Track */}
         <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
           <div
-            className="h-full bg-gradient-to-r from-primary via-indigo-500 to-rose-500 transition-all duration-500 ease-out"
+            className="h-full bg-indigo-500 transition-all duration-500 ease-out"
             style={{ width: `${(step / 8) * 100}%` }}
           />
         </div>
       </div>
 
-      {/* Main Wizard Content */}
+      {/* Main Wizard Card */}
       <div className="max-w-3xl w-full mx-auto my-auto py-8 relative z-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.25 }}
-            className="bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl rounded-2xl p-6 md:p-10 shadow-2xl space-y-8"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="bg-slate-900/40 border border-white/10 backdrop-blur-2xl rounded-3xl p-6 md:p-10 shadow-2xl space-y-8"
           >
             {/* STEP 1: WELCOME */}
             {step === 1 && (
               <div className="text-center space-y-6 py-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary via-indigo-600 to-rose-600 flex items-center justify-center mx-auto shadow-xl shadow-primary/30 animate-pulse">
-                  <Sparkles className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 rounded-2xl bg-slate-800 border border-white/10 flex items-center justify-center mx-auto shadow-lg">
+                  <Film className="w-7 h-7 text-indigo-400" />
                 </div>
                 <div className="space-y-2">
                   <h1 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight">
-                    Welcome to Animatrix Personalization
+                    Welcome to Animatrix
                   </h1>
-                  <p className="text-slate-400 text-sm max-w-lg mx-auto">
-                    Let&apos;s build your anime taste profile. No boring surveys — just tell us what you love, what you dislike, and your vibe.
+                  <p className="text-slate-400 text-sm max-w-lg mx-auto leading-relaxed">
+                    Set up your taste profile. Tell us what you love and what you prefer to skip so we can tailor your home feed.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left max-w-2xl mx-auto pt-4">
-                  <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
-                    <Zap className="w-5 h-5 text-primary mb-2" />
-                    <h4 className="text-xs font-bold text-white">Smart Engine</h4>
-                    <p className="text-[11px] text-slate-400">Personalized feeds based on your taste fingerprint.</p>
+                  <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-1">
+                    <Zap className="w-4 h-4 text-indigo-400 mb-2" />
+                    <h4 className="text-xs font-bold text-white">Personalized for You</h4>
+                    <p className="text-[11px] text-slate-400">Feed tailored to your exact taste profile.</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
-                    <Flame className="w-5 h-5 text-rose-500 mb-2" />
-                    <h4 className="text-xs font-bold text-white">Zero Spoilers</h4>
-                    <p className="text-[11px] text-slate-400">Curated collections matching your exact preferred era & length.</p>
+                  <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-1">
+                    <Flame className="w-4 h-4 text-rose-400 mb-2" />
+                    <h4 className="text-xs font-bold text-white">Curated Collections</h4>
+                    <p className="text-[11px] text-slate-400">Discover titles matching your preferred era & length.</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
-                    <ShieldAlert className="w-5 h-5 text-indigo-400 mb-2" />
+                  <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-1">
+                    <ShieldAlert className="w-4 h-4 text-amber-400 mb-2" />
                     <h4 className="text-xs font-bold text-white">Negative Filtering</h4>
-                    <p className="text-[11px] text-slate-400">Never get recommended tropes or genres you avoid.</p>
+                    <p className="text-[11px] text-slate-400">Avoid tropes or genres you don&apos;t enjoy.</p>
                   </div>
                 </div>
               </div>
@@ -302,7 +300,7 @@ export default function OnboardingPage() {
             {step === 2 && (
               <div className="space-y-6">
                 <div className="space-y-1">
-                  <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                  <h2 className="text-xl md:text-2xl font-bold text-white">
                     Choose Your Favorite Genres
                   </h2>
                   <p className="text-xs text-slate-400">
@@ -327,7 +325,7 @@ export default function OnboardingPage() {
                         className={cn(
                           "px-4 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2 border cursor-pointer",
                           isSelected
-                            ? "bg-primary text-white border-primary shadow-lg shadow-primary/30"
+                            ? "bg-indigo-600 text-white border-indigo-500 shadow-md"
                             : "bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700"
                         )}
                       >
@@ -340,11 +338,11 @@ export default function OnboardingPage() {
               </div>
             )}
 
-            {/* STEP 3: FAVORITE ANIME (AniList Live Search) */}
+            {/* STEP 3: FAVORITE ANIME */}
             {step === 3 && (
               <div className="space-y-6">
                 <div className="space-y-1">
-                  <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                  <h2 className="text-xl md:text-2xl font-bold text-white">
                     Pick Your Top Anime
                   </h2>
                   <p className="text-xs text-slate-400">
@@ -360,10 +358,10 @@ export default function OnboardingPage() {
                     value={searchQuery}
                     onChange={(e) => handleSearchAnime(e.target.value)}
                     placeholder="Search anime e.g. Attack on Titan, Frieren, Jujutsu Kaisen..."
-                    className="w-full pl-10 pr-4 py-3 text-xs bg-slate-950/70 border border-slate-800 rounded-xl text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-primary transition-all"
+                    className="w-full pl-10 pr-4 py-3 text-xs bg-slate-950/70 border border-slate-800 rounded-xl text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-all"
                   />
                   {isSearching && (
-                    <Loader2 className="w-4 h-4 text-primary animate-spin absolute right-3.5 top-1/2 -translate-y-1/2" />
+                    <Loader2 className="w-4 h-4 text-indigo-400 animate-spin absolute right-3.5 top-1/2 -translate-y-1/2" />
                   )}
                 </div>
 
@@ -374,7 +372,7 @@ export default function OnboardingPage() {
                       <span
                         key={item.id}
                         onClick={() => toggleFavoriteAnime(item)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-primary/20 border border-primary/40 text-xs font-semibold text-primary cursor-pointer hover:bg-primary/30"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-950/60 border border-indigo-500/40 text-xs font-semibold text-indigo-300 cursor-pointer hover:bg-indigo-900/60"
                       >
                         {item.title} ×
                       </span>
@@ -393,16 +391,16 @@ export default function OnboardingPage() {
                         className={cn(
                           "relative rounded-xl overflow-hidden border cursor-pointer group transition-all",
                           isPicked
-                            ? "border-primary ring-2 ring-primary/40 shadow-lg shadow-primary/30"
+                            ? "border-indigo-500 ring-2 ring-indigo-500/30 shadow-md"
                             : "border-slate-800 hover:border-slate-700"
                         )}
                       >
-                        <img src={item.image} alt={item.title} className="w-full h-32 object-cover group-hover:scale-105 transition-transform" />
+                        <img src={item.image} alt={item.title} className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent p-2 flex flex-col justify-end">
                           <span className="text-[11px] font-semibold text-white truncate">{item.title}</span>
                         </div>
                         {isPicked && (
-                          <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-white">
+                          <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white">
                             <Check className="w-3 h-3" />
                           </div>
                         )}
@@ -417,7 +415,7 @@ export default function OnboardingPage() {
             {step === 4 && (
               <div className="space-y-6">
                 <div className="space-y-1">
-                  <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                  <h2 className="text-xl md:text-2xl font-bold text-white">
                     What Vibe Are You In The Mood For?
                   </h2>
                   <p className="text-xs text-slate-400">Select any moods that match your favorite watching style</p>
@@ -438,7 +436,7 @@ export default function OnboardingPage() {
                         className={cn(
                           "p-3.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer",
                           isSelected
-                            ? "bg-primary/20 border-primary shadow-lg shadow-primary/20"
+                            ? "bg-indigo-950/40 border-indigo-500/80 shadow-md"
                             : "bg-slate-950/60 border-slate-800 hover:border-slate-700"
                         )}
                       >
@@ -449,7 +447,7 @@ export default function OnboardingPage() {
                             <div className="text-[11px] text-slate-400">{m.desc}</div>
                           </div>
                         </div>
-                        {isSelected && <Check className="w-4 h-4 text-primary" />}
+                        {isSelected && <Check className="w-4 h-4 text-indigo-400" />}
                       </button>
                     );
                   })}
@@ -461,7 +459,7 @@ export default function OnboardingPage() {
             {step === 5 && (
               <div className="space-y-6">
                 <div className="space-y-1">
-                  <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                  <h2 className="text-xl md:text-2xl font-bold text-white">
                     Things To Avoid
                   </h2>
                   <p className="text-xs text-slate-400">Select tropes or themes you prefer NOT to see in recommendations</p>
@@ -482,7 +480,7 @@ export default function OnboardingPage() {
                         className={cn(
                           "px-4 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2 border cursor-pointer",
                           isSelected
-                            ? "bg-rose-600/30 text-rose-300 border-rose-500"
+                            ? "bg-rose-950/40 text-rose-300 border-rose-500/80"
                             : "bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700"
                         )}
                       >
@@ -499,7 +497,7 @@ export default function OnboardingPage() {
             {step === 6 && (
               <div className="space-y-6">
                 <div className="space-y-1">
-                  <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                  <h2 className="text-xl md:text-2xl font-bold text-white">
                     Preferred Anime Length
                   </h2>
                   <p className="text-xs text-slate-400">What format fits your daily watching schedule?</p>
@@ -514,17 +512,17 @@ export default function OnboardingPage() {
                         className={cn(
                           "w-full p-4 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer",
                           isSelected
-                            ? "bg-primary/20 border-primary shadow-lg shadow-primary/20"
+                            ? "bg-indigo-950/40 border-indigo-500/80 shadow-md"
                             : "bg-slate-950/60 border-slate-800 hover:border-slate-700"
                         )}
                       >
                         <div className="space-y-0.5">
                           <div className="text-xs font-bold text-white flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-primary" /> {opt.label}
+                            <Clock className="w-4 h-4 text-indigo-400" /> {opt.label}
                           </div>
                           <div className="text-[11px] text-slate-400">{opt.desc}</div>
                         </div>
-                        {isSelected && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                        {isSelected && <CheckCircle2 className="w-5 h-5 text-indigo-400" />}
                       </button>
                     );
                   })}
@@ -536,7 +534,7 @@ export default function OnboardingPage() {
             {step === 7 && (
               <div className="space-y-6">
                 <div className="space-y-1">
-                  <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                  <h2 className="text-xl md:text-2xl font-bold text-white">
                     Preferred Anime Era
                   </h2>
                   <p className="text-xs text-slate-400">Which release generation do you favor?</p>
@@ -551,17 +549,17 @@ export default function OnboardingPage() {
                         className={cn(
                           "w-full p-4 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer",
                           isSelected
-                            ? "bg-primary/20 border-primary shadow-lg shadow-primary/20"
+                            ? "bg-indigo-950/40 border-indigo-500/80 shadow-md"
                             : "bg-slate-950/60 border-slate-800 hover:border-slate-700"
                         )}
                       >
                         <div className="space-y-0.5">
                           <div className="text-xs font-bold text-white flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-primary" /> {opt.label}
+                            <Calendar className="w-4 h-4 text-indigo-400" /> {opt.label}
                           </div>
                           <div className="text-[11px] text-slate-400">{opt.desc}</div>
                         </div>
-                        {isSelected && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                        {isSelected && <CheckCircle2 className="w-5 h-5 text-indigo-400" />}
                       </button>
                     );
                   })}
@@ -572,14 +570,13 @@ export default function OnboardingPage() {
             {/* STEP 8: FINISHING */}
             {step === 8 && (
               <div className="text-center space-y-6 py-8">
-                <div className="w-20 h-20 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center mx-auto relative">
-                  <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                  <Sparkles className="w-5 h-5 text-indigo-400 absolute top-2 right-2 animate-bounce" />
+                <div className="w-16 h-16 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center mx-auto">
+                  <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-bold text-white">Initializing Recommendation Matrix</h2>
+                  <h2 className="text-2xl font-bold text-white">Finding Your Next Favorite...</h2>
                   <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                    We&apos;re indexing your favorite genres, AniList titles, and mood tags into your personalized engine.
+                    We&apos;re indexing your favorite genres, titles, and preferences into your personal feed.
                   </p>
                 </div>
               </div>
@@ -599,9 +596,9 @@ export default function OnboardingPage() {
 
                 <button
                   onClick={nextStep}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-500 text-xs font-semibold text-white shadow-lg shadow-primary/25 transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                 >
-                  {step === 7 ? "Finish & Personalize" : "Continue"} <ChevronRight className="w-4 h-4" />
+                  {step === 7 ? "Finish Preferences" : "Continue"} <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
             )}
