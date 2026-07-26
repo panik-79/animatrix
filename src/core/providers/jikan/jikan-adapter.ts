@@ -13,6 +13,51 @@ import {
   JikanAnimeRecommendation
 } from './jikan-types';
 
+// Minimal Kitsu JSON:API response shape used by the fallback search.
+interface KitsuAnimeAttributes {
+  canonicalTitle: string;
+  titles?: { en_jp?: string; en?: string; ja_jp?: string };
+  synopsis?: string | null;
+  description?: string | null;
+  status?: 'current' | 'finished' | 'upcoming' | 'unreleased' | 'tba';
+  subtype?: string;
+  episodeCount?: number | null;
+  episodeLength?: number | null;
+  averageRating?: string | null;
+  userCount?: number | null;
+  ratingRank?: number | null;
+  popularityRank?: number | null;
+  favoritesCount?: number | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  ageRating?: 'G' | 'PG' | 'PG13' | 'R' | 'R18' | null;
+  posterImage?: { medium?: string; large?: string; original?: string } | null;
+  coverImage?: { large?: string; original?: string } | null;
+  youtubeVideoId?: string | null;
+}
+
+interface KitsuAnimeItem {
+  id: string;
+  type: 'anime';
+  attributes: KitsuAnimeAttributes;
+  relationships?: {
+    mappings?: { data?: Array<{ id: string; type: string }> };
+  };
+}
+
+interface KitsuMapping {
+  id: string;
+  type: 'mappings';
+  attributes: { externalSite: string; externalId: string };
+}
+
+interface KitsuResponse {
+  data: KitsuAnimeItem[];
+  included?: KitsuMapping[];
+  meta?: { count?: number };
+}
+
+
 export class JikanAdapter implements AnimeProvider {
   readonly id = 'jikan';
   private readonly baseUrl = API_CONFIG.JIKAN.BASE_URL;
@@ -287,31 +332,33 @@ export class JikanAdapter implements AnimeProvider {
     urlParams.append('include', 'mappings');
 
     try {
-      const kitsuRes = await httpClient.get<any>(
-        `https://kitsu.io/api/edge/anime?${urlParams.toString()}`
+      const kitsuRes = await httpClient.get<KitsuResponse>(
+        `${API_CONFIG.KITSU.BASE_URL}/anime?${urlParams.toString()}`
       );
 
       const data = kitsuRes.data || [];
       const included = kitsuRes.included || [];
 
       const mappedAnime: Anime[] = data
-        .map((item: any) => {
-          const attrs = item.attributes || {};
-          
-          // Try to extract MyAnimeList ID from mappings
-          const mappingRefs = item.relationships?.mappings?.data || [];
+        .map((item: KitsuAnimeItem) => {
+          const attrs = item.attributes;
+
+          // Try to extract MyAnimeList ID from included mappings
+          const mappingRefs = item.relationships?.mappings?.data ?? [];
           const malMapping = included.find(
-            (inc: any) =>
+            (inc: KitsuMapping) =>
               inc.type === 'mappings' &&
-              mappingRefs.some((ref: any) => ref.id === inc.id) &&
-              inc.attributes?.externalSite === 'myanimelist/anime'
+              mappingRefs.some((ref) => ref.id === inc.id) &&
+              inc.attributes.externalSite === 'myanimelist/anime'
           );
 
-          const malId = malMapping ? parseInt(malMapping.attributes.externalId) : null;
-          if (!malId) return null; // Skip items without a MAL mapping to guarantee detail pages work
+          const malId = malMapping ? parseInt(malMapping.attributes.externalId, 10) : null;
+          if (!malId) return null; // Skip items without a MAL mapping so detail pages always resolve
 
-          // Format score (Kitsu uses 0-100 rating, we map it to 0-10)
-          const score = attrs.averageRating ? parseFloat((parseFloat(attrs.averageRating) / 10).toFixed(2)) : null;
+          // Format score (Kitsu uses 0-100 rating, map to 0-10)
+          const score = attrs.averageRating
+            ? parseFloat((parseFloat(attrs.averageRating) / 10).toFixed(2))
+            : null;
 
           // Map status
           let status: AnimeStatus = 'Unknown';
@@ -337,38 +384,39 @@ export class JikanAdapter implements AnimeProvider {
           else if (attrs.ageRating === 'R') rating = 'R';
           else if (attrs.ageRating === 'R18') rating = 'R+';
 
-          // Create localized image sizes
-          const poster = attrs.posterImage?.medium || attrs.posterImage?.large || attrs.posterImage?.original || '';
-          const posterLarge = attrs.posterImage?.large || attrs.posterImage?.original || poster;
-          const banner = attrs.coverImage?.large || attrs.coverImage?.original || null;
+          const poster =
+            attrs.posterImage?.medium ??
+            attrs.posterImage?.large ??
+            attrs.posterImage?.original ??
+            '';
+          const posterLarge =
+            attrs.posterImage?.large ?? attrs.posterImage?.original ?? poster;
+          const banner =
+            attrs.coverImage?.large ?? attrs.coverImage?.original ?? null;
 
           return {
-            id: `jikan:${malId}`, // Set ID to match our Jikan prefix format so it resolves properly to detail pages
+            id: `jikan:${malId}`,
             malId,
             anilistId: null,
             title: {
-              romaji: attrs.titles?.en_jp || attrs.canonicalTitle || '',
-              english: attrs.titles?.en || attrs.canonicalTitle || null,
-              native: attrs.titles?.ja_jp || null,
+              romaji: attrs.titles?.en_jp ?? attrs.canonicalTitle ?? '',
+              english: attrs.titles?.en ?? attrs.canonicalTitle ?? null,
+              native: attrs.titles?.ja_jp ?? null,
             },
-            images: {
-              poster,
-              posterLarge,
-              banner,
-            },
-            synopsis: attrs.synopsis || attrs.description || null,
+            images: { poster, posterLarge, banner },
+            synopsis: attrs.synopsis ?? attrs.description ?? null,
             background: null,
             type,
             status,
             airing: status === 'Airing',
-            episodes: attrs.episodeCount || null,
+            episodes: attrs.episodeCount ?? null,
             duration: attrs.episodeLength ? `${attrs.episodeLength} min` : null,
             score,
-            scoredBy: attrs.userCount || null,
-            rank: attrs.ratingRank || null,
-            popularity: attrs.popularityRank || null,
-            members: attrs.userCount || null,
-            favorites: attrs.favoritesCount || null,
+            scoredBy: attrs.userCount ?? null,
+            rank: attrs.ratingRank ?? null,
+            popularity: attrs.popularityRank ?? null,
+            members: attrs.userCount ?? null,
+            favorites: attrs.favoritesCount ?? null,
             season: null,
             year: attrs.startDate ? new Date(attrs.startDate).getFullYear() : null,
             studios: [],
@@ -377,20 +425,22 @@ export class JikanAdapter implements AnimeProvider {
             demographics: [],
             rating,
             source: null,
-            trailer: attrs.youtubeVideoId ? {
-              id: attrs.youtubeVideoId,
-              url: `https://www.youtube.com/watch?v=${attrs.youtubeVideoId}`,
-              embedUrl: `https://www.youtube.com/embed/${attrs.youtubeVideoId}`,
-              image: `https://img.youtube.com/vi/${attrs.youtubeVideoId}/hqdefault.jpg`,
-            } : null,
+            trailer: attrs.youtubeVideoId
+              ? {
+                  id: attrs.youtubeVideoId,
+                  url: `https://www.youtube.com/watch?v=${attrs.youtubeVideoId}`,
+                  embedUrl: `https://www.youtube.com/embed/${attrs.youtubeVideoId}`,
+                  image: `https://img.youtube.com/vi/${attrs.youtubeVideoId}/hqdefault.jpg`,
+                }
+              : null,
             aired: {
-              from: attrs.startDate || null,
-              to: attrs.endDate || null,
+              from: attrs.startDate ?? null,
+              to: attrs.endDate ?? null,
             },
             broadcast: null,
           } as Anime;
         })
-        .filter(Boolean) as Anime[];
+        .filter((a): a is Anime => a !== null);
 
       return {
         data: mappedAnime,
