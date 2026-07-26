@@ -17,6 +17,7 @@ import { TrailerModal } from "@/components/anime/details/trailer-modal";
 import { AnimeCarousel } from "@/components/anime/anime-carousel";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { EmptyState } from "@/components/shared/empty-state";
+import { toast } from "@/store/toast-store";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -74,26 +75,42 @@ export default function AnimeDetailPage({ params }: PageProps) {
   const handleShare = () => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(window.location.href);
-      alert("Link copied to clipboard!");
+      toast.success("Link Copied!", "Direct link saved to your clipboard.");
+    }
+  };
+
+  const handleStatusChange = (newStatus: string | null) => {
+    setLibraryStatus(newStatus);
+    if (newStatus) {
+      toast.success(`Updated to "${newStatus}"`, title);
+    } else {
+      toast.info("Removed from Library", title);
+    }
+  };
+
+  const handleFavoriteToggle = () => {
+    const nextState = !isFavorite;
+    setIsFavorite(nextState);
+    if (nextState) {
+      toast.success("Added to Favorites", title);
+    } else {
+      toast.info("Removed from Favorites", title);
     }
   };
 
   return (
     <div className="min-h-screen pb-16 relative overflow-hidden bg-background text-foreground">
       
-      {/* ── HERO SECTION ──
-          Poster on left, Title, Japanese Title, Metadata row, Genre chips,
-          3-5 line synopsis directly inside hero, and integrated lightweight toolbar.
-      */}
+      {/* ── HERO SECTION ── */}
       <HeroSection
         anime={anime}
         onOpenTrailer={() => setIsTrailerOpen(true)}
         status={libraryStatus}
-        onStatusChange={(newStatus) => setLibraryStatus(newStatus)}
+        onStatusChange={handleStatusChange}
         episodesWatched={episodesWatched}
         onEpisodesChange={(ep) => setEpisodesWatched(ep)}
         isFavorite={isFavorite}
-        onFavoriteToggle={() => setIsFavorite(!isFavorite)}
+        onFavoriteToggle={handleFavoriteToggle}
         onShare={handleShare}
       />
 

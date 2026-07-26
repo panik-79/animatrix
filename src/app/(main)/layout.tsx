@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Footer } from "@/components/layout/footer";
 import { PageTransition } from "@/components/layout/page-transition";
 import { CommandPalette } from "@/components/layout/command-palette";
+import { ToastContainer } from "@/components/shared/toast-container";
 import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +34,7 @@ export default function MainLayout({
         <Footer />
       </div>
       <CommandPalette />
+      <ToastContainer />
     </div>
   );
 }
