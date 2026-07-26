@@ -27,7 +27,11 @@ import {
   Bookmark,
   Check,
   Plus,
+  Layers,
+  BookOpen,
+  X,
 } from "lucide-react";
+import { GlassCard } from "@/components/shared/glass-card";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -149,25 +153,30 @@ export default function AnimeDetailPage({ params }: PageProps) {
           </div>
 
           {/* Quick Library Action Panel (Scaffolded Mockup) */}
-          <div className="w-full max-w-[320px] lg:max-w-none p-5 rounded-2xl bg-card/45 border border-white/[0.06] backdrop-blur-md space-y-4">
+          <GlassCard className="w-full max-w-[320px] lg:max-w-none p-5 rounded-2xl border border-white/[0.06] backdrop-blur-md space-y-4">
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">Watch Status</label>
-              <div className="flex flex-wrap gap-1.5">
-                {["Watching", "Plan to Watch", "Completed", "Dropped"].map((status) => {
-                  const isSelected = libraryStatus === status;
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest block mb-2.5">Watch Status</label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { label: "Watching", icon: Play, activeClass: "bg-emerald-500 border-emerald-400 text-white shadow-[0_0_15px_rgba(16,185,129,0.35)]", hoverClass: "hover:bg-emerald-500/10 hover:border-emerald-500/30 hover:text-emerald-400" },
+                  { label: "Plan to Watch", icon: Bookmark, activeClass: "bg-indigo-500 border-indigo-400 text-white shadow-[0_0_15px_rgba(99,102,241,0.35)]", hoverClass: "hover:bg-indigo-500/10 hover:border-indigo-500/30 hover:text-indigo-400" },
+                  { label: "Completed", icon: Check, activeClass: "bg-amber-500 border-amber-400 text-white shadow-[0_0_15px_rgba(245,158,11,0.35)]", hoverClass: "hover:bg-amber-500/10 hover:border-amber-500/30 hover:text-amber-400" },
+                  { label: "Dropped", icon: X, activeClass: "bg-rose-500 border-rose-400 text-white shadow-[0_0_15px_rgba(244,63,94,0.35)]", hoverClass: "hover:bg-rose-500/10 hover:border-rose-500/30 hover:text-rose-400" },
+                ].map(({ label, icon: Icon, activeClass, hoverClass }) => {
+                  const isSelected = libraryStatus === label;
                   return (
                     <button
-                      key={status}
-                      onClick={() => setLibraryStatus(isSelected ? null : status)}
+                      key={label}
+                      onClick={() => setLibraryStatus(isSelected ? null : label)}
                       className={cn(
-                        "flex-1 min-w-[45%] flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl border text-[11px] font-bold tracking-wide transition-all cursor-pointer",
+                        "flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl border text-[11px] font-bold tracking-wide transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]",
                         isSelected
-                          ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/25"
-                          : "bg-background/40 border-white/[0.06] text-white/70 hover:bg-white/[0.04] hover:text-white"
+                          ? activeClass
+                          : "bg-background/40 border-white/[0.06] text-white/70 " + hoverClass
                       )}
                     >
-                      {isSelected ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-                      {status}
+                      <Icon className="w-3 h-3" />
+                      {label}
                     </button>
                   );
                 })}
@@ -179,13 +188,13 @@ export default function AnimeDetailPage({ params }: PageProps) {
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
-                className="space-y-2 pt-2 border-t border-white/[0.06] overflow-hidden"
+                className="space-y-3 pt-3 border-t border-white/[0.06] overflow-hidden"
               >
                 <div className="flex justify-between items-center text-xs font-semibold text-muted-foreground">
                   <span>Episode Progress</span>
-                  <span>{episodesWatched} / {anime.episodes || "???"}</span>
+                  <span className="text-white bg-white/10 px-2 py-0.5 rounded-md text-[10px] font-bold">{episodesWatched} / {anime.episodes || "???"}</span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-3">
                   <input
                     type="range"
                     min="0"
@@ -194,6 +203,20 @@ export default function AnimeDetailPage({ params }: PageProps) {
                     onChange={(e) => setEpisodesWatched(parseInt(e.target.value))}
                     className="w-full accent-primary bg-background/50 h-1.5 rounded-full cursor-pointer"
                   />
+                  <div className="flex gap-1">
+                    <button 
+                      onClick={() => setEpisodesWatched(prev => Math.max(0, prev - 1))}
+                      className="w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-xs text-white hover:bg-white/10 hover:border-white/20 active:scale-95 cursor-pointer"
+                    >
+                      -
+                    </button>
+                    <button 
+                      onClick={() => setEpisodesWatched(prev => Math.min(anime.episodes || 100, prev + 1))}
+                      className="w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-xs text-white hover:bg-white/10 hover:border-white/20 active:scale-95 cursor-pointer"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -203,21 +226,21 @@ export default function AnimeDetailPage({ params }: PageProps) {
               <button
                 onClick={() => setIsFavorite(!isFavorite)}
                 className={cn(
-                  "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer",
+                  "flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]",
                   isFavorite
                     ? "bg-rose-500/15 border-rose-500/30 text-rose-400"
-                    : "bg-background/40 border-white/[0.06] text-white/70 hover:bg-white/[0.04] hover:text-white"
+                    : "bg-background/40 border-white/[0.06] text-white/70 hover:bg-rose-500/10 hover:border-rose-500/25 hover:text-rose-400"
                 )}
               >
-                <Heart className={cn("w-4 h-4", isFavorite && "fill-current")} />
+                <Heart className={cn("w-4 h-4 transition-transform", isFavorite && "fill-current scale-110 text-rose-500 animate-pulse")} />
                 Favorite
               </button>
-              <button className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-background/40 border border-white/[0.06] text-white/70 hover:bg-white/[0.04] hover:text-white text-xs font-semibold transition-all cursor-pointer">
+              <button className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-background/40 border border-white/[0.06] text-white/70 hover:bg-primary/10 hover:border-primary/25 hover:text-primary text-xs font-semibold transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]">
                 <Share2 className="w-4 h-4" />
                 Share
               </button>
             </div>
-          </div>
+          </GlassCard>
         </div>
 
         {/* Right column (Metadata, Synopsis, Characters, Relations) */}
@@ -327,53 +350,85 @@ export default function AnimeDetailPage({ params }: PageProps) {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="grid grid-cols-2 sm:grid-cols-3 gap-6 p-1"
+                className="grid grid-cols-2 sm:grid-cols-3 gap-4 p-1"
               >
                 {/* Format */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">Format</span>
-                  <span className="text-sm font-semibold text-white/90 flex items-center gap-1.5">
-                    <Tv className="w-4 h-4 text-primary" />
-                    {anime.type}
-                  </span>
-                </div>
+                <GlassCard className="p-4 flex items-center gap-3.5 border border-white/[0.04] bg-white/[0.01]">
+                  <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)] flex items-center justify-center">
+                    {anime.type === "Movie" ? <Film className="w-5 h-5" /> : <Tv className="w-5 h-5" />}
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase text-muted-foreground/80 tracking-widest block">Format</span>
+                    <span className="text-sm font-bold text-white/95 mt-0.5 block">
+                      {anime.type || "N/A"}
+                    </span>
+                  </div>
+                </GlassCard>
+
                 {/* Episodes */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">Episodes</span>
-                  <span className="text-sm font-semibold text-white/90">
-                    {anime.episodes || "Unknown"} episodes
-                  </span>
-                </div>
+                <GlassCard className="p-4 flex items-center gap-3.5 border border-white/[0.04] bg-white/[0.01]">
+                  <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)] flex items-center justify-center">
+                    <Layers className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase text-muted-foreground/80 tracking-widest block">Episodes</span>
+                    <span className="text-sm font-bold text-white/95 mt-0.5 block">
+                      {anime.episodes ? `${anime.episodes} episodes` : "N/A"}
+                    </span>
+                  </div>
+                </GlassCard>
+
                 {/* Duration */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">Duration</span>
-                  <span className="text-sm font-semibold text-white/90 flex items-center gap-1.5">
-                    <Clock className="w-4 h-4 text-primary" />
-                    {anime.duration || "N/A"}
-                  </span>
-                </div>
+                <GlassCard className="p-4 flex items-center gap-3.5 border border-white/[0.04] bg-white/[0.01]">
+                  <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.15)] flex items-center justify-center">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase text-muted-foreground/80 tracking-widest block">Duration</span>
+                    <span className="text-sm font-bold text-white/95 mt-0.5 block">
+                      {anime.duration || "N/A"}
+                    </span>
+                  </div>
+                </GlassCard>
+
                 {/* Season */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">Season</span>
-                  <span className="text-sm font-semibold text-white/90 flex items-center gap-1.5">
-                    <Calendar className="w-4 h-4 text-primary" />
-                    {anime.season} {anime.year}
-                  </span>
-                </div>
+                <GlassCard className="p-4 flex items-center gap-3.5 border border-white/[0.04] bg-white/[0.01]">
+                  <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.15)] flex items-center justify-center">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase text-muted-foreground/80 tracking-widest block">Season</span>
+                    <span className="text-sm font-bold text-white/95 mt-0.5 block">
+                      {anime.season || anime.year ? `${anime.season ?? ""} ${anime.year ?? ""}` : "N/A"}
+                    </span>
+                  </div>
+                </GlassCard>
+
                 {/* Studios */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">Studio</span>
-                  <span className="text-sm font-semibold text-white/90">
-                    {anime.studios.map(s => s.name).join(", ") || "Unknown"}
-                  </span>
-                </div>
+                <GlassCard className="p-4 flex items-center gap-3.5 border border-white/[0.04] bg-white/[0.01]">
+                  <div className="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 shadow-[0_0_15px_rgba(234,179,8,0.15)] flex items-center justify-center">
+                    <Award className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase text-muted-foreground/80 tracking-widest block">Studio</span>
+                    <span className="text-sm font-bold text-white/95 mt-0.5 block truncate max-w-[150px]" title={anime.studios.map(s => s.name).join(", ")}>
+                      {anime.studios.map(s => s.name).join(", ") || "N/A"}
+                    </span>
+                  </div>
+                </GlassCard>
+
                 {/* Source */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">Source</span>
-                  <span className="text-sm font-semibold text-white/90">
-                    {anime.source || "Original"}
-                  </span>
-                </div>
+                <GlassCard className="p-4 flex items-center gap-3.5 border border-white/[0.04] bg-white/[0.01]">
+                  <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.15)] flex items-center justify-center">
+                    <BookOpen className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase text-muted-foreground/80 tracking-widest block">Source</span>
+                    <span className="text-sm font-bold text-white/95 mt-0.5 block">
+                      {anime.source || "Original"}
+                    </span>
+                  </div>
+                </GlassCard>
               </motion.div>
             )}
 
