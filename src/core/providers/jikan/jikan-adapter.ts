@@ -153,30 +153,29 @@ export class JikanAdapter implements AnimeProvider {
       { provider: this.id }
     );
     
-    // Recommendations only return partial info (entry node). 
+    // Recommendations only return partial info (entry node).
     // We map it to Anime partially, enough for a card.
     return res.data.map(r => {
-      // Mock full anime struct with available data
       return JikanMapper.mapAnime({
         mal_id: r.entry.mal_id,
         title: r.entry.name,
         images: r.entry.images,
         url: r.entry.url,
-        // Fill rest with defaults
+        // Fill rest with nulls — the mapper handles null gracefully
         trailer: { youtube_id: null, url: null, embed_url: null, images: { image_url: null, small_image_url: null, medium_image_url: null, large_image_url: null, maximum_image_url: null } },
         approved: true,
         titles: [{ type: 'Default', title: r.entry.name }],
         title_english: null,
         title_japanese: null,
         title_synonyms: [],
-        type: 'Unknown',
-        source: 'Unknown',
+        type: null,
+        source: null,
         episodes: null,
-        status: 'Unknown',
+        status: null,
         airing: false,
         aired: { from: null, to: null, prop: {}, string: null },
-        duration: 'Unknown',
-        rating: 'Unknown',
+        duration: null,
+        rating: null,
         score: null,
         scored_by: null,
         rank: null,
@@ -373,13 +372,13 @@ export class JikanAdapter implements AnimeProvider {
             : null;
 
           // Map status
-          let status: AnimeStatus = 'Unknown';
+          let status: AnimeStatus = null;
           if (attrs.status === 'current') status = 'Airing';
           else if (attrs.status === 'finished') status = 'Finished';
           else if (attrs.status === 'upcoming') status = 'Upcoming';
 
           // Map type
-          let type: AnimeType = 'Unknown';
+          let type: AnimeType = null;
           const sub = attrs.subtype?.toUpperCase();
           if (sub === 'TV') type = 'TV';
           else if (sub === 'MOVIE') type = 'Movie';
@@ -389,12 +388,13 @@ export class JikanAdapter implements AnimeProvider {
           else if (sub === 'MUSIC') type = 'Music';
 
           // Map age rating
-          let rating: AgeRating = 'Unknown';
+          let rating: AgeRating = null;
           if (attrs.ageRating === 'G') rating = 'G';
           else if (attrs.ageRating === 'PG') rating = 'PG';
           else if (attrs.ageRating === 'PG13') rating = 'PG-13';
           else if (attrs.ageRating === 'R') rating = 'R';
           else if (attrs.ageRating === 'R18') rating = 'R+';
+
 
           const poster =
             attrs.posterImage?.medium ??

@@ -1,7 +1,7 @@
-export type AnimeType = 'TV' | 'Movie' | 'OVA' | 'ONA' | 'Special' | 'Music' | 'Unknown';
-export type AnimeStatus = 'Airing' | 'Finished' | 'Upcoming' | 'Unknown';
+export type AnimeType = 'TV' | 'Movie' | 'OVA' | 'ONA' | 'Special' | 'Music' | null;
+export type AnimeStatus = 'Airing' | 'Finished' | 'Upcoming' | null;
 export type AnimeSeason = 'Winter' | 'Spring' | 'Summer' | 'Fall';
-export type AgeRating = 'G' | 'PG' | 'PG-13' | 'R' | 'R+' | 'Rx' | 'Unknown';
+export type AgeRating = 'G' | 'PG' | 'PG-13' | 'R' | 'R+' | 'Rx' | null;
 
 export interface AnimeTitle {
   romaji: string;
