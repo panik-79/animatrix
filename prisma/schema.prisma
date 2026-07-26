@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum WatchStatus {
+  WATCHING
+  COMPLETED
+  PLAN_TO_WATCH
+  ON_HOLD
+  DROPPED
+}
+
+model LibraryEntry {
+  id              String      @id @default(cuid())
+  animeId         String      // Unique provider key e.g. "jikan:4224" or "anilist:153518"
+  malId           Int?
+  anilistId       Int?
+  title           String
+  imageUrl        String?
+  bannerUrl       String?
+  status          WatchStatus @default(WATCHING)
+  score           Float?      // 1.0 - 10.0 score
+  progress        Int         @default(0) // Episodes watched
+  totalEpisodes   Int?
+  rewatchCount    Int         @default(0)
+  isFavorite      Boolean     @default(false)
+  notes           String?
+  startDate       DateTime?
+  completedDate   DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([animeId])
+}
+
+model Collection {
+  id          String           @id @default(cuid())
+  name        String
+  description String?
+  coverImage  String?
+  isPinned    Boolean          @default(false)
+  isHidden    Boolean          @default(false)
+  sortOrder   Int              @default(0)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  items       CollectionItem[]
+}
+
+model CollectionItem {
+  id           String     @id @default(cuid())
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  animeId      String
+  title        String
+  imageUrl     String?
+  sortOrder    Int        @default(0)
+  note         String?
+  createdAt    DateTime   @default(now())
+}
+
+model WatchHistory {
+  id        String   @id @default(cuid())
+  animeId   String
+  episode   Int
+  watchedAt DateTime @default(now())
+}
+
+model UserSettings {
+  id        String   @id @default("default")
+  data      String   // JSON payload for settings
+  updatedAt DateTime @updatedAt
+}

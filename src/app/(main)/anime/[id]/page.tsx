@@ -1,12 +1,17 @@
 "use client";
 
-import { useState, use } from "react";
+import { use } from "react";
 import {
   useAnimeById,
   useAnimeCharacters,
   useAnimeRecommendations,
   useAnimeRelations,
 } from "@/hooks/use-anime";
+import {
+  useLibraryEntry,
+  useUpdateLibrary,
+  useRemoveFromLibrary,
+} from "@/hooks/use-library";
 
 import { HeroSection } from "@/components/anime/details/hero-section";
 import { CharacterCast } from "@/components/anime/details/character-cast";
@@ -18,6 +23,8 @@ import { AnimeCarousel } from "@/components/anime/anime-carousel";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { EmptyState } from "@/components/shared/empty-state";
 import { toast } from "@/store/toast-store";
+import { WatchStatus } from "@prisma/client";
+import { useState } from "react";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -26,17 +33,19 @@ interface PageProps {
 export default function AnimeDetailPage({ params }: PageProps) {
   const { id } = use(params);
 
-  // Hook queries
+  // Core API Queries
   const { data: anime, isLoading: isAnimeLoading, isError: isAnimeError, refetch } = useAnimeById(id);
   const { data: characters, isLoading: isCharsLoading } = useAnimeCharacters(id);
   const { data: recommendations, isLoading: isRecsLoading } = useAnimeRecommendations(id);
   const { data: relations, isLoading: isRelsLoading } = useAnimeRelations(id);
 
-  // Component UI State
+  // DB Persistence Hooks
+  const { data: libraryEntry } = useLibraryEntry(id);
+  const updateLibraryMutation = useUpdateLibrary();
+  const removeLibraryMutation = useRemoveFromLibrary();
+
+  // Local State
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
-  const [libraryStatus, setLibraryStatus] = useState<string | null>(null);
-  const [episodesWatched, setEpisodesWatched] = useState(0);
-  const [isFavorite, setIsFavorite] = useState(false);
 
   if (isAnimeLoading) {
     return (
@@ -71,6 +80,9 @@ export default function AnimeDetailPage({ params }: PageProps) {
   }
 
   const title = anime.title.english || anime.title.romaji;
+  const currentStatus = libraryEntry?.status || null;
+  const currentEpisodes = libraryEntry?.progress || 0;
+  const isFavorite = libraryEntry?.isFavorite || false;
 
   const handleShare = () => {
     if (typeof window !== "undefined") {
@@ -80,35 +92,58 @@ export default function AnimeDetailPage({ params }: PageProps) {
   };
 
   const handleStatusChange = (newStatus: string | null) => {
-    setLibraryStatus(newStatus);
-    if (newStatus) {
-      toast.success(`Updated to "${newStatus}"`, title);
-    } else {
-      toast.info("Removed from Library", title);
+    if (!newStatus) {
+      removeLibraryMutation.mutate(id);
+      return;
     }
+
+    const prismaStatus = newStatus.toUpperCase().replace(/\s+/g, "_") as WatchStatus;
+
+    updateLibraryMutation.mutate({
+      animeId: id,
+      title,
+      imageUrl: anime.images.posterLarge || anime.images.poster,
+      bannerUrl: anime.images.banner,
+      totalEpisodes: anime.episodes,
+      status: prismaStatus,
+    });
+    toast.success(`Updated to "${newStatus}"`, title);
+  };
+
+  const handleEpisodesChange = (ep: number) => {
+    updateLibraryMutation.mutate({
+      animeId: id,
+      title,
+      imageUrl: anime.images.posterLarge || anime.images.poster,
+      bannerUrl: anime.images.banner,
+      totalEpisodes: anime.episodes,
+      progress: ep,
+    });
+    toast.info(`Progress: Ep ${ep} / ${anime.episodes || "???"}`, title);
   };
 
   const handleFavoriteToggle = () => {
-    const nextState = !isFavorite;
-    setIsFavorite(nextState);
-    if (nextState) {
-      toast.success("Added to Favorites", title);
-    } else {
-      toast.info("Removed from Favorites", title);
-    }
+    updateLibraryMutation.mutate({
+      animeId: id,
+      title,
+      imageUrl: anime.images.posterLarge || anime.images.poster,
+      bannerUrl: anime.images.banner,
+      isFavorite: !isFavorite,
+    });
+    toast.success(!isFavorite ? "Added to Favorites" : "Removed from Favorites", title);
   };
 
   return (
     <div className="min-h-screen pb-16 relative overflow-hidden bg-background text-foreground">
       
-      {/* ── HERO SECTION ── */}
+      {/* ── HERO SECTION WITH LIVE DB SYNC ── */}
       <HeroSection
         anime={anime}
         onOpenTrailer={() => setIsTrailerOpen(true)}
-        status={libraryStatus}
+        status={currentStatus}
         onStatusChange={handleStatusChange}
-        episodesWatched={episodesWatched}
-        onEpisodesChange={(ep) => setEpisodesWatched(ep)}
+        episodesWatched={currentEpisodes}
+        onEpisodesChange={handleEpisodesChange}
         isFavorite={isFavorite}
         onFavoriteToggle={handleFavoriteToggle}
         onShare={handleShare}
@@ -134,7 +169,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
           anime={anime}
         />
 
-        {/* ── RECOMMENDATIONS (Aligned Grid, Hidden when empty) ── */}
+        {/* ── RECOMMENDATIONS ── */}
         <AnimeCarousel
           title="Recommendations"
           items={recommendations}
