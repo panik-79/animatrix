@@ -125,12 +125,12 @@ export class LibraryRepository {
     });
   }
 
-  static async updateProgress(rawAnimeId: string, progress: number, title?: string, imageUrl?: string | null, bannerUrl?: string | null) {
+  static async updateProgress(rawAnimeId: string, progress: number, title?: string, imageUrl?: string | null, bannerUrl?: string | null, totalEpisodes?: number | null) {
     const animeId = normalizeAnimeId(rawAnimeId);
     const existing = await prisma.libraryEntry.findUnique({ where: { animeId } });
 
-    const totalEpisodes = existing?.totalEpisodes ?? null;
-    const isCompleted = totalEpisodes && progress >= totalEpisodes;
+    const finalTotalEpisodes = totalEpisodes ?? existing?.totalEpisodes ?? null;
+    const isCompleted = finalTotalEpisodes && progress >= finalTotalEpisodes;
     const newStatus = isCompleted ? "COMPLETED" : (existing?.status ?? "WATCHING");
 
     // Track watch history
@@ -146,6 +146,7 @@ export class LibraryRepository {
       update: {
         progress,
         status: newStatus,
+        totalEpisodes: finalTotalEpisodes,
         completedDate: isCompleted ? new Date() : existing?.completedDate,
         updatedAt: new Date(),
       },
@@ -156,6 +157,7 @@ export class LibraryRepository {
         status: newStatus,
         imageUrl,
         bannerUrl,
+        totalEpisodes: finalTotalEpisodes,
         completedDate: isCompleted ? new Date() : null,
       },
     });

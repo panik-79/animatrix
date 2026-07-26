@@ -38,7 +38,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     }
 
     if (typeof body.progress === "number") {
-      const updated = await LibraryRepository.updateProgress(decodedId, body.progress, body.title, body.imageUrl, body.bannerUrl);
+      const updated = await LibraryRepository.updateProgress(decodedId, body.progress, body.title, body.imageUrl, body.bannerUrl, body.totalEpisodes);
       return NextResponse.json({ entry: updated });
     }
 

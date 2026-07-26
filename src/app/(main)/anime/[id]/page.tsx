@@ -147,6 +147,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
         title,
         imageUrl: anime.images.posterLarge || anime.images.poster,
         bannerUrl: anime.images.banner,
+        totalEpisodes: anime.episodes,
         isFavorite: nextState,
       },
       {
