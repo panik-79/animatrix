@@ -1,5 +1,5 @@
 import { AnimeProvider, SearchParams, TopAnimeParams, SeasonParams, AnimeRelation } from '../anime-provider';
-import { Anime, PaginatedResult, Genre } from '../../models/anime';
+import { Anime, PaginatedResult, Genre, AnimeType, AnimeStatus, AgeRating } from '../../models/anime';
 import { Character } from '../../models/character';
 import { JikanMapper } from './jikan-mapper';
 import { httpClient } from '@/lib/http-client';
@@ -38,32 +38,37 @@ export class JikanAdapter implements AnimeProvider {
       });
     }
 
-    const query = new URLSearchParams();
-    if (params.q) query.append('q', params.q);
-    if (params.page) query.append('page', params.page.toString());
-    if (params.limit) query.append('limit', params.limit.toString());
-    if (params.type) query.append('type', params.type);
-    if (params.score) query.append('score', params.score.toString());
-    if (params.min_score) query.append('min_score', params.min_score.toString());
-    if (params.max_score) query.append('max_score', params.max_score.toString());
-    if (params.status) query.append('status', params.status);
-    if (params.rating) query.append('rating', params.rating);
-    if (params.genres) query.append('genres', params.genres);
-    if (params.genres_exclude) query.append('genres_exclude', params.genres_exclude);
-    if (params.order_by) query.append('order_by', params.order_by);
-    if (params.sort) query.append('sort', params.sort);
-    if (params.start_date) query.append('start_date', params.start_date);
-    if (params.end_date) query.append('end_date', params.end_date);
-    
-    // Ensure sfw by default unless overridden
-    query.append('sfw', 'true');
+    try {
+      const query = new URLSearchParams();
+      if (params.q) query.append('q', params.q);
+      if (params.page) query.append('page', params.page.toString());
+      if (params.limit) query.append('limit', params.limit.toString());
+      if (params.type) query.append('type', params.type);
+      if (params.score) query.append('score', params.score.toString());
+      if (params.min_score) query.append('min_score', params.min_score.toString());
+      if (params.max_score) query.append('max_score', params.max_score.toString());
+      if (params.status) query.append('status', params.status);
+      if (params.rating) query.append('rating', params.rating);
+      if (params.genres) query.append('genres', params.genres);
+      if (params.genres_exclude) query.append('genres_exclude', params.genres_exclude);
+      if (params.order_by) query.append('order_by', params.order_by);
+      if (params.sort) query.append('sort', params.sort);
+      if (params.start_date) query.append('start_date', params.start_date);
+      if (params.end_date) query.append('end_date', params.end_date);
+      
+      // Ensure sfw by default unless overridden
+      query.append('sfw', 'true');
 
-    const res = await httpClient.get<JikanPaginatedResponse<JikanAnime>>(
-      `${this.baseUrl}/anime?${query.toString()}`,
-      { provider: this.id }
-    );
-    
-    return this.mapPaginated(res);
+      const res = await httpClient.get<JikanPaginatedResponse<JikanAnime>>(
+        `${this.baseUrl}/anime?${query.toString()}`,
+        { provider: this.id }
+      );
+      
+      return this.mapPaginated(res);
+    } catch (error) {
+      console.warn("Jikan search endpoint failed. Falling back to Kitsu search provider...", error);
+      return this.searchAnimeViaKitsuFallback(params);
+    }
   }
 
   async getAnimeById(id: string): Promise<Anime> {
@@ -237,5 +242,180 @@ export class JikanAdapter implements AnimeProvider {
         }
       }
     };
+  }
+
+  private async searchAnimeViaKitsuFallback(params: SearchParams): Promise<PaginatedResult<Anime>> {
+    const limit = params.limit || 20;
+    const page = params.page || 1;
+    const offset = (page - 1) * limit;
+
+    const urlParams = new URLSearchParams();
+    if (params.q) {
+      urlParams.append('filter[text]', params.q);
+    }
+    
+    // Map genres to Kitsu categories
+    if (params.genres) {
+      const genreIdList = params.genres.split(',');
+      const genreNames = genreIdList
+        .map(id => {
+          const map: Record<string, string> = {
+            "1": "Action",
+            "2": "Adventure",
+            "4": "Comedy",
+            "8": "Drama",
+            "24": "Sci-Fi",
+            "7": "Mystery",
+            "37": "Supernatural",
+            "10": "Fantasy",
+            "30": "Sports",
+            "22": "Romance",
+            "36": "Slice of Life",
+            "41": "Thriller",
+          };
+          return map[id];
+        })
+        .filter(Boolean);
+      
+      if (genreNames.length > 0) {
+        urlParams.append('filter[categories]', genreNames.join(','));
+      }
+    }
+
+    urlParams.append('page[limit]', limit.toString());
+    urlParams.append('page[offset]', offset.toString());
+    urlParams.append('include', 'mappings');
+
+    try {
+      const kitsuRes = await httpClient.get<any>(
+        `https://kitsu.io/api/edge/anime?${urlParams.toString()}`
+      );
+
+      const data = kitsuRes.data || [];
+      const included = kitsuRes.included || [];
+
+      const mappedAnime: Anime[] = data
+        .map((item: any) => {
+          const attrs = item.attributes || {};
+          
+          // Try to extract MyAnimeList ID from mappings
+          const mappingRefs = item.relationships?.mappings?.data || [];
+          const malMapping = included.find(
+            (inc: any) =>
+              inc.type === 'mappings' &&
+              mappingRefs.some((ref: any) => ref.id === inc.id) &&
+              inc.attributes?.externalSite === 'myanimelist/anime'
+          );
+
+          const malId = malMapping ? parseInt(malMapping.attributes.externalId) : null;
+          if (!malId) return null; // Skip items without a MAL mapping to guarantee detail pages work
+
+          // Format score (Kitsu uses 0-100 rating, we map it to 0-10)
+          const score = attrs.averageRating ? parseFloat((parseFloat(attrs.averageRating) / 10).toFixed(2)) : null;
+
+          // Map status
+          let status: AnimeStatus = 'Unknown';
+          if (attrs.status === 'current') status = 'Airing';
+          else if (attrs.status === 'finished') status = 'Finished';
+          else if (attrs.status === 'upcoming') status = 'Upcoming';
+
+          // Map type
+          let type: AnimeType = 'Unknown';
+          const sub = attrs.subtype?.toUpperCase();
+          if (sub === 'TV') type = 'TV';
+          else if (sub === 'MOVIE') type = 'Movie';
+          else if (sub === 'OVA') type = 'OVA';
+          else if (sub === 'ONA') type = 'ONA';
+          else if (sub === 'SPECIAL') type = 'Special';
+          else if (sub === 'MUSIC') type = 'Music';
+
+          // Map age rating
+          let rating: AgeRating = 'Unknown';
+          if (attrs.ageRating === 'G') rating = 'G';
+          else if (attrs.ageRating === 'PG') rating = 'PG';
+          else if (attrs.ageRating === 'PG13') rating = 'PG-13';
+          else if (attrs.ageRating === 'R') rating = 'R';
+          else if (attrs.ageRating === 'R18') rating = 'R+';
+
+          // Create localized image sizes
+          const poster = attrs.posterImage?.medium || attrs.posterImage?.large || attrs.posterImage?.original || '';
+          const posterLarge = attrs.posterImage?.large || attrs.posterImage?.original || poster;
+          const banner = attrs.coverImage?.large || attrs.coverImage?.original || null;
+
+          return {
+            id: `jikan:${malId}`, // Set ID to match our Jikan prefix format so it resolves properly to detail pages
+            malId,
+            anilistId: null,
+            title: {
+              romaji: attrs.titles?.en_jp || attrs.canonicalTitle || '',
+              english: attrs.titles?.en || attrs.canonicalTitle || null,
+              native: attrs.titles?.ja_jp || null,
+            },
+            images: {
+              poster,
+              posterLarge,
+              banner,
+            },
+            synopsis: attrs.synopsis || attrs.description || null,
+            background: null,
+            type,
+            status,
+            airing: status === 'Airing',
+            episodes: attrs.episodeCount || null,
+            duration: attrs.episodeLength ? `${attrs.episodeLength} min` : null,
+            score,
+            scoredBy: attrs.userCount || null,
+            rank: attrs.ratingRank || null,
+            popularity: attrs.popularityRank || null,
+            members: attrs.userCount || null,
+            favorites: attrs.favoritesCount || null,
+            season: null,
+            year: attrs.startDate ? new Date(attrs.startDate).getFullYear() : null,
+            studios: [],
+            genres: [],
+            themes: [],
+            demographics: [],
+            rating,
+            source: null,
+            trailer: attrs.youtubeVideoId ? {
+              id: attrs.youtubeVideoId,
+              url: `https://www.youtube.com/watch?v=${attrs.youtubeVideoId}`,
+              embedUrl: `https://www.youtube.com/embed/${attrs.youtubeVideoId}`,
+              image: `https://img.youtube.com/vi/${attrs.youtubeVideoId}/hqdefault.jpg`,
+            } : null,
+            aired: {
+              from: attrs.startDate || null,
+              to: attrs.endDate || null,
+            },
+            broadcast: null,
+          } as Anime;
+        })
+        .filter(Boolean) as Anime[];
+
+      return {
+        data: mappedAnime,
+        pagination: {
+          lastVisiblePage: kitsuRes.meta?.count ? Math.ceil(kitsuRes.meta.count / limit) : page,
+          hasNextPage: mappedAnime.length === limit,
+          currentPage: page,
+          items: {
+            count: mappedAnime.length,
+            total: kitsuRes.meta?.count || mappedAnime.length,
+            perPage: limit,
+          },
+        },
+      };
+    } catch (kitsuError) {
+      console.error("Kitsu search fallback failed:", kitsuError);
+      return {
+        data: [],
+        pagination: {
+          lastVisiblePage: 1,
+          hasNextPage: false,
+          currentPage: 1,
+          items: { count: 0, total: 0, perPage: limit },
+        },
+      };
+    }
   }
 }
