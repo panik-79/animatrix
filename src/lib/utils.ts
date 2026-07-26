@@ -5,6 +5,21 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function normalizeAnimeId(id: string): string {
+  if (!id) return id;
+  let prev = id;
+  let decoded = decodeURIComponent(id);
+  while (decoded !== prev) {
+    prev = decoded;
+    decoded = decodeURIComponent(decoded);
+  }
+  const clean = decoded.trim();
+  if (/^\d+$/.test(clean)) {
+    return `jikan:${clean}`;
+  }
+  return clean;
+}
+
 export function formatNumber(num: number): string {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + 'M'

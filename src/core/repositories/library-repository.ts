@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { WatchStatus, LibraryEntry as PrismaLibraryEntry } from "@prisma/client";
+import { normalizeAnimeId } from "@/lib/utils";
 
 export interface UpsertLibraryEntryInput {
   animeId: string;
@@ -17,7 +18,55 @@ export interface UpsertLibraryEntryInput {
 }
 
 export class LibraryRepository {
+  /**
+   * Automatic database cleanup helper to merge malformed/percent-encoded duplicate IDs
+   */
+  private static async cleanupDuplicates() {
+    try {
+      const allEntries = await prisma.libraryEntry.findMany({ orderBy: { updatedAt: 'desc' } });
+      const seen = new Map<string, string>(); // normalizedId -> canonical DB entry ID
+
+      for (const entry of allEntries) {
+        const normalized = normalizeAnimeId(entry.animeId);
+        
+        // If entry.animeId is not normalized (e.g. jikan%3A61316 or jikan%253A61316), clean it up!
+        if (entry.animeId !== normalized) {
+          if (!seen.has(normalized)) {
+            // Check if normalized entry already exists in DB
+            const existingCanonical = await prisma.libraryEntry.findUnique({ where: { animeId: normalized } });
+            if (existingCanonical) {
+              // Delete the malformed duplicate
+              await prisma.libraryEntry.delete({ where: { id: entry.id } });
+            } else {
+              // Update this malformed entry to the canonical normalized ID
+              await prisma.libraryEntry.update({
+                where: { id: entry.id },
+                data: { animeId: normalized },
+              });
+              seen.set(normalized, entry.id);
+            }
+          } else {
+            // Duplicate row exists! Delete the older duplicate
+            await prisma.libraryEntry.delete({ where: { id: entry.id } });
+          }
+        } else {
+          if (seen.has(normalized)) {
+            // Duplicate canonical row! Delete redundant row
+            await prisma.libraryEntry.delete({ where: { id: entry.id } });
+          } else {
+            seen.set(normalized, entry.id);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Error during library deduplication:", e);
+    }
+  }
+
   static async getAll(status?: WatchStatus, search?: string) {
+    // Run background deduplication
+    await this.cleanupDuplicates();
+
     const where: any = {};
     if (status) {
       where.status = status;
@@ -34,26 +83,27 @@ export class LibraryRepository {
     });
   }
 
-  static async getByAnimeId(animeId: string) {
+  static async getByAnimeId(rawAnimeId: string) {
+    const animeId = normalizeAnimeId(rawAnimeId);
     return prisma.libraryEntry.findUnique({
       where: { animeId },
     });
   }
 
   static async upsertEntry(input: UpsertLibraryEntryInput) {
-    const { animeId, ...data } = input;
+    const animeId = normalizeAnimeId(input.animeId);
     
     // Clean null/undefined values
     const updateData: any = { updatedAt: new Date() };
-    if (data.title) updateData.title = data.title;
-    if (data.status) updateData.status = data.status;
-    if (typeof data.score === 'number' || data.score === null) updateData.score = data.score;
-    if (typeof data.progress === 'number') updateData.progress = data.progress;
-    if (typeof data.totalEpisodes === 'number' || data.totalEpisodes === null) updateData.totalEpisodes = data.totalEpisodes;
-    if (typeof data.isFavorite === 'boolean') updateData.isFavorite = data.isFavorite;
-    if (data.imageUrl) updateData.imageUrl = data.imageUrl;
-    if (data.bannerUrl) updateData.bannerUrl = data.bannerUrl;
-    if (data.notes !== undefined) updateData.notes = data.notes;
+    if (input.title) updateData.title = input.title;
+    if (input.status) updateData.status = input.status;
+    if (typeof input.score === 'number' || input.score === null) updateData.score = input.score;
+    if (typeof input.progress === 'number') updateData.progress = input.progress;
+    if (typeof input.totalEpisodes === 'number' || input.totalEpisodes === null) updateData.totalEpisodes = input.totalEpisodes;
+    if (typeof input.isFavorite === 'boolean') updateData.isFavorite = input.isFavorite;
+    if (input.imageUrl) updateData.imageUrl = input.imageUrl;
+    if (input.bannerUrl) updateData.bannerUrl = input.bannerUrl;
+    if (input.notes !== undefined) updateData.notes = input.notes;
 
     return prisma.libraryEntry.upsert({
       where: { animeId },
@@ -75,7 +125,8 @@ export class LibraryRepository {
     });
   }
 
-  static async updateProgress(animeId: string, progress: number, title?: string, imageUrl?: string | null, bannerUrl?: string | null) {
+  static async updateProgress(rawAnimeId: string, progress: number, title?: string, imageUrl?: string | null, bannerUrl?: string | null) {
+    const animeId = normalizeAnimeId(rawAnimeId);
     const existing = await prisma.libraryEntry.findUnique({ where: { animeId } });
 
     const totalEpisodes = existing?.totalEpisodes ?? null;
@@ -110,7 +161,8 @@ export class LibraryRepository {
     });
   }
 
-  static async toggleFavorite(animeId: string, title?: string, imageUrl?: string | null, bannerUrl?: string | null) {
+  static async toggleFavorite(rawAnimeId: string, title?: string, imageUrl?: string | null, bannerUrl?: string | null) {
+    const animeId = normalizeAnimeId(rawAnimeId);
     const existing = await prisma.libraryEntry.findUnique({ where: { animeId } });
     const nextFavoriteState = existing ? !existing.isFavorite : true;
 
@@ -132,13 +184,15 @@ export class LibraryRepository {
     });
   }
 
-  static async deleteEntry(animeId: string) {
+  static async deleteEntry(rawAnimeId: string) {
+    const animeId = normalizeAnimeId(rawAnimeId);
     return prisma.libraryEntry.delete({
       where: { animeId },
     });
   }
 
   static async getStats() {
+    await this.cleanupDuplicates();
     const entries = await prisma.libraryEntry.findMany();
 
     const totalEntries = entries.length;
