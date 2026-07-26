@@ -23,28 +23,30 @@ export function FranchiseTimeline({ relations, isLoading }: FranchiseTimelinePro
         <span className="text-xs text-muted-foreground">{relations.length} Relations</span>
       </div>
 
-      {/* Connected Vertical Timeline */}
-      <div className="relative pl-5 border-l border-white/15 space-y-4 py-1">
+      {/* Connected Vertical Timeline with Distinctive Milestone Nodes */}
+      <div className="relative pl-6 border-l-2 border-violet-500/30 space-y-6 py-2">
         {relations.map((rel, idx) => (
           <div key={`${rel.relation}-${idx}`} className="relative group">
-            {/* Timeline Node Dot */}
-            <div className="absolute -left-[25px] top-1.5 w-2.5 h-2.5 rounded-full bg-violet-400 ring-4 ring-violet-500/20 transition-transform group-hover:scale-125" />
+            {/* Distinctive Milestone Node Dot */}
+            <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-violet-400 border-2 border-background ring-4 ring-violet-500/20 shadow-md shadow-violet-500/40 transition-transform duration-300 group-hover:scale-125" />
 
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {/* Relation Category Badge */}
               <span className="text-[11px] font-semibold text-violet-400 uppercase tracking-wider block">
                 {rel.relation}
               </span>
 
               {/* Entry Pills */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 {rel.entry.map((entry) => (
                   <Link
                     key={`${entry.malId}-${entry.name}`}
                     href={ROUTES.ANIME_DETAIL(`jikan:${entry.malId}`)}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card/50 hover:bg-card border border-white/10 hover:border-violet-500/40 text-xs font-medium text-white transition-all cursor-pointer shadow-sm hover:shadow-md group/link"
+                    className="inline-flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-card/50 hover:bg-card border border-white/10 hover:border-violet-500/40 text-xs font-medium text-white transition-all duration-300 cursor-pointer shadow-sm hover:shadow-lg hover:shadow-black/50 hover:-translate-y-0.5 group/link"
                   >
-                    <span className="text-[10px] text-muted-foreground font-mono uppercase">{entry.type}</span>
+                    <span className="text-[10px] text-muted-foreground font-mono uppercase bg-white/5 px-1.5 py-0.5 rounded">
+                      {entry.type}
+                    </span>
                     <span className="text-white/90 group-hover/link:text-white font-medium">
                       {entry.name}
                     </span>

@@ -72,17 +72,17 @@ export function ProductionDetails({ anime }: ProductionDetailsProps) {
   ];
 
   return (
-    <div className="space-y-3 pt-4 border-t border-white/10">
+    <div className="space-y-3.5 pt-4 border-t border-white/10">
       <h3 className="text-sm font-semibold text-white">Production</h3>
 
-      {/* Styled Color Tiles with Icons */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+      {/* Styled Color Tiles with Consistent Sizing, Equal Visual Weight & Elevation */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-xs">
         {details.map((item) => {
           const Icon = item.icon;
           return (
             <div
               key={item.label}
-              className="p-3 rounded-xl bg-card/40 border border-white/10 hover:border-white/20 transition-all flex items-start gap-2.5 group"
+              className="p-3.5 sm:p-4 rounded-xl bg-card/40 border border-white/10 hover:border-white/25 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/50 transition-all duration-300 flex items-start gap-3 group cursor-default"
             >
               <div className={`p-2 rounded-lg border ${item.color} shrink-0`}>
                 <Icon className="w-4 h-4" />
