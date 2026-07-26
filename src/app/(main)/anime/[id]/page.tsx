@@ -39,11 +39,11 @@ export default function AnimeDetailPage({ params }: PageProps) {
 
   if (isAnimeLoading) {
     return (
-      <div className="min-h-screen pb-20 space-y-8 px-4 md:px-8 pt-8 max-w-6xl mx-auto">
-        <div className="h-[380px] rounded-2xl overflow-hidden bg-slate-900/50">
+      <div className="min-h-screen pb-16 space-y-6 px-4 md:px-8 pt-6 max-w-6xl mx-auto">
+        <div className="h-[320px] rounded-xl overflow-hidden bg-slate-900/50">
           <SkeletonLoader className="w-full h-full" />
         </div>
-        <div className="h-40 rounded-2xl bg-slate-900/50">
+        <div className="h-32 rounded-xl bg-slate-900/50">
           <SkeletonLoader className="w-full h-full" />
         </div>
       </div>
@@ -59,7 +59,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
           action={
             <button
               onClick={() => refetch()}
-              className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-lg shadow-primary/25 hover:scale-[1.02]"
+              className="px-5 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs rounded-lg transition-all cursor-pointer shadow-sm"
             >
               Retry Loading
             </button>
@@ -79,11 +79,11 @@ export default function AnimeDetailPage({ params }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen pb-24 relative overflow-hidden bg-background text-foreground">
+    <div className="min-h-screen pb-16 relative overflow-hidden bg-background text-foreground">
       
-      {/* ── 1. EDITORIAL HERO SECTION ──
-          Tells you what Toradora is: Poster, Title, Native Title, Rating, Genres, Year,
-          Episode Count, Studio, Embedded Synopsis & Integrated Actions.
+      {/* ── HERO SECTION ──
+          Poster on left, Title, Japanese Title, Metadata row, Genre chips,
+          3-5 line synopsis directly inside hero, and integrated lightweight toolbar.
       */}
       <HeroSection
         anime={anime}
@@ -97,38 +97,38 @@ export default function AnimeDetailPage({ params }: PageProps) {
         onShare={handleShare}
       />
 
-      {/* ── CONTENT JOURNEY CONTAINER ── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* ── CONTENT JOURNEY CONTAINER (Tight ~30% reduced vertical spacing) ── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 mt-6">
         
-        {/* ── 2. CHARACTERS & VOICE CAST ── */}
+        {/* ── CHARACTERS ── */}
         <CharacterCast
           characters={characters}
           isLoading={isCharsLoading}
         />
 
-        {/* ── 3. FRANCHISE & RELATED ENTRIES ── */}
+        {/* ── RELATIONS ── */}
         <FranchiseTimeline
           relations={relations}
           isLoading={isRelsLoading}
         />
 
-        {/* ── 4. PRODUCTION & DETAILS ── */}
+        {/* ── PRODUCTION ── */}
         <ProductionDetails
           anime={anime}
         />
 
       </div>
 
-      {/* ── 5. RECOMMENDATIONS ── */}
-      <div className="mt-12">
+      {/* ── RECOMMENDATIONS ── */}
+      <div className="mt-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <AnimeCarousel
-          title={`More Like ${title}`}
+          title="Recommendations"
           items={recommendations}
           isLoading={isRecsLoading}
         />
       </div>
 
-      {/* ── 6. TRAILER PLAYBACK MODAL ── */}
+      {/* ── TRAILER PLAYBACK MODAL ── */}
       <TrailerModal
         isOpen={isTrailerOpen}
         onClose={() => setIsTrailerOpen(false)}
