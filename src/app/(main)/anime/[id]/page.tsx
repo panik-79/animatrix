@@ -47,6 +47,8 @@ export default function AnimeDetailPage({ params }: PageProps) {
   // Local State & Optimistic Feedback
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [optimisticFavorite, setOptimisticFavorite] = useState<boolean | null>(null);
+  const [optimisticProgress, setOptimisticProgress] = useState<number | null>(null);
+  const [optimisticStatus, setOptimisticStatus] = useState<string | null>(null);
 
   if (isAnimeLoading) {
     return (
@@ -81,8 +83,8 @@ export default function AnimeDetailPage({ params }: PageProps) {
   }
 
   const title = anime.title.english || anime.title.romaji;
-  const currentStatus = libraryEntry?.status || null;
-  const currentEpisodes = libraryEntry?.progress || 0;
+  const currentStatus = optimisticStatus !== null ? optimisticStatus : (libraryEntry?.status || null);
+  const currentEpisodes = optimisticProgress !== null ? optimisticProgress : (libraryEntry?.progress || 0);
   const isFavorite = optimisticFavorite !== null ? optimisticFavorite : (libraryEntry?.isFavorite || false);
 
   const handleShare = () => {
@@ -93,6 +95,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
   };
 
   const handleStatusChange = (newStatus: string | null) => {
+    setOptimisticStatus(newStatus);
     if (!newStatus) {
       removeLibraryMutation.mutate(id);
       return;
@@ -100,26 +103,37 @@ export default function AnimeDetailPage({ params }: PageProps) {
 
     const prismaStatus = newStatus.toUpperCase().replace(/\s+/g, "_") as WatchStatus;
 
-    updateLibraryMutation.mutate({
-      animeId: id,
-      title,
-      imageUrl: anime.images.posterLarge || anime.images.poster,
-      bannerUrl: anime.images.banner,
-      totalEpisodes: anime.episodes,
-      status: prismaStatus,
-    });
+    updateLibraryMutation.mutate(
+      {
+        animeId: id,
+        title,
+        imageUrl: anime.images.posterLarge || anime.images.poster,
+        bannerUrl: anime.images.banner,
+        totalEpisodes: anime.episodes,
+        status: prismaStatus,
+      },
+      {
+        onError: () => setOptimisticStatus(null),
+      }
+    );
     toast.success(`Updated to "${newStatus}"`, title);
   };
 
   const handleEpisodesChange = (ep: number) => {
-    updateLibraryMutation.mutate({
-      animeId: id,
-      title,
-      imageUrl: anime.images.posterLarge || anime.images.poster,
-      bannerUrl: anime.images.banner,
-      totalEpisodes: anime.episodes,
-      progress: ep,
-    });
+    setOptimisticProgress(ep);
+    updateLibraryMutation.mutate(
+      {
+        animeId: id,
+        title,
+        imageUrl: anime.images.posterLarge || anime.images.poster,
+        bannerUrl: anime.images.banner,
+        totalEpisodes: anime.episodes,
+        progress: ep,
+      },
+      {
+        onError: () => setOptimisticProgress(null),
+      }
+    );
     toast.info(`Progress: Ep ${ep} / ${anime.episodes || "???"}`, title);
   };
 

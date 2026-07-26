@@ -71,8 +71,9 @@ export function useUpdateLibrary() {
     onSuccess: (updatedEntry) => {
       queryClient.invalidateQueries({ queryKey: ["library"] });
       if (updatedEntry?.animeId) {
-        queryClient.invalidateQueries({ queryKey: ["library-entry", updatedEntry.animeId] });
+        queryClient.setQueryData(["library-entry", updatedEntry.animeId], updatedEntry);
       }
+      queryClient.invalidateQueries({ queryKey: ["library-entry"] });
       queryClient.invalidateQueries({ queryKey: ["library-stats"] });
     },
     onError: (err: any) => {
