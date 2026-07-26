@@ -23,6 +23,7 @@ import { AnimeCarousel } from "@/components/anime/anime-carousel";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { EmptyState } from "@/components/shared/empty-state";
 import { toast } from "@/store/toast-store";
+import { normalizeAnimeId } from "@/lib/utils";
 import { WatchStatus } from "@prisma/client";
 import { useState } from "react";
 
@@ -31,7 +32,8 @@ interface PageProps {
 }
 
 export default function AnimeDetailPage({ params }: PageProps) {
-  const { id } = use(params);
+  const { id: rawId } = use(params);
+  const id = normalizeAnimeId(rawId);
 
   // Core API Queries
   const { data: anime, isLoading: isAnimeLoading, isError: isAnimeError, refetch } = useAnimeById(id);

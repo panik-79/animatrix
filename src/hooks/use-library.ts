@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { WatchStatus } from "@prisma/client";
 import { toast } from "@/store/toast-store";
+import { normalizeAnimeId } from "@/lib/utils";
 
 export function useLibrary(status?: WatchStatus, search?: string) {
   return useQuery({
@@ -19,16 +20,17 @@ export function useLibrary(status?: WatchStatus, search?: string) {
 }
 
 export function useLibraryEntry(animeId: string) {
+  const normalizedId = normalizeAnimeId(animeId);
   return useQuery({
-    queryKey: ["library-entry", animeId],
+    queryKey: ["library-entry", normalizedId],
     queryFn: async () => {
-      if (!animeId) return null;
-      const res = await fetch(`/api/library/${encodeURIComponent(animeId)}`);
+      if (!normalizedId) return null;
+      const res = await fetch(`/api/library/${encodeURIComponent(normalizedId)}`);
       if (!res.ok) return null;
       const data = await res.json();
       return data.entry;
     },
-    enabled: Boolean(animeId),
+    enabled: Boolean(normalizedId),
   });
 }
 
@@ -60,10 +62,11 @@ export function useUpdateLibrary() {
       isFavorite?: boolean;
       notes?: string | null;
     }) => {
-      const res = await fetch(`/api/library/${encodeURIComponent(payload.animeId)}`, {
+      const normalizedId = normalizeAnimeId(payload.animeId);
+      const res = await fetch(`/api/library/${encodeURIComponent(normalizedId)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, animeId: normalizedId }),
       });
       if (!res.ok) throw new Error("Failed to update library entry");
       return (await res.json()).entry;
@@ -71,7 +74,8 @@ export function useUpdateLibrary() {
     onSuccess: (updatedEntry) => {
       queryClient.invalidateQueries({ queryKey: ["library"] });
       if (updatedEntry?.animeId) {
-        queryClient.setQueryData(["library-entry", updatedEntry.animeId], updatedEntry);
+        const canonicalId = normalizeAnimeId(updatedEntry.animeId);
+        queryClient.setQueryData(["library-entry", canonicalId], updatedEntry);
       }
       queryClient.invalidateQueries({ queryKey: ["library-entry"] });
       queryClient.invalidateQueries({ queryKey: ["library-stats"] });
@@ -87,17 +91,21 @@ export function useRemoveFromLibrary() {
 
   return useMutation({
     mutationFn: async (animeId: string) => {
-      const res = await fetch(`/api/library/${encodeURIComponent(animeId)}`, {
+      const normalizedId = normalizeAnimeId(animeId);
+      const res = await fetch(`/api/library/${encodeURIComponent(normalizedId)}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to remove library entry");
-      return animeId;
+      if (!res.ok) throw new Error("Failed to remove from library");
+      return normalizedId;
     },
-    onSuccess: (animeId) => {
+    onSuccess: (removedId) => {
       queryClient.invalidateQueries({ queryKey: ["library"] });
-      queryClient.invalidateQueries({ queryKey: ["library-entry", animeId] });
+      queryClient.invalidateQueries({ queryKey: ["library-entry", removedId] });
       queryClient.invalidateQueries({ queryKey: ["library-stats"] });
       toast.info("Removed from Library");
+    },
+    onError: (err: any) => {
+      toast.error("Library Error", err.message || "Failed to remove entry");
     },
   });
 }

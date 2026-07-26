@@ -2,13 +2,14 @@ import { useQuery, useInfiniteQuery, keepPreviousData } from '@tanstack/react-qu
 import { animeService } from '@/core/services/anime-service';
 import { SearchParams, TopAnimeParams, SeasonParams } from '@/core/providers/anime-provider';
 import { API_CONFIG } from '@/config/api.config';
+import { normalizeAnimeId } from '@/lib/utils';
 
 export const ANIME_KEYS = {
   all: ['anime'] as const,
   lists: () => [...ANIME_KEYS.all, 'list'] as const,
   list: (filters: string | Record<string, any>) => [...ANIME_KEYS.lists(), filters] as const,
   details: () => [...ANIME_KEYS.all, 'detail'] as const,
-  detail: (id: string) => [...ANIME_KEYS.details(), id] as const,
+  detail: (id: string) => [...ANIME_KEYS.details(), normalizeAnimeId(id)] as const,
   characters: (id: string) => [...ANIME_KEYS.detail(id), 'characters'] as const,
   recommendations: (id: string) => [...ANIME_KEYS.detail(id), 'recommendations'] as const,
   relations: (id: string) => [...ANIME_KEYS.detail(id), 'relations'] as const,
@@ -27,33 +28,36 @@ export function useAnimeSearch(params: SearchParams) {
 }
 
 export function useAnimeById(id: string) {
+  const normalizedId = normalizeAnimeId(id);
   return useQuery({
-    queryKey: ANIME_KEYS.detail(id),
-    queryFn: () => animeService.getAnimeById(id),
+    queryKey: ANIME_KEYS.detail(normalizedId),
+    queryFn: () => animeService.getAnimeById(normalizedId),
     staleTime: API_CONFIG.CACHE.TTL_LONG,
-    enabled: !!id,
+    enabled: !!normalizedId,
     retry: 1,
     retryDelay: 1000,
   });
 }
 
 export function useAnimeCharacters(id: string) {
+  const normalizedId = normalizeAnimeId(id);
   return useQuery({
-    queryKey: ANIME_KEYS.characters(id),
-    queryFn: () => animeService.getAnimeCharacters(id),
+    queryKey: ANIME_KEYS.characters(normalizedId),
+    queryFn: () => animeService.getAnimeCharacters(normalizedId),
     staleTime: API_CONFIG.CACHE.TTL_LONG,
-    enabled: !!id,
+    enabled: !!normalizedId,
     retry: 1,
     retryDelay: 1000,
   });
 }
 
 export function useAnimeRecommendations(id: string) {
+  const normalizedId = normalizeAnimeId(id);
   return useQuery({
-    queryKey: ANIME_KEYS.recommendations(id),
-    queryFn: () => animeService.getAnimeRecommendations(id),
+    queryKey: ANIME_KEYS.recommendations(normalizedId),
+    queryFn: () => animeService.getAnimeRecommendations(normalizedId),
     staleTime: API_CONFIG.CACHE.TTL_LONG,
-    enabled: !!id,
+    enabled: !!normalizedId,
     retry: 1,
     retryDelay: 1000,
   });
