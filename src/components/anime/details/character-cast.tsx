@@ -18,7 +18,7 @@ export function CharacterCast({ characters, isLoading }: CharacterCastProps) {
         <h3 className="text-sm font-semibold text-white">Characters</h3>
         <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={`skel-char-${i}`} className="min-w-[150px] w-[150px] h-[230px] rounded-xl bg-card/30 border border-white/10 overflow-hidden shrink-0">
+            <div key={`skel-char-${i}`} className="min-w-[180px] sm:min-w-[200px] h-[260px] sm:h-[280px] rounded-xl bg-card/30 border border-white/10 overflow-hidden shrink-0">
               <SkeletonLoader className="w-full h-full" />
             </div>
           ))}
@@ -38,57 +38,57 @@ export function CharacterCast({ characters, isLoading }: CharacterCastProps) {
         <span className="text-xs text-muted-foreground">{characters.length} Cast</span>
       </div>
 
-      {/* Horizontal Cast Strip with Larger Portraits */}
-      <div className="flex gap-3.5 overflow-x-auto pb-3 pt-1 hide-scrollbar">
-        {characters.slice(0, 12).map((char) => {
+      {/* Horizontal Cast Strip with Larger Vertical Portraits */}
+      <div className="flex gap-4 overflow-x-auto pb-3 pt-1 hide-scrollbar">
+        {characters.slice(0, 14).map((char) => {
           const japaneseVA = char.voiceActors.find(va => va.language === "Japanese") || char.voiceActors[0];
 
           return (
             <div
               key={char.id}
-              className="min-w-[150px] w-[150px] rounded-xl overflow-hidden bg-card/40 border border-white/10 group flex flex-col justify-end p-2.5 relative shrink-0 isolate shadow-sm hover:border-white/20 transition-all hover:scale-[1.02]"
+              className="min-w-[180px] sm:min-w-[200px] w-[180px] sm:w-[200px] h-[260px] sm:h-[280px] rounded-xl overflow-hidden bg-card/40 border border-white/10 group flex flex-col justify-end p-3 relative shrink-0 isolate shadow-md hover:border-white/20 transition-all hover:scale-[1.02]"
             >
-              {/* Character Image (Larger portrait, reduced overlay blur) */}
+              {/* Character Image (Larger full-height portrait) */}
               <img
                 src={char.images.webp || char.images.jpg}
                 alt={char.name}
                 className="absolute inset-0 w-full h-full object-cover object-top z-0 transition-transform duration-300 group-hover:scale-105"
               />
 
-              {/* Light Subtle Bottom Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
+              {/* Gradient Bottom Mask */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10" />
 
               {/* Info Container */}
-              <div className="relative z-20 space-y-1">
+              <div className="relative z-20 space-y-1.5">
                 <span className={cn(
-                  "inline-block px-1.5 py-0.5 rounded text-[9px] font-medium uppercase tracking-wide",
+                  "inline-block px-2 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wider",
                   char.role === "Main"
-                    ? "bg-primary/20 text-primary border border-primary/30"
-                    : "bg-white/10 text-white/70 border border-white/10"
+                    ? "bg-primary/30 text-primary border border-primary/40 shadow-sm"
+                    : "bg-black/60 text-white/80 border border-white/15 backdrop-blur-sm"
                 )}>
                   {char.role}
                 </span>
 
-                <h4 className="text-xs font-semibold text-white leading-tight truncate">
+                <h4 className="text-xs sm:text-sm font-bold text-white leading-tight truncate">
                   {char.name}
                 </h4>
 
                 {/* Voice Actor Details Below */}
                 {japaneseVA && (
-                  <div className="pt-1 border-t border-white/10 flex items-center gap-1.5">
+                  <div className="pt-1.5 border-t border-white/15 flex items-center gap-2">
                     {japaneseVA.image ? (
                       <img
                         src={japaneseVA.image}
                         alt={japaneseVA.name}
-                        className="w-4 h-4 rounded-full object-cover border border-white/20 shrink-0"
+                        className="w-5 h-5 rounded-full object-cover border border-white/20 shrink-0"
                       />
                     ) : (
-                      <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-white/60 shrink-0">
-                        <Mic className="w-2.5 h-2.5" />
+                      <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-white/60 shrink-0">
+                        <Mic className="w-3 h-3" />
                       </div>
                     )}
 
-                    <span className="text-[10px] text-white/70 font-medium truncate">{japaneseVA.name}</span>
+                    <span className="text-[11px] text-white/80 font-medium truncate">{japaneseVA.name}</span>
                   </div>
                 )}
               </div>

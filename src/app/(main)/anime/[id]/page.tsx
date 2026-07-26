@@ -97,7 +97,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
         onShare={handleShare}
       />
 
-      {/* ── CONTENT JOURNEY CONTAINER (Tight ~30% reduced vertical spacing) ── */}
+      {/* ── CONTENT JOURNEY CONTAINER (Aligned max-w-6xl Grid) ── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 mt-6">
         
         {/* ── CHARACTERS ── */}
@@ -117,15 +117,14 @@ export default function AnimeDetailPage({ params }: PageProps) {
           anime={anime}
         />
 
-      </div>
-
-      {/* ── RECOMMENDATIONS ── */}
-      <div className="mt-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* ── RECOMMENDATIONS (Aligned Grid, Hidden when empty) ── */}
         <AnimeCarousel
           title="Recommendations"
           items={recommendations}
           isLoading={isRecsLoading}
+          disablePadding={true}
         />
+
       </div>
 
       {/* ── TRAILER PLAYBACK MODAL ── */}
