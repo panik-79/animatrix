@@ -55,18 +55,66 @@ export function Navbar() {
           </button>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <Link 
             href={ROUTES.SETTINGS}
             className="p-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80 transition-colors"
           >
             <Settings className="w-5 h-5" />
           </Link>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center">
-            <User className="w-4 h-4 text-white" />
-          </div>
+          <AuthUserButton />
         </div>
       </div>
     </header>
+  );
+}
+
+function AuthUserButton() {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => setUser(data.user))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.reload();
+  };
+
+  if (loading) {
+    return <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse" />;
+  }
+
+  if (!user) {
+    return (
+      <Link
+        href="/login"
+        className="px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-sm transition-all"
+      >
+        Sign In
+      </Link>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <div
+        className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-rose-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-primary/20"
+        title={user.name}
+      >
+        {user.name[0]?.toUpperCase() || "U"}
+      </div>
+      <button
+        onClick={handleLogout}
+        className="text-[11px] font-semibold text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+      >
+        Sign Out
+      </button>
+    </div>
   );
 }
