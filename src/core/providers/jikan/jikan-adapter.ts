@@ -62,6 +62,18 @@ export class JikanAdapter implements AnimeProvider {
   readonly id = 'jikan';
   private readonly baseUrl = API_CONFIG.JIKAN.BASE_URL;
 
+  /**
+   * Extract the raw numeric MAL ID from our internal ID format.
+   * Handles both the raw form ("jikan:60636") and the URL-encoded form
+   * ("jikan%3A60636") that Next.js dynamic segments produce when a colon
+   * appears in a path segment.
+   */
+  private extractMalId(id: string): string {
+    // Decode percent-encoding first, then strip the provider prefix.
+    const decoded = decodeURIComponent(id);
+    return decoded.replace(/^jikan:/, '');
+  }
+
   async searchAnime(params: SearchParams): Promise<PaginatedResult<Anime>> {
     // If no search query and no filters, fallback to top/anime endpoint.
     // MAL's dynamic search endpoint frequently times out (504), but top/anime is highly cached and reliable.
@@ -117,7 +129,7 @@ export class JikanAdapter implements AnimeProvider {
   }
 
   async getAnimeById(id: string): Promise<Anime> {
-    const malId = id.replace('jikan:', '');
+    const malId = this.extractMalId(id);
     const res = await httpClient.get<JikanResponse<JikanAnime>>(
       `${this.baseUrl}/anime/${malId}/full`,
       { provider: this.id }
@@ -126,7 +138,7 @@ export class JikanAdapter implements AnimeProvider {
   }
 
   async getAnimeCharacters(id: string): Promise<Character[]> {
-    const malId = id.replace('jikan:', '');
+    const malId = this.extractMalId(id);
     const res = await httpClient.get<JikanResponse<JikanCharacterData[]>>(
       `${this.baseUrl}/anime/${malId}/characters`,
       { provider: this.id }
@@ -135,7 +147,7 @@ export class JikanAdapter implements AnimeProvider {
   }
 
   async getAnimeRecommendations(id: string): Promise<Anime[]> {
-    const malId = id.replace('jikan:', '');
+    const malId = this.extractMalId(id);
     const res = await httpClient.get<JikanResponse<JikanAnimeRecommendation[]>>(
       `${this.baseUrl}/anime/${malId}/recommendations`,
       { provider: this.id }
@@ -188,7 +200,7 @@ export class JikanAdapter implements AnimeProvider {
   }
 
   async getAnimeRelations(id: string): Promise<AnimeRelation[]> {
-    const malId = id.replace('jikan:', '');
+    const malId = this.extractMalId(id);
     const res = await httpClient.get<JikanResponse<JikanAnimeRelation[]>>(
       `${this.baseUrl}/anime/${malId}/relations`,
       { provider: this.id }

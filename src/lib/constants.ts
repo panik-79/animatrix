@@ -4,7 +4,7 @@ export const APP_DESCRIPTION = 'The Ultimate Anime Tracker & Discovery Platform'
 export const ROUTES = {
   HOME: '/',
   DISCOVERY: '/anime',
-  ANIME_DETAIL: (id: string) => `/anime/${id}`,
+  ANIME_DETAIL: (id: string) => `/anime/${encodeURIComponent(id)}`,
   DASHBOARD: '/dashboard',
   LIBRARY: '/library',
   COLLECTIONS: '/collections',
