@@ -1,11 +1,18 @@
-import { APP_NAME } from "@/lib/constants";
+import { Heart } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/5 py-8 mt-12 bg-background/30 backdrop-blur-sm">
-      <div className="container mx-auto px-6 text-center text-sm text-muted-foreground">
-        <p>© {new Date().getFullYear()} {APP_NAME}. Built with Next.js, shadcn/ui & Jikan API.</p>
-        <p className="mt-2 text-xs opacity-60">This platform is for discovery and tracking. It does not host any video content.</p>
+    <footer className="border-t border-border py-8 mt-12 bg-background/50 backdrop-blur-sm">
+      <div className="container mx-auto px-6 text-center space-y-1.5">
+        <p className="text-xs font-medium text-muted-foreground">
+          © {new Date().getFullYear()} Animatrix
+        </p>
+        <p className="text-xs text-muted-foreground/80 flex items-center justify-center gap-1 font-medium">
+          <span>Made with</span>
+          <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
+          <span>by</span>
+          <span className="font-semibold text-foreground">Pujan</span>
+        </p>
       </div>
     </footer>
   );
