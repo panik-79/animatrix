@@ -36,8 +36,8 @@ const STATUS_TABS: {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
 }[] = [
-  { id: "ALL", label: "All Anime", icon: Film },
   { id: "WATCHING", label: "Watching", icon: Play },
+  { id: "ALL", label: "All Anime", icon: Film },
   { id: "COMPLETED", label: "Completed", icon: CheckCircle2 },
   { id: "PLAN_TO_WATCH", label: "Plan to Watch", icon: Bookmark },
   { id: "ON_HOLD", label: "On Hold", icon: Clock },
@@ -54,7 +54,7 @@ const STATUS_COLOR_MAP: Record<WatchStatus, string> = {
 };
 
 export default function UserLibraryPage() {
-  const [activeTab, setActiveTab] = useState<WatchStatus | "ALL" | "FAVORITES">("ALL");
+  const [activeTab, setActiveTab] = useState<WatchStatus | "ALL" | "FAVORITES">("WATCHING");
   const [searchQuery, setSearchQuery] = useState("");
 
   const statusFilter = activeTab === "ALL" || activeTab === "FAVORITES" ? undefined : activeTab;
