@@ -29,7 +29,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const { sidebarCollapsed } = useAppStore();
 
-  const renderLinks = (links: typeof MAIN_NAV) => (
+  const renderLinks = (links: Array<{ name: string; icon: any; href: string }>) => (
     <div className="space-y-1">
       {links.map((link) => {
         const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);

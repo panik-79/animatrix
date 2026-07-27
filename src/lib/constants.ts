@@ -1,46 +1,8 @@
-import { normalizeAnimeId } from "./utils";
+import { APP_CONFIG } from "@/config/app.config";
 
-export const APP_NAME = 'Animatrix';
-export const APP_DESCRIPTION = 'The Ultimate Anime Tracker & Discovery Platform';
-
-export const ROUTES = {
-  HOME: '/',
-  DISCOVERY: '/anime',
-  ANIME_DETAIL: (id: string) => `/anime/${encodeURIComponent(normalizeAnimeId(id))}`,
-  DASHBOARD: '/dashboard',
-  LIBRARY: '/library',
-  COLLECTIONS: '/collections',
-  COLLECTION_DETAIL: (id: string) => `/collections/${id}`,
-  STATS: '/stats',
-  GUIDE: '/guide',
-  SETTINGS: '/settings',
-};
-
-export const ANIME_STATUS = {
-  AIRING: 'Airing',
-  FINISHED: 'Finished',
-  UPCOMING: 'Upcoming',
-};
-
-export const WATCH_STATUS = {
-  WATCHING: 'Watching',
-  COMPLETED: 'Completed',
-  ON_HOLD: 'On Hold',
-  DROPPED: 'Dropped',
-  PLAN_TO_WATCH: 'Plan to Watch',
-};
-
-export const GENRES = [
-  'Action',
-  'Adventure',
-  'Comedy',
-  'Drama',
-  'Sci-Fi',
-  'Mystery',
-  'Supernatural',
-  'Fantasy',
-  'Sports',
-  'Romance',
-  'Slice of Life',
-  'Suspense',
-];
+export const APP_NAME = APP_CONFIG.NAME;
+export const APP_DESCRIPTION = APP_CONFIG.DESCRIPTION;
+export const ROUTES = APP_CONFIG.ROUTES;
+export const ANIME_STATUS = APP_CONFIG.ANIME_STATUS;
+export const WATCH_STATUS = APP_CONFIG.WATCH_STATUS;
+export const GENRES = APP_CONFIG.GENRES;

@@ -66,7 +66,7 @@ export const THEME_PRESETS: Record<ThemePresetId, ThemePreset> = {
   },
 };
 
-export const themeConfig = {
+export const THEME_CONFIG = {
   animation: {
     transitionDuration: '0.3s',
     easing: 'cubic-bezier(0.4, 0, 0.2, 1)', // ease-out
