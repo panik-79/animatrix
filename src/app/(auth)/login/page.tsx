@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Eye, EyeOff } from "lucide-react";
@@ -17,6 +17,24 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  useEffect(() => {
+    const authError = searchParams.get("error");
+    if (!authError) return;
+
+    if (authError === "google_not_configured") {
+      toast.warn(
+        "Google OAuth Not Configured",
+        "Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your .env file."
+      );
+    } else if (authError === "google_cancelled") {
+      toast.info("Sign-In Cancelled", "Google authentication was cancelled.");
+    } else if (authError === "google_auth_failed") {
+      toast.error("Authentication Failed", "Failed to complete Google authentication.");
+    } else if (authError === "csrf_state_mismatch" || authError === "invalid_oauth_response") {
+      toast.error("Security Alert", "Invalid OAuth response state. Please try again.");
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,10 +72,8 @@ function LoginForm() {
 
   const handleGoogleLogin = () => {
     setIsGoogleLoading(true);
-    toast.info("Google Sign-In", "Redirecting to Google authentication...");
-    setTimeout(() => {
-      setIsGoogleLoading(false);
-    }, 1500);
+    toast.info("Google Sign-In", "Redirecting to Google...");
+    window.location.href = `/api/auth/google?from=${encodeURIComponent(from)}`;
   };
 
   return (
@@ -89,7 +105,7 @@ function LoginForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Email Field (Filled dark input) */}
+        {/* Email Field */}
         <div className="space-y-1.5">
           <label htmlFor="email" className="block text-xs font-medium text-slate-300">
             Email address
@@ -106,7 +122,7 @@ function LoginForm() {
           />
         </div>
 
-        {/* Password Field (Filled dark input with toggle) */}
+        {/* Password Field */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
             <label htmlFor="password" className="font-medium text-slate-300">
