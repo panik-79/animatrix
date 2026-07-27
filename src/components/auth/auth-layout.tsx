@@ -15,16 +15,16 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       {/* Background Room Atmosphere with Subtle 60s Ken Burns */}
       <AuthBackground />
 
+      {/* Top Left Logo (Anchored at the top left of the entire page) */}
+      <div className="absolute top-6 left-6 sm:top-8 sm:left-10 lg:top-10 lg:left-14 z-30">
+        <Logo variant="full" height={56} linked />
+      </div>
+
       {/* Main Content Split Grid */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center min-h-[82vh]">
-        {/* Left Side: Brand & Headline (Visible on desktop) */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center min-h-[82vh] pt-16 lg:pt-8">
+        {/* Left Side: Brand & Feature Highlights (Visible on desktop) */}
         <div className="hidden lg:block lg:col-span-7">
           <AuthLeftBranding />
-        </div>
-
-        {/* Mobile Header */}
-        <div className="block lg:hidden text-center mb-4 flex justify-center">
-          <Logo variant="full" height={52} linked />
         </div>
 
         {/* Right Side: Authentication Card sitting in the darker right-hand portion */}
