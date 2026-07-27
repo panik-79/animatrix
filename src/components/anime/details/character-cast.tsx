@@ -3,7 +3,7 @@
 import React from "react";
 import { Character } from "@/core/models/character";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
-import { Mic } from "lucide-react";
+import { Mic, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CharacterCastProps {
@@ -14,8 +14,17 @@ interface CharacterCastProps {
 export function CharacterCast({ characters, isLoading }: CharacterCastProps) {
   if (isLoading) {
     return (
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">Characters</h3>
+      <div className="space-y-4 pt-4">
+        <div className="flex items-center justify-between border-b border-border pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
+              <Users className="w-4 h-4" />
+            </div>
+            <h2 className="text-lg font-bold text-foreground tracking-tight font-heading">
+              Characters & Voice Actors
+            </h2>
+          </div>
+        </div>
         <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={`skel-char-${i}`} className="min-w-[180px] sm:min-w-[200px] h-[260px] sm:h-[280px] rounded-xl bg-card border border-border overflow-hidden shrink-0">
@@ -32,10 +41,20 @@ export function CharacterCast({ characters, isLoading }: CharacterCastProps) {
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground">Characters</h3>
-        <span className="text-xs text-muted-foreground">{characters.length} Cast</span>
+    <div className="space-y-4 pt-4">
+      {/* Section Header (Consistent Design System) */}
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
+            <Users className="w-4 h-4" />
+          </div>
+          <h2 className="text-lg font-bold text-foreground tracking-tight font-heading">
+            Characters & Voice Actors
+          </h2>
+        </div>
+        <span className="text-xs text-muted-foreground font-semibold px-3 py-1 rounded-full bg-muted border border-border">
+          {characters.length} Cast
+        </span>
       </div>
 
       <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar">

@@ -57,7 +57,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}
         style={{ transform, transformStyle: "preserve-3d" }}
-        className="relative rounded-2xl overflow-hidden bg-gradient-to-b from-white/[0.04] to-white/[0.01] border border-white/[0.1] hover:border-primary/50 h-full flex flex-col transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
+        className="relative rounded-2xl overflow-hidden bg-card border border-border hover:border-primary/50 h-full flex flex-col transition-all duration-300 hover:shadow-xl"
       >
         {/* Poster */}
         <div className="relative overflow-hidden">

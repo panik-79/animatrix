@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, GitFork } from "lucide-react";
 import Link from "next/link";
 import { AnimeRelation } from "@/core/providers/anime-provider";
 import { ROUTES } from "@/lib/constants";
@@ -17,10 +17,20 @@ export function FranchiseTimeline({ relations, isLoading }: FranchiseTimelinePro
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground">Relations & Timeline</h3>
-        <span className="text-xs text-muted-foreground">{relations.length} Relations</span>
+    <div className="space-y-4 pt-4">
+      {/* Section Header (Consistent Design System) */}
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
+            <GitFork className="w-4 h-4" />
+          </div>
+          <h2 className="text-lg font-bold text-foreground tracking-tight font-heading">
+            Relations & Franchise Timeline
+          </h2>
+        </div>
+        <span className="text-xs text-muted-foreground font-semibold px-3 py-1 rounded-full bg-muted border border-border">
+          {relations.length} Relations
+        </span>
       </div>
 
       <div className="relative pl-6 border-l-2 border-primary/40 space-y-6 py-2">

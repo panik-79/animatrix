@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { Anime } from "@/core/models/anime";
 import { AnimeCard, AnimeCardSkeleton } from "./anime-card";
 import { cn } from "@/lib/utils";
@@ -83,12 +83,14 @@ export function AnimeCarousel({
   }
 
   return (
-    <div className={cn("space-y-3", className)}>
-      {/* Title Header */}
-      <div className={cn("flex items-center justify-between gap-4", disablePadding ? "" : "px-4 md:px-8")}>
+    <div className={cn("space-y-4 pt-4", className)}>
+      {/* Title Header (Consistent Design System) */}
+      <div className={cn("flex items-center justify-between gap-4 border-b border-border pb-4", disablePadding ? "" : "px-4 md:px-8")}>
         <div className="flex items-center gap-2.5">
-          <span className="w-1.5 h-4.5 rounded-full bg-primary shadow-[0_0_12px_rgba(139,92,246,0.8)]" />
-          <h2 className="text-base sm:text-lg font-extrabold text-foreground tracking-tight font-heading">
+          <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <h2 className="text-lg font-bold text-foreground tracking-tight font-heading">
             {title}
           </h2>
         </div>
