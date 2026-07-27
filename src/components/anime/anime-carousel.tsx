@@ -84,11 +84,14 @@ export function AnimeCarousel({
 
   return (
     <div className={cn("space-y-3", className)}>
-      {/* Title */}
-      <div className={disablePadding ? "" : "px-4 md:px-8"}>
-        <h2 className="text-sm font-semibold text-foreground">
-          {title}
-        </h2>
+      {/* Title Header */}
+      <div className={cn("flex items-center justify-between gap-4", disablePadding ? "" : "px-4 md:px-8")}>
+        <div className="flex items-center gap-2.5">
+          <span className="w-1.5 h-4.5 rounded-full bg-primary shadow-[0_0_12px_rgba(139,92,246,0.8)]" />
+          <h2 className="text-base sm:text-lg font-extrabold text-foreground tracking-tight font-heading">
+            {title}
+          </h2>
+        </div>
       </div>
 
       {/* Carousel Container */}

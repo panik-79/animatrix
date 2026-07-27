@@ -8,7 +8,7 @@ import {
 } from "@/hooks/use-anime";
 import { HomeHero } from "@/components/home/home-hero";
 import { AnimeCarousel } from "@/components/anime/anime-carousel";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles, TrendingUp, Layers, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { ROUTES, GENRES } from "@/lib/constants";
 import { motion, Variants } from "framer-motion";
@@ -34,36 +34,86 @@ const CURATED_GENRES = GENRES.slice(0, 8);
 
 export default function Home() {
   const { data: trending, isLoading: trendingLoading } = useTrendingAnime();
-  const { data: currentSeason, isLoading: currentLoading } =
-    useCurrentSeason();
+  const { data: currentSeason, isLoading: currentLoading } = useCurrentSeason();
   const { data: upcoming, isLoading: upcomingLoading } = useUpcomingAnime();
   const { data: topRated, isLoading: topLoading } = useTopAnime({});
 
   return (
-    <div className="pb-20 overflow-x-hidden">
-      {/* Hero Carousel */}
+    <div className="pb-20 overflow-x-hidden space-y-8">
+      {/* ── HERO BANNER ── */}
       <HomeHero />
 
-      {/* Content Sections */}
+      {/* ── LIVE PLATFORM HIGHLIGHTS STRIP ── */}
+      <div className="mx-3 md:mx-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 rounded-2xl md:rounded-3xl border border-white/[0.08] bg-gradient-to-r from-white/[0.03] via-white/[0.01] to-white/[0.03] backdrop-blur-xl shadow-xl">
+          <div className="flex items-center gap-3 p-2">
+            <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary shrink-0">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-white">Daily Updates</p>
+              <p className="text-[11px] text-zinc-500">Latest Airing Anime</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-2">
+            <div className="p-2.5 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 shrink-0">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-white">Smart Discovery</p>
+              <p className="text-[11px] text-zinc-500">10,000+ Titles</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-2">
+            <div className="p-2.5 rounded-xl bg-indigo-400/10 border border-indigo-400/20 text-indigo-400 shrink-0">
+              <Layers className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-white">Custom Lists</p>
+              <p className="text-[11px] text-zinc-500">Personal Collections</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-2">
+            <div className="p-2.5 rounded-xl bg-rose-400/10 border border-rose-400/20 text-rose-400 shrink-0">
+              <MessageSquare className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-white">Community Reviews</p>
+              <p className="text-[11px] text-zinc-500">Ratings & Discussions</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── CONTENT SECTIONS ── */}
       <motion.div
         variants={stagger}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: "-80px" }}
-        className="mt-8 md:mt-12 space-y-10 md:space-y-14"
+        className="space-y-10 md:space-y-14"
       >
-        {/* Genre Quick Access */}
-        <motion.section variants={fadeUp} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-semibold mb-3">
-            Browse by Genre
-          </p>
+        {/* Genre Quick Access Chips */}
+        <motion.section variants={fadeUp} className="px-4 md:px-8">
+          <div className="flex items-center justify-between gap-4 mb-3">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-4.5 rounded-full bg-primary shadow-[0_0_12px_rgba(139,92,246,0.8)]" />
+              <h3 className="text-xs uppercase tracking-widest text-zinc-400 font-bold">
+                Browse by Genre
+              </h3>
+            </div>
+          </div>
+
           <div className="flex flex-wrap gap-2">
             {CURATED_GENRES.map((genre) => (
               <Link key={genre} href={`${ROUTES.DISCOVERY}?genres=${genre}`}>
                 <motion.span
-                  whileHover={{ scale: 1.04 }}
+                  whileHover={{ scale: 1.05, y: -1 }}
                   whileTap={{ scale: 0.97 }}
-                  className="inline-block px-4 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[13px] font-medium text-foreground/70 hover:bg-primary/15 hover:border-primary/30 hover:text-primary transition-colors cursor-pointer"
+                  className="inline-block px-4 py-2 bg-gradient-to-b from-white/[0.04] to-white/[0.01] border border-white/[0.08] hover:border-primary/40 hover:bg-primary/10 rounded-xl text-xs font-semibold text-zinc-300 hover:text-primary transition-all duration-200 shadow-sm cursor-pointer"
                 >
                   {genre}
                 </motion.span>
@@ -71,12 +121,12 @@ export default function Home() {
             ))}
             <Link href={ROUTES.DISCOVERY}>
               <motion.span
-                whileHover={{ scale: 1.04 }}
+                whileHover={{ scale: 1.05, y: -1 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[13px] font-medium text-foreground/50 hover:text-foreground/80 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl text-xs font-semibold text-primary hover:bg-primary/20 transition-all duration-200 shadow-sm cursor-pointer"
               >
-                All Genres
-                <ArrowRight className="w-3 h-3" />
+                <span>All Genres</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </motion.span>
             </Link>
           </div>
