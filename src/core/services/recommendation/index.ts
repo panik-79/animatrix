@@ -128,7 +128,9 @@ export async function getRecommendations(
 
   // ── Results cache (keyed by userId + sessionMood + limit) ────────────────
   const resultsCacheKey = `rec:results:${userId}:${limit}:${sessionMood ?? "none"}`;
-  if (!forceRefresh && !debug) {
+  if (forceRefresh) {
+    appCache.clear();
+  } else if (!debug) {
     const cached = appCache.get(resultsCacheKey);
     if (cached) return cached as RecommendationResult;
   }

@@ -113,7 +113,7 @@ function mapJikanRaw(raw: JikanAnimeRaw): Anime {
 async function fetchByGenre(genreId: number, limit: number): Promise<Anime[]> {
   const cacheKey = `rec:candidates:genre:${genreId}:${limit}`;
   const cached = appCache.get(cacheKey);
-  if (cached) return cached as Anime[];
+  if (cached && (cached as Anime[]).length > 0) return cached as Anime[];
 
   try {
     const res = await httpClient.get<{ data: JikanAnimeRaw[] }>(
@@ -121,7 +121,9 @@ async function fetchByGenre(genreId: number, limit: number): Promise<Anime[]> {
       { provider: "jikan" }
     );
     const data = (res.data ?? []).map(mapJikanRaw);
-    appCache.set(cacheKey, data, CACHE_TTL.ANIME_METADATA_MS);
+    if (data.length > 0) {
+      appCache.set(cacheKey, data, CACHE_TTL.ANIME_METADATA_MS);
+    }
     return data;
   } catch {
     return [];
@@ -131,7 +133,7 @@ async function fetchByGenre(genreId: number, limit: number): Promise<Anime[]> {
 async function fetchSeedRecommendations(malId: number): Promise<Anime[]> {
   const cacheKey = `rec:candidates:seed:${malId}`;
   const cached = appCache.get(cacheKey);
-  if (cached) return cached as Anime[];
+  if (cached && (cached as Anime[]).length > 0) return cached as Anime[];
 
   try {
     const res = await httpClient.get<{
@@ -144,7 +146,9 @@ async function fetchSeedRecommendations(malId: number): Promise<Anime[]> {
       .map((r) => r.entry)
       .filter(Boolean)
       .map(mapJikanRaw);
-    appCache.set(cacheKey, data, CACHE_TTL.ANIME_METADATA_MS);
+    if (data.length > 0) {
+      appCache.set(cacheKey, data, CACHE_TTL.ANIME_METADATA_MS);
+    }
     return data;
   } catch {
     return [];
@@ -154,7 +158,7 @@ async function fetchSeedRecommendations(malId: number): Promise<Anime[]> {
 async function fetchTopAiring(limit: number): Promise<Anime[]> {
   const cacheKey = `rec:candidates:trending:${limit}`;
   const cached = appCache.get(cacheKey);
-  if (cached) return cached as Anime[];
+  if (cached && (cached as Anime[]).length > 0) return cached as Anime[];
 
   try {
     const res = await httpClient.get<{ data: JikanAnimeRaw[] }>(
@@ -162,7 +166,9 @@ async function fetchTopAiring(limit: number): Promise<Anime[]> {
       { provider: "jikan" }
     );
     const data = (res.data ?? []).map(mapJikanRaw);
-    appCache.set(cacheKey, data, CACHE_TTL.ANIME_METADATA_MS);
+    if (data.length > 0) {
+      appCache.set(cacheKey, data, CACHE_TTL.ANIME_METADATA_MS);
+    }
     return data;
   } catch {
     return [];
