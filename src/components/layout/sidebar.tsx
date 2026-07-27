@@ -76,7 +76,7 @@ export function Sidebar() {
       {/* Header with bold prominent logo */}
       <div className={cn("h-24 flex items-center shrink-0", sidebarCollapsed ? "justify-center" : "px-6")}>
         {!sidebarCollapsed ? (
-          <Logo variant="full" height={48} linked />
+          <Logo variant="full" height={36} linked />
         ) : (
           <Logo variant="icon" height={36} linked />
         )}
