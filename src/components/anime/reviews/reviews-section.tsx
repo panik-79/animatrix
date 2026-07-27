@@ -9,23 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { cn } from "@/lib/utils";
 
-// ─── Current user hook (lightweight — hits existing /api/user/profile) ────────
-
-interface CurrentUser { id: string; name: string; image: string | null }
-
-function useCurrentUser() {
-  return useQuery<CurrentUser | null>({
-    queryKey: ["current-user"],
-    queryFn: async () => {
-      const res = await fetch("/api/user/profile");
-      if (!res.ok) return null;
-      const data = await res.json();
-      return data.user ? { id: data.user.id, name: data.user.name, image: data.user.image } : null;
-    },
-    staleTime: 5 * 60_000,
-    retry: false,
-  });
-}
+import { useAuth } from "@/hooks/use-auth";
 
 // ─── Stats bar ────────────────────────────────────────────────────────────────
 
@@ -112,7 +96,7 @@ interface ReviewsSectionProps {
 }
 
 export function ReviewsSection({ animeId }: ReviewsSectionProps) {
-  const { data: currentUser } = useCurrentUser();
+  const { user: currentUser } = useAuth();
   const { data: reviews, isLoading, isError } = useReviews(animeId);
   const [showComposer, setShowComposer] = useState(false);
 

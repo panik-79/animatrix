@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   User as UserIcon,
   Mail,
@@ -17,6 +18,7 @@ import { AvatarPickerModal } from "@/components/account/avatar-picker-modal";
 
 export default function AccountPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
@@ -90,6 +92,7 @@ export default function AccountPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to update profile");
 
+      queryClient.invalidateQueries({ queryKey: ["current-user"] });
       toast.success("Account Updated", "Your profile details have been saved.");
     } catch (err: any) {
       toast.error("Save Error", err.message || "Failed to save profile.");
@@ -136,6 +139,7 @@ export default function AccountPage() {
               <img
                 src={image}
                 alt={name}
+                referrerPolicy="no-referrer"
                 onError={() => setImageError(true)}
                 className="w-28 h-28 rounded-full object-cover border-2 border-primary/50 shadow-xl bg-card"
               />

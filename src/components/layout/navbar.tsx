@@ -9,7 +9,7 @@ import { ROUTES } from "@/lib/constants";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "@/components/shared/logo";
-import { confirmDialog } from "@/store/confirm-store";
+import { useAuth } from "@/hooks/use-auth";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -101,18 +101,9 @@ export function Navbar() {
 }
 
 function AuthUserButton() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isLoading, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    fetch("/api/auth/me")
-      .then((res) => res.json())
-      .then((data) => setUser(data.user))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -126,21 +117,10 @@ function AuthUserButton() {
 
   const handleLogout = async () => {
     setIsOpen(false);
-    const confirmed = await confirmDialog({
-      title: "Sign Out",
-      message: "Are you sure you want to sign out?",
-      confirmText: "Yup!",
-      cancelText: "Hell Nahhh",
-      variant: "danger",
-    });
-
-    if (!confirmed) return;
-
-    await fetch("/api/auth/logout", { method: "POST" });
-    window.location.reload();
+    logout();
   };
 
-  if (loading) {
+  if (isLoading) {
     return <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse shrink-0" />;
   }
 

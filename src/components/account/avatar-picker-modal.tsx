@@ -85,6 +85,7 @@ export function AvatarPickerModal({
                         <img
                           src={googleImage}
                           alt="Google Account"
+                          referrerPolicy="no-referrer"
                           onError={() => handleImageError("google")}
                           className="w-14 h-14 rounded-full object-cover border border-white/10"
                         />
