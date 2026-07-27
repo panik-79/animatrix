@@ -6,6 +6,7 @@ import {
   useUpcomingAnime,
   useCurrentSeason,
 } from "@/hooks/use-anime";
+import { useRecommendations } from "@/hooks/use-recommendations";
 import { HomeHero } from "@/components/home/home-hero";
 import { AnimeCarousel } from "@/components/anime/anime-carousel";
 import { ArrowRight, Sparkles } from "lucide-react";
@@ -33,10 +34,13 @@ const fadeUp: Variants = {
 const CURATED_GENRES = GENRES.slice(0, 8);
 
 export default function Home() {
+  const { data: recommendationsData, isLoading: recLoading } = useRecommendations({ limit: 20 });
   const { data: trending, isLoading: trendingLoading } = useTrendingAnime();
   const { data: currentSeason, isLoading: currentLoading } = useCurrentSeason();
   const { data: upcoming, isLoading: upcomingLoading } = useUpcomingAnime();
   const { data: topRated, isLoading: topLoading } = useTopAnime({});
+
+  const recommendedAnimeList = recommendationsData?.recommendations.map((r) => r.anime) ?? [];
 
   return (
     <div className="pb-20 overflow-x-hidden space-y-8">
@@ -88,6 +92,16 @@ export default function Home() {
         </motion.section>
 
         {/* Anime Carousels */}
+        {(recLoading || recommendedAnimeList.length > 0) && (
+          <motion.section variants={fadeUp}>
+            <AnimeCarousel
+              title="Recommended For You"
+              items={recommendedAnimeList}
+              isLoading={recLoading}
+            />
+          </motion.section>
+        )}
+
         <motion.section variants={fadeUp}>
           <AnimeCarousel
             title="Trending Now"
