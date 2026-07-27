@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { LibraryRepository } from "@/core/repositories/library-repository";
 import { WatchStatus } from "@prisma/client";
+import { appCache } from "@/lib/cache";
 
 export async function GET(request: Request) {
   try {
@@ -24,6 +25,8 @@ export async function POST(request: Request) {
     }
 
     const entry = await LibraryRepository.upsertEntry(body);
+    // Invalidate recommendation cache so next fetch reflects the new library state
+    appCache.clear();
     return NextResponse.json({ entry });
   } catch (error: any) {
     console.error("Library POST Error:", error);

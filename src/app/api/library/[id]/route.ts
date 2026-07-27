@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { LibraryRepository } from "@/core/repositories/library-repository";
+import { appCache } from "@/lib/cache";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -48,6 +49,8 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       ...body,
     });
 
+    // Invalidate recommendation cache on any library mutation
+    appCache.clear();
     return NextResponse.json({ entry: updated });
   } catch (error: any) {
     console.error("Library PATCH Error:", error);
@@ -60,6 +63,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     const { id } = await params;
     const decodedId = cleanDecode(id);
     await LibraryRepository.deleteEntry(decodedId);
+    appCache.clear();
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: "Failed to delete entry" }, { status: 500 });
