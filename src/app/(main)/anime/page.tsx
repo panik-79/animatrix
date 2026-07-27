@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useAnimeSearch, useGenres } from "@/hooks/use-anime";
 import { AnimeGrid } from "@/components/anime/anime-grid";
+import { AnimeListItem } from "@/components/anime/anime-card";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Search, SlidersHorizontal, X, ArrowUpDown, Grid, List, ChevronDown } from "lucide-react";
@@ -211,6 +212,7 @@ function DiscoveryContent() {
                 "p-1.5 rounded-lg transition-colors cursor-pointer",
                 viewMode === "grid" ? "bg-white/10 text-white" : "text-muted-foreground hover:text-white"
               )}
+              title="Grid View"
             >
               <Grid className="w-4 h-4" />
             </button>
@@ -220,6 +222,7 @@ function DiscoveryContent() {
                 "p-1.5 rounded-lg transition-colors cursor-pointer",
                 viewMode === "list" ? "bg-white/10 text-white" : "text-muted-foreground hover:text-white"
               )}
+              title="List View"
             >
               <List className="w-4 h-4" />
             </button>
@@ -427,9 +430,15 @@ function DiscoveryContent() {
             Showing {animeList.length} results
           </div>
 
-          <div className={cn(viewMode === "list" && "space-y-3")}>
-            <AnimeGrid items={animeList} className={cn(viewMode === "list" && "grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-3")} />
-          </div>
+          {viewMode === "grid" ? (
+            <AnimeGrid items={animeList} />
+          ) : (
+            <div className="space-y-3.5">
+              {animeList.map((anime) => (
+                <AnimeListItem key={anime.id} anime={anime} />
+              ))}
+            </div>
+          )}
 
           {/* Load More scroll trigger */}
           {hasNextPage && (

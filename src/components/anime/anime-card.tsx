@@ -86,7 +86,7 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
           </div>
         </div>
 
-        {/* Info — compact, no wrapping issues */}
+        {/* Info */}
         <div className="p-2.5 flex flex-col gap-1 flex-1">
           <h4 className="font-semibold text-[13px] leading-tight line-clamp-1 group-hover:text-primary transition-colors duration-200">
             {title}
@@ -123,6 +123,84 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
           />
         )}
       </motion.div>
+    </Link>
+  );
+}
+
+export function AnimeListItem({ anime }: { anime: Anime }) {
+  const title = anime.title.english || anime.title.romaji;
+  const score = anime.score;
+
+  return (
+    <Link
+      href={ROUTES.ANIME_DETAIL(anime.id)}
+      className="group flex flex-col sm:flex-row gap-4 p-3.5 sm:p-4 rounded-2xl bg-card/40 hover:bg-card/70 border border-white/[0.06] hover:border-primary/40 transition-all duration-300 shadow-sm hover:shadow-xl"
+    >
+      {/* Poster */}
+      <div className="relative w-full sm:w-28 md:w-32 h-44 sm:h-40 md:h-44 rounded-xl overflow-hidden shrink-0 bg-slate-900 border border-white/10">
+        <img
+          src={anime.images.poster}
+          alt={title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        {anime.status === "Airing" && (
+          <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/70 backdrop-blur-md rounded-md px-2 py-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[10px] font-bold text-white uppercase">Airing</span>
+          </div>
+        )}
+      </div>
+
+      {/* Content Details */}
+      <div className="flex-1 flex flex-col justify-between space-y-2.5">
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="text-base sm:text-lg font-bold text-foreground group-hover:text-primary transition-colors font-heading line-clamp-1">
+              {title}
+            </h3>
+            {score ? (
+              <span className="px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-bold flex items-center gap-1 shrink-0">
+                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                {score}
+              </span>
+            ) : null}
+          </div>
+
+          {/* Badges: Format, Episodes, Year */}
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            {anime.type && (
+              <span className="px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground font-semibold border border-border">
+                {anime.type}
+              </span>
+            )}
+            {anime.episodes && (
+              <span>{anime.episodes} Episodes</span>
+            )}
+            {anime.year && (
+              <span>• {anime.year}</span>
+            )}
+          </div>
+
+          {/* Synopsis */}
+          {anime.synopsis && (
+            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+              {anime.synopsis.replace(/\[Written by MAL Rewrite\]/g, "")}
+            </p>
+          )}
+        </div>
+
+        {/* Genres */}
+        <div className="flex flex-wrap gap-1.5 pt-1">
+          {anime.genres.slice(0, 5).map((g) => (
+            <span
+              key={g.id}
+              className="text-[11px] font-medium bg-primary/10 border border-primary/20 text-primary px-2.5 py-0.5 rounded-md"
+            >
+              {g.name}
+            </span>
+          ))}
+        </div>
+      </div>
     </Link>
   );
 }
