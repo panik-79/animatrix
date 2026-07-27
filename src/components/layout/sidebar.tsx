@@ -9,12 +9,9 @@ import { ROUTES } from "@/lib/constants";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "@/components/shared/logo";
 
-const MAIN_NAV = [
+const NAV_ITEMS = [
   { name: "Home", icon: Home, href: ROUTES.HOME },
   { name: "Discover", icon: Compass, href: ROUTES.DISCOVERY },
-];
-
-const USER_NAV = [
   { name: "Library", icon: Library, href: ROUTES.LIBRARY },
   { name: "Collections", icon: Layers, href: ROUTES.COLLECTIONS },
   { name: "Statistics", icon: BarChart2, href: ROUTES.STATS },
@@ -112,25 +109,9 @@ export function Sidebar() {
         </div>
       </div>
 
-      <div className={cn("flex-1 overflow-y-auto hide-scrollbar py-4 flex flex-col px-3", sidebarCollapsed ? "gap-1.5" : "gap-6")}>
-        <div>
-          {!sidebarCollapsed && (
-            <h4 className="px-3 text-[11px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">
-              Menu
-            </h4>
-          )}
-          {renderLinks(MAIN_NAV)}
-        </div>
-        
-        <div>
-          {!sidebarCollapsed && (
-            <h4 className="px-3 text-[11px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">
-              Library
-            </h4>
-          )}
-          {renderLinks(USER_NAV)}
-        </div>
-        
+      <div className="flex-1 overflow-y-auto hide-scrollbar py-4 flex flex-col px-3">
+        {renderLinks(NAV_ITEMS)}
+
         <div className={cn("mt-auto pt-3", !sidebarCollapsed && "border-t border-border/40")}>
           {renderLinks(EXTRA_NAV)}
         </div>
