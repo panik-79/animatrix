@@ -72,8 +72,16 @@ export function ProductionDetails({ anime }: ProductionDetailsProps) {
   ];
 
   return (
-    <div className="space-y-3.5">
-      <h3 className="text-sm font-semibold text-foreground">Production</h3>
+    <div className="space-y-4 pt-4">
+      {/* Section Header (Matches Reviews & Ratings style) */}
+      <div className="flex items-center gap-2.5 border-b border-border pb-4">
+        <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
+          <Building2 className="w-4 h-4" />
+        </div>
+        <h2 className="text-lg font-bold text-foreground tracking-tight font-heading">
+          Production Details
+        </h2>
+      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-xs">
         {details.map((item) => {
