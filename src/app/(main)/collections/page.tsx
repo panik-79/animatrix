@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { toast } from "@/store/toast-store";
 import { confirmDialog } from "@/store/confirm-store";
+import { SearchInput } from "@/components/shared/search-input";
 
 interface CollectionItem {
   id: string;
@@ -172,23 +173,13 @@ export default function CollectionsPage() {
       {/* ── TOP CONTROLS: SEARCH FILTER, VIEW TOGGLE & CREATE BUTTON ── */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         {/* Filter collections search bar (top left) */}
-        <div className="relative w-full md:max-w-md group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-          <input
-            type="text"
+        <div className="w-full md:max-w-md">
+          <SearchInput
             placeholder="Filter collections..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-card/60 dark:bg-slate-950/80 border border-white/20 dark:border-white/25 border-slate-400 hover:border-white/40 rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 backdrop-blur-md transition-all shadow-md placeholder:text-muted-foreground text-foreground"
+            onChange={setSearchQuery}
+            variantSize="md"
           />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
         </div>
 
         {/* Action Controls (top right) */}

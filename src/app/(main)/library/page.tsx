@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { EmptyState } from "@/components/shared/empty-state";
+import { SearchInput } from "@/components/shared/search-input";
 
 const STATUS_TABS: { id: WatchStatus | "ALL" | "FAVORITES"; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: "ALL", label: "All Anime", icon: Film },
@@ -96,14 +97,12 @@ export default function UserLibraryPage() {
         </div>
 
         {/* Search Input */}
-        <div className="relative min-w-[200px] sm:w-64">
-          <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
+        <div className="min-w-[200px] sm:w-64">
+          <SearchInput
             placeholder="Search library..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl dark:bg-slate-950/80 bg-slate-200/80 border border-white/20 dark:border-white/25 border-slate-400 hover:border-white/40 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all shadow-sm"
+            onChange={setSearchQuery}
+            variantSize="sm"
           />
         </div>
       </div>

@@ -11,6 +11,7 @@ import { Search, SlidersHorizontal, X, ArrowUpDown, Grid, List, ChevronDown } fr
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { SearchParams } from "@/core/providers/anime-provider";
+import { SearchInput } from "@/components/shared/search-input";
 
 // Static mapping for popular genres to Jikan IDs for instant offline lookup
 const GENRE_MAP: Record<string, number> = {
@@ -161,29 +162,17 @@ function DiscoveryContent() {
     <div className="w-full px-4 md:px-6 pb-20 pt-2 space-y-6">
       {/* ── TOP HEADER SEARCH BAR & FILTER CONTROLS ── */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="relative w-full md:max-w-md group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              updateUrlParam({ q: e.target.value || null });
-            }}
+        <div className="w-full md:max-w-md">
+          <SearchInput
             placeholder="Search anime by title..."
-            className="w-full pl-11 pr-4 py-3 bg-card/60 dark:bg-slate-950/80 border border-white/20 dark:border-white/25 border-slate-400 hover:border-white/40 rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 backdrop-blur-md transition-all shadow-md placeholder:text-muted-foreground text-foreground"
+            value={searchQuery}
+            onChange={(val) => {
+              setSearchQuery(val);
+              updateUrlParam({ q: val || null });
+            }}
+            onClear={() => updateUrlParam({ q: null })}
+            variantSize="md"
           />
-          {searchQuery && (
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                updateUrlParam({ q: null });
-              }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full text-muted-foreground hover:text-white transition-colors"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
         </div>
 
         <div className="flex items-center gap-3 w-full md:w-auto justify-end">
