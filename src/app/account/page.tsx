@@ -6,29 +6,21 @@ import {
   User as UserIcon,
   Mail,
   Calendar,
-  Sparkles,
   Loader2,
   Camera,
   ShieldCheck,
-  Heart,
   Save,
-  CheckCircle2,
+  ChevronDown,
 } from "lucide-react";
 import { toast } from "@/store/toast-store";
 import { AvatarPickerModal } from "@/components/account/avatar-picker-modal";
-
-const GENDER_OPTIONS = [
-  { value: "Male", label: "Male", icon: "👨" },
-  { value: "Female", label: "Female", icon: "👩" },
-  { value: "Non-Binary", label: "Non-Binary", icon: "✨" },
-  { value: "Prefer not to say", label: "Prefer not to say", icon: "🔒" },
-];
 
 export default function AccountPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   // Form State
   const [name, setName] = useState("");
@@ -108,6 +100,7 @@ export default function AccountPage() {
 
   const handleSelectAvatar = (newImageUrl: string) => {
     setImage(newImageUrl);
+    setImageError(false);
     toast.info("Avatar Selected", "Click 'Save Changes' to finalize your profile photo.");
   };
 
@@ -127,9 +120,8 @@ export default function AccountPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Page Title */}
         <div className="space-y-1">
-          <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
-            <span>My Account</span>
-            <Sparkles className="w-5 h-5 text-indigo-400" />
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">
+            My Account
           </h1>
           <p className="text-sm text-slate-400 font-normal">
             Manage your profile details, avatar, and personal preferences.
@@ -140,14 +132,15 @@ export default function AccountPage() {
         <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col sm:flex-row items-center gap-6">
           {/* Avatar Area with Change Button */}
           <div className="relative group shrink-0">
-            {image ? (
+            {image && !imageError ? (
               <img
                 src={image}
                 alt={name}
-                className="w-28 h-28 rounded-full object-cover border-2 border-indigo-500/50 shadow-xl"
+                onError={() => setImageError(true)}
+                className="w-28 h-28 rounded-full object-cover border-2 border-indigo-500/50 shadow-xl bg-slate-900"
               />
             ) : (
-              <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-indigo-600 via-purple-600 to-rose-600 flex items-center justify-center text-white font-bold text-3xl shadow-xl">
+              <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-indigo-600 via-purple-600 to-rose-600 flex items-center justify-center text-white font-bold text-3xl shadow-xl border-2 border-indigo-500/50">
                 {name[0]?.toUpperCase() || "U"}
               </div>
             )}
@@ -187,7 +180,7 @@ export default function AccountPage() {
                 onClick={() => setIsAvatarModalOpen(true)}
                 className="px-4 py-2 text-xs font-semibold rounded-xl bg-white/10 hover:bg-white/15 text-white transition-all duration-200 cursor-pointer inline-flex items-center gap-2 border border-white/5"
               >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                <UserIcon className="w-3.5 h-3.5 text-indigo-400" />
                 <span>Choose Anime Avatar</span>
               </button>
             </div>
@@ -206,58 +199,54 @@ export default function AccountPage() {
               <label htmlFor="name" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
                 Full Name / Username
               </label>
-              <div className="relative">
-                <input
-                  id="name"
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your Name"
-                  className="w-full px-4 py-3 text-xs bg-slate-950/70 border border-white/10 rounded-xl text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all"
-                />
-              </div>
+              <input
+                id="name"
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your Name"
+                className="w-full px-4 py-3 text-xs bg-slate-950/70 border border-white/10 rounded-xl text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all"
+              />
             </div>
 
-            {/* Gender Selection */}
+            {/* Gender Dropdown */}
             <div className="space-y-2">
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+              <label htmlFor="gender" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
                 Gender
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {GENDER_OPTIONS.map((g) => {
-                  const isSelected = gender === g.value;
-                  return (
-                    <button
-                      key={g.value}
-                      type="button"
-                      onClick={() => setGender(g.value)}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-medium transition-all ${
-                        isSelected
-                          ? "bg-indigo-600/30 border-indigo-500 text-white shadow-md ring-2 ring-indigo-500/30"
-                          : "bg-slate-950/50 border-white/5 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
-                      }`}
-                    >
-                      <span>{g.icon}</span>
-                      <span>{g.label}</span>
-                    </button>
-                  );
-                })}
+              <div className="relative">
+                <select
+                  id="gender"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full appearance-none px-4 py-3 text-xs bg-slate-950/70 border border-white/10 rounded-xl text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all cursor-pointer pr-10"
+                >
+                  <option value="" className="bg-slate-900 text-slate-400">Select Gender</option>
+                  <option value="Male" className="bg-slate-900 text-white">Male</option>
+                  <option value="Female" className="bg-slate-900 text-white">Female</option>
+                  <option value="Non-Binary" className="bg-slate-900 text-white">Non-Binary</option>
+                  <option value="Prefer not to say" className="bg-slate-900 text-white">Prefer not to say</option>
+                </select>
+                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
 
-            {/* Date of Birth */}
+            {/* Date of Birth Calendar */}
             <div className="space-y-2">
               <label htmlFor="dob" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
                 Date of Birth
               </label>
-              <input
-                id="dob"
-                type="date"
-                value={dateOfBirth}
-                onChange={(e) => setDateOfBirth(e.target.value)}
-                className="w-full max-w-xs px-4 py-3 text-xs bg-slate-950/70 border border-white/10 rounded-xl text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all"
-              />
+              <div className="relative max-w-sm flex items-center">
+                <Calendar className="w-4 h-4 text-indigo-400 absolute left-3.5 pointer-events-none z-10" />
+                <input
+                  id="dob"
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(e) => setDateOfBirth(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 text-xs bg-slate-950/70 border border-white/10 rounded-xl text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all cursor-pointer"
+                />
+              </div>
               <p className="text-[11px] text-slate-500">
                 Used to tailor personalized recommendations and anime release highlights.
               </p>

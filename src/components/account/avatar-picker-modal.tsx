@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PRESET_ANIME_AVATARS, AnimeAvatar } from "@/lib/constants/avatars";
-import { Check, X, Sparkles, User as UserIcon } from "lucide-react";
+import { Check, X, User as UserIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AvatarPickerModalProps {
@@ -21,6 +21,7 @@ export function AvatarPickerModal({
   onSelectAvatar,
 }: AvatarPickerModalProps) {
   const [selectedUrl, setSelectedUrl] = useState<string | null>(currentImage);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   if (!isOpen) return null;
 
@@ -28,6 +29,10 @@ export function AvatarPickerModal({
     setSelectedUrl(url);
     onSelectAvatar(url);
     onClose();
+  };
+
+  const handleImageError = (id: string) => {
+    setFailedImages((prev) => ({ ...prev, [id]: true }));
   };
 
   return (
@@ -42,9 +47,8 @@ export function AvatarPickerModal({
           {/* Header */}
           <div className="flex items-center justify-between border-b border-white/10 pb-4 shrink-0">
             <div>
-              <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                <span>Choose Profile Avatar</span>
-                <Sparkles className="w-4 h-4 text-indigo-400" />
+              <h2 className="text-xl font-bold text-white tracking-tight">
+                Choose Profile Avatar
               </h2>
               <p className="text-xs text-slate-400 mt-1">
                 Select from famous anime character avatars or your Google profile photo.
@@ -77,11 +81,18 @@ export function AvatarPickerModal({
                     }`}
                   >
                     <div className="relative shrink-0">
-                      <img
-                        src={googleImage}
-                        alt="Google Account"
-                        className="w-14 h-14 rounded-full object-cover border border-white/10"
-                      />
+                      {!failedImages["google"] ? (
+                        <img
+                          src={googleImage}
+                          alt="Google Account"
+                          onError={() => handleImageError("google")}
+                          className="w-14 h-14 rounded-full object-cover border border-white/10"
+                        />
+                      ) : (
+                        <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md border border-white/10">
+                          G
+                        </div>
+                      )}
                       <div className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow-md">
                         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
                           <path
@@ -120,6 +131,8 @@ export function AvatarPickerModal({
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                 {PRESET_ANIME_AVATARS.map((avatar) => {
                   const isSelected = selectedUrl === avatar.url;
+                  const isFailed = failedImages[avatar.id];
+
                   return (
                     <button
                       key={avatar.id}
@@ -132,11 +145,18 @@ export function AvatarPickerModal({
                       }`}
                     >
                       <div className="relative w-16 h-16 rounded-full overflow-hidden mb-2 border border-white/10 group-hover:scale-105 transition-transform duration-200">
-                        <img
-                          src={avatar.url}
-                          alt={avatar.name}
-                          className="w-full h-full object-cover"
-                        />
+                        {!isFailed ? (
+                          <img
+                            src={avatar.url}
+                            alt={avatar.name}
+                            onError={() => handleImageError(avatar.id)}
+                            className="w-full h-full object-cover bg-slate-900"
+                          />
+                        ) : (
+                          <div className={`w-full h-full bg-gradient-to-tr ${avatar.fallbackColor} flex items-center justify-center text-white font-bold text-lg shadow-md`}>
+                            {avatar.name[0]}
+                          </div>
+                        )}
                         {isSelected && (
                           <div className="absolute inset-0 bg-indigo-600/40 flex items-center justify-center backdrop-blur-[1px]">
                             <Check className="w-6 h-6 text-white stroke-[3]" />
