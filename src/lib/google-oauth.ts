@@ -113,17 +113,18 @@ export async function handleGoogleUserAuth(googleUser: GoogleUserInfo, tokens: G
       },
     });
 
-    if (googleUser.picture && !existingAccount.user.image) {
-      await prisma.user.update({
-        where: { id: existingAccount.user.id },
-        data: { image: googleUser.picture },
-      });
-    }
+    // Always sync Google picture so it stays current across logins
+    const updatedUser = googleUser.picture
+      ? await prisma.user.update({
+          where: { id: existingAccount.user.id },
+          data: { image: googleUser.picture },
+        })
+      : existingAccount.user;
 
     const sessionToken = await createSession(existingAccount.user.id);
     await setSessionCookie(sessionToken);
 
-    return { user: existingAccount.user, isNewUser: false };
+    return { user: updatedUser, isNewUser: false };
   }
 
   // Check if user exists by email
@@ -147,17 +148,18 @@ export async function handleGoogleUserAuth(googleUser: GoogleUserInfo, tokens: G
       },
     });
 
-    if (googleUser.picture && !existingUserByEmail.image) {
-      await prisma.user.update({
-        where: { id: existingUserByEmail.id },
-        data: { image: googleUser.picture },
-      });
-    }
+    // Always sync Google picture so it stays current
+    const updatedLinkedUser = googleUser.picture
+      ? await prisma.user.update({
+          where: { id: existingUserByEmail.id },
+          data: { image: googleUser.picture },
+        })
+      : existingUserByEmail;
 
     const sessionToken = await createSession(existingUserByEmail.id);
     await setSessionCookie(sessionToken);
 
-    return { user: existingUserByEmail, isNewUser: false };
+    return { user: updatedLinkedUser, isNewUser: false };
   }
 
   const fallbackName = googleUser.email ? (googleUser.email.split("@")[0] || "User") : "User";
