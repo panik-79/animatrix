@@ -13,6 +13,63 @@ export interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInp
   containerClassName?: string;
 }
 
+const EASTER_EGG_PATTERNS = [
+  {
+    key: "goku",
+    regex: /(goku|dbz|dragon\s*ball|saiyan)/i,
+    title: "💥 POWER LEVEL OVER 9000!",
+    description: "Can he beat Goku though? 🤔",
+  },
+  {
+    key: "op",
+    regex: /(one\s*piece|luffy|strawhat|zoro)/i,
+    title: "🏴‍☠️ THE ONE PIECE IS REAL!",
+    description: "I'm gonna be King of the Pirates! 👑",
+  },
+  {
+    key: "naruto",
+    regex: /(naruto|sasuke|hokage|dattebayo)/i,
+    title: "🍥 DATTEBAYO!",
+    description: "Believe it! Ichiraku Ramen break 🍜",
+  },
+  {
+    key: "bleach",
+    regex: /(bleach|ichigo|bankai)/i,
+    title: "⚔️ BANKAI!",
+    description: "Getsuga Tensho! 🌙",
+  },
+  {
+    key: "aot",
+    regex: /(attack\s*on\s*titan|aot|eren|levi|titan)/i,
+    title: "⚔️ SHINZOU WO SASAGEYO!",
+    description: "Dedicate your heart! 🗡️",
+  },
+  {
+    key: "deathnote",
+    regex: /(death\s*note|light\s*yagami|kira)/i,
+    title: "📓 GOD OF THE NEW WORLD",
+    description: "I'll take a potato chip... AND EAT IT! 🍎",
+  },
+  {
+    key: "jjk",
+    regex: /(jujutsu|gojo|sukuna|domain\s*expansion)/i,
+    title: "🤞 DOMAIN EXPANSION: INFINITE VOID ✨",
+    description: "Nah, I'd win. 😎",
+  },
+  {
+    key: "demonslayer",
+    regex: /(demon\s*slayer|kimetsu|tanjiro|nezuko)/i,
+    title: "🗡️ WATER BREATHING: 11TH FORM",
+    description: "Dead Calm 🌊",
+  },
+  {
+    key: "sololeveling",
+    regex: /(solo\s*leveling|jinwoo|arise)/i,
+    title: "👑 ARISE!",
+    description: "Shadow Monarch has been awakened ⚔️",
+  },
+];
+
 export function SearchInput({
   value,
   onChange,
@@ -27,19 +84,19 @@ export function SearchInput({
 
   const handleInputChange = (newVal: string) => {
     onChange(newVal);
-    const lower = newVal.toLowerCase().trim();
+    const text = newVal.trim();
 
-    if (lower === "goku" && !triggeredEasterEggs.current.has("goku")) {
-      triggeredEasterEggs.current.add("goku");
-      toast.info("💥 POWER LEVEL OVER 9000!", "Can he beat Goku though? 🤔");
-    } else if (lower === "one piece" && !triggeredEasterEggs.current.has("op")) {
-      triggeredEasterEggs.current.add("op");
-      toast.info("🏴‍☠️ CAN WE GET MUCH HIGHER?", "THE ONE PIECE IS REAL!");
-    } else if (lower === "naruto" && !triggeredEasterEggs.current.has("naruto")) {
-      triggeredEasterEggs.current.add("naruto");
-      toast.info("🍥 DATTEBAYO!", "Believe it! Ramen time 🍜");
+    if (!text) return;
+
+    for (const egg of EASTER_EGG_PATTERNS) {
+      if (egg.regex.test(text) && !triggeredEasterEggs.current.has(egg.key)) {
+        triggeredEasterEggs.current.add(egg.key);
+        toast.info(egg.title, egg.description);
+        break;
+      }
     }
   };
+
   const handleClear = () => {
     onChange("");
     onClear?.();
@@ -77,7 +134,7 @@ export function SearchInput({
         {...props}
       />
 
-      {/* Left Search Icon with primary color hover animation */}
+      {/* Left Search Icon */}
       <Search
         className={cn(
           "absolute top-1/2 -translate-y-1/2 z-10 pointer-events-none shrink-0",

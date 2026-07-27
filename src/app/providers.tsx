@@ -7,6 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { ToastContainer } from "@/components/shared/toast-container";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { KonamiCodeListener } from "@/components/shared/konami-code";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -29,6 +30,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         </AnimatePresence>
         <ToastContainer />
         <ConfirmDialog />
+        <KonamiCodeListener />
       </ThemeProvider>
     </QueryClientProvider>
   );
