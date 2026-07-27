@@ -60,8 +60,8 @@ export function Navbar() {
             : "bg-background/70 backdrop-blur-md border border-border/40"
         )}
       >
-        {/* Left Side: Mobile Hamburger / Desktop Collapse + Page Title */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0 overflow-hidden">
+        {/* Left Side: Mobile Hamburger / Desktop Collapse + Page Title / Mobile Logo */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Mobile Hamburger Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -86,14 +86,14 @@ export function Navbar() {
             )}
           </button>
 
-          {/* Active Top Level Page Title */}
+          {/* Active Top Level Page Title (Desktop / Tablet) */}
           <h2 className="text-xs sm:text-sm font-bold font-heading text-foreground hidden sm:block truncate">
             {pageTitle}
           </h2>
 
-          {/* Mobile Brand Logo */}
+          {/* Mobile Brand Icon Logo */}
           <div className="flex items-center md:hidden shrink-0">
-            <Logo variant="full" height={24} className="ml-1" linked />
+            <Logo variant="icon" height={26} linked />
           </div>
         </div>
 
@@ -101,10 +101,10 @@ export function Navbar() {
         <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="flex items-center w-28 sm:w-48 md:w-64 lg:w-80 px-2.5 sm:px-3.5 py-1.5 sm:py-2 space-x-2 text-xs sm:text-sm rounded-full bg-slate-100/90 dark:bg-slate-950/80 hover:bg-slate-200/90 dark:hover:bg-slate-900/90 text-foreground transition-all duration-300 ease-out border border-slate-300 dark:border-white/20 hover:border-primary/60 hover:shadow-lg hover:shadow-primary/10 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
+            className="flex items-center px-2.5 sm:px-3.5 py-1.5 sm:py-2 space-x-2 text-xs sm:text-sm rounded-full bg-slate-100/90 dark:bg-slate-950/80 hover:bg-slate-200/90 dark:hover:bg-slate-900/90 text-foreground transition-all duration-300 ease-out border border-slate-300 dark:border-white/20 hover:border-primary/60 hover:shadow-lg hover:shadow-primary/10 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
           >
-            <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground/70 group-hover:text-primary group-hover:scale-110 transition-all duration-300 ease-out shrink-0" />
-            <span className="font-medium text-xs text-muted-foreground truncate">Search...</span>
+            <Search className="w-4 h-4 text-muted-foreground/70 group-hover:text-primary group-hover:scale-110 transition-all duration-300 ease-out shrink-0" />
+            <span className="font-medium text-xs text-muted-foreground hidden sm:inline-block truncate max-w-[120px] md:max-w-[200px]">Search anime...</span>
             <kbd className="hidden sm:inline-block px-1.5 py-0.5 ml-auto text-[10px] font-mono rounded-md dark:bg-white/10 bg-slate-300/80 text-muted-foreground group-hover:text-primary group-hover:bg-primary/15 group-hover:border-primary/40 border border-border shadow-sm transition-all duration-200 shrink-0">
               ⌘K
             </kbd>
