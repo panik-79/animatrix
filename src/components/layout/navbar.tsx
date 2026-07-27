@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, Settings, User as UserIcon, LogOut } from "lucide-react";
+import { Search, Menu, Settings, User as UserIcon, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
@@ -30,16 +30,29 @@ export function Navbar() {
       )}
     >
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
-        <div className="flex items-center md:hidden">
+        {/* Left Side: Collapse/Expand Sidebar Toggle + Mobile Logo */}
+        <div className="flex items-center gap-2">
+          {/* Desktop & Mobile Collapse Button */}
           <button 
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition-all cursor-pointer"
+            title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+            aria-label={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            <Menu className="w-6 h-6" />
+            {sidebarCollapsed ? (
+              <PanelLeftOpen className="w-5 h-5" />
+            ) : (
+              <PanelLeftClose className="w-5 h-5" />
+            )}
           </button>
-          <Logo variant="full" height={36} className="ml-3" linked />
+
+          {/* Mobile Logo Only */}
+          <div className="flex items-center md:hidden">
+            <Logo variant="full" height={32} className="ml-1" linked />
+          </div>
         </div>
 
+        {/* Center: Search Input Bar */}
         <div className="flex-1 flex justify-center md:justify-start max-w-xl mx-auto md:ml-4">
           <button
             onClick={() => setCommandPaletteOpen(true)}
@@ -53,6 +66,7 @@ export function Navbar() {
           </button>
         </div>
 
+        {/* Right Side: User Profile Button */}
         <div className="flex items-center space-x-3">
           <AuthUserButton />
         </div>
