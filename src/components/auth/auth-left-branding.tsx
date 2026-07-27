@@ -23,7 +23,7 @@ export function AuthLeftBranding() {
       <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium tracking-wide">
         <span>Made with</span>
         <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/80 animate-pulse" />
-        <span>by <strong className="text-slate-300 font-semibold">Pujan</strong></span>
+        <span>by Pujan</span>
       </div>
     </div>
   );
