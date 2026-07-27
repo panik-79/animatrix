@@ -68,9 +68,9 @@ export function AnimeCarousel({
 
     animate(el.scrollLeft, targetScroll, {
       type: "spring",
-      stiffness: 80,
-      damping: 15,
-      mass: 0.6,
+      stiffness: 220,
+      damping: 24,
+      mass: 0.5,
       onUpdate: (latest) => {
         if (el) el.scrollLeft = latest;
       },

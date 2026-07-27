@@ -23,8 +23,8 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const xSpring = useSpring(x, { stiffness: 200, damping: 20 });
-  const ySpring = useSpring(y, { stiffness: 200, damping: 20 });
+  const xSpring = useSpring(x, { stiffness: 350, damping: 25, mass: 0.5 });
+  const ySpring = useSpring(y, { stiffness: 350, damping: 25, mass: 0.5 });
   const transform = useTransform(
     [xSpring, ySpring],
     ([xVal, yVal]) =>

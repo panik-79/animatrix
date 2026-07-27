@@ -194,4 +194,21 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* ── 120 FPS GPU Hardware Acceleration & Silky Smooth Easing Utilities ── */
+  .gpu-layer {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  .smooth-transition {
+    transition-property: transform, opacity, background-color, border-color, box-shadow;
+    transition-duration: 250ms;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .smooth-transition-fast {
+    transition-property: transform, opacity, background-color, border-color, box-shadow;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }
