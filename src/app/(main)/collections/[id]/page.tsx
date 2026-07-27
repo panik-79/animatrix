@@ -215,24 +215,24 @@ export default function CollectionDetailPage({
           <span>{collection.items.length} Anime items</span>
           <span>•</span>
           <span>Created {new Date(collection.createdAt).toLocaleDateString()}</span>
+          <span>•</span>
+          <span>{collection.items.length} {collection.items.length === 1 ? "item" : "items"}</span>
+        </div>
+
+        {/* Add Anime button inline in banner footer */}
+        <div className="pt-2">
+          <Link
+            href={ROUTES.DISCOVERY}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-md shadow-primary/20 transition-all hover:scale-[1.02] cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Add Anime</span>
+          </Link>
         </div>
       </div>
 
       {/* Items Grid */}
-      <div className="mt-10">
-        <div className="flex items-center justify-between gap-4 mb-5">
-          <h2 className="text-lg font-bold font-heading text-foreground">
-            Anime in this Collection ({collection.items.length})
-          </h2>
-          <Link
-            href={ROUTES.DISCOVERY}
-            className="px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold flex items-center gap-2 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Anime</span>
-          </Link>
-        </div>
-
+      <div className="mt-6">
         {collection.items.length === 0 ? (
           <div className="text-center py-16 px-4 bg-card/40 border border-border rounded-3xl space-y-3">
             <Layers className="w-8 h-8 text-muted-foreground mx-auto stroke-1" />
@@ -248,7 +248,7 @@ export default function CollectionDetailPage({
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
             {collection.items.map((item) => (
               <div
                 key={item.id}
@@ -283,10 +283,10 @@ export default function CollectionDetailPage({
                 </div>
 
                 {/* Title */}
-                <div className="p-3">
+                <div className="px-2 py-1.5">
                   <Link
                     href={ROUTES.ANIME_DETAIL(item.animeId)}
-                    className="text-xs font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2"
+                    className="text-[11px] font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight"
                   >
                     {item.title}
                   </Link>
