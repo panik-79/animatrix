@@ -30,34 +30,44 @@ export function Sidebar() {
   const { sidebarCollapsed } = useAppStore();
 
   const renderLinks = (links: Array<{ name: string; icon: any; href: string }>) => (
-    <div className="space-y-1">
+    <div className="space-y-1.5">
       {links.map((link) => {
-        const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
+        const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(`${link.href}`));
         const Icon = link.icon;
         
         return (
           <Link
             key={link.href}
             href={link.href}
+            title={sidebarCollapsed ? link.name : undefined}
             className={cn(
-              "flex items-center py-2.5 px-3 rounded-lg transition-all group relative",
+              "flex items-center py-2.5 px-3 rounded-xl transition-all duration-200 group relative font-medium text-sm",
               isActive 
-                ? "bg-primary/10 text-primary" 
-                : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground",
-              sidebarCollapsed ? "justify-center" : "space-x-3"
+                ? "bg-primary/15 text-primary shadow-sm font-semibold" 
+                : "text-muted-foreground hover:bg-white/[0.05] hover:text-foreground",
+              sidebarCollapsed ? "justify-center" : "space-x-3.5"
             )}
           >
+            {/* Active Left Pill Glow Indicator */}
             {isActive && (
               <motion.div 
-                layoutId="sidebar-active"
-                className="absolute inset-0 rounded-lg bg-primary/10 border border-primary/20"
+                layoutId="sidebar-active-indicator"
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-primary shadow-[0_0_12px_rgba(139,92,246,0.8)]"
                 initial={false}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
               />
             )}
-            <Icon className={cn("w-5 h-5 relative z-10", isActive && "text-primary")} />
+
+            {/* Icon with scale animation on hover */}
+            <Icon
+              className={cn(
+                "w-5 h-5 relative z-10 transition-transform duration-200 group-hover:scale-110",
+                isActive ? "text-primary" : "group-hover:text-foreground"
+              )}
+            />
+
             {!sidebarCollapsed && (
-              <span className="font-medium relative z-10">{link.name}</span>
+              <span className="relative z-10 truncate">{link.name}</span>
             )}
           </Link>
         );
@@ -72,27 +82,35 @@ export function Sidebar() {
         sidebarCollapsed ? "w-20" : "w-64"
       )}
     >
-      {/* Header with bold prominent logo */}
-      <div className={cn("h-24 flex items-center shrink-0", sidebarCollapsed ? "justify-center" : "px-6")}>
+      {/* Header with prominent logo */}
+      <div className={cn("h-20 flex items-center shrink-0 border-b border-white/[0.04]", sidebarCollapsed ? "justify-center" : "px-6")}>
         {!sidebarCollapsed ? (
-          <Logo variant="full" height={36} linked />
+          <Logo variant="full" height={34} linked />
         ) : (
-          <Logo variant="icon" height={36} linked />
+          <Logo variant="icon" height={34} linked />
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto hide-scrollbar py-2 flex flex-col gap-8 px-3">
+      <div className="flex-1 overflow-y-auto hide-scrollbar py-4 flex flex-col gap-6 px-3">
         <div>
-          {!sidebarCollapsed && <h4 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Discover</h4>}
+          {!sidebarCollapsed && (
+            <h4 className="px-3 text-[11px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">
+              Menu
+            </h4>
+          )}
           {renderLinks(MAIN_NAV)}
         </div>
         
         <div>
-          {!sidebarCollapsed && <h4 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Personal</h4>}
+          {!sidebarCollapsed && (
+            <h4 className="px-3 text-[11px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">
+              Library
+            </h4>
+          )}
           {renderLinks(USER_NAV)}
         </div>
         
-        <div className="mt-auto pt-4 pb-2">
+        <div className="mt-auto pt-4 border-t border-white/[0.04]">
           {renderLinks(EXTRA_NAV)}
         </div>
       </div>

@@ -57,19 +57,27 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}
         style={{ transform, transformStyle: "preserve-3d" }}
-        className="relative rounded-xl overflow-hidden bg-card/40 border border-white/[0.06] h-full flex flex-col transition-shadow duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.5)]"
+        className="relative rounded-2xl overflow-hidden bg-gradient-to-b from-white/[0.04] to-white/[0.01] border border-white/[0.1] hover:border-primary/50 h-full flex flex-col transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
       >
         {/* Poster */}
         <div className="relative overflow-hidden">
-          <AnimePoster src={anime.images.poster} alt={title} className="w-full" />
+          <AnimePoster src={anime.images.poster} alt={title} className="w-full transition-transform duration-500 ease-out group-hover:scale-105" />
 
           {/* Airing indicator dot */}
           {anime.status === "Airing" && (
-            <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-md px-2 py-1">
+            <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 bg-black/70 backdrop-blur-md rounded-lg px-2 py-0.5 border border-white/10">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] font-semibold text-white tracking-wide uppercase">Airing</span>
+              <span className="text-[10px] font-bold text-white tracking-wide uppercase">Airing</span>
             </div>
           )}
+
+          {/* Star rating badge top-right */}
+          {score ? (
+            <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1 bg-black/70 backdrop-blur-md rounded-lg px-2 py-0.5 border border-white/10 text-amber-400 font-bold text-[11px] shadow-md">
+              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+              <span className="tabular-nums">{score}</span>
+            </div>
+          ) : null}
 
           {/* Hover overlay with genres */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
