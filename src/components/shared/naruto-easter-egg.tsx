@@ -1,12 +1,20 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { X } from "lucide-react";
 import { toast } from "@/store/toast-store";
+import narutoRamenImg from "@/assets/naruto_ramen.jpg";
 
 const NARUTO_KEYS = ["n", "a", "r", "u", "t", "o"];
+
+const AUDIO_TRACKS = [
+  "/audio/dattebayo.mp3",
+  "/audio/naruto.mp3",
+  "/audio/rasengan.mp3",
+];
 
 export function NarutoEasterEgg() {
   const inputBuffer = useRef<string[]>([]);
@@ -24,6 +32,20 @@ export function NarutoEasterEgg() {
       } catch {
         // Fallback silently if speech synthesis disabled
       }
+    }
+  };
+
+  const playRandomNarutoAudio = () => {
+    try {
+      const randomTrack = AUDIO_TRACKS[Math.floor(Math.random() * AUDIO_TRACKS.length)];
+      const audio = new Audio(randomTrack);
+      audio.volume = 1.0;
+      audio.play().catch(() => {
+        // Fallback to speech synthesis if autoplay blocked
+        speakDattebayo();
+      });
+    } catch {
+      speakDattebayo();
     }
   };
 
@@ -48,7 +70,7 @@ export function NarutoEasterEgg() {
       ) {
         inputBuffer.current = [];
         setShowRamen(true);
-        speakDattebayo();
+        playRandomNarutoAudio();
 
         confetti({
           particleCount: 160,
@@ -73,10 +95,10 @@ export function NarutoEasterEgg() {
           animate={{ opacity: 1, scale: 1, rotate: 0 }}
           exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md cursor-pointer select-none"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md cursor-pointer select-none"
           onClick={() => setShowRamen(false)}
         >
-          <div className="relative bg-gradient-to-b from-orange-500/20 via-slate-900 to-slate-950 border-2 border-orange-500/50 rounded-3xl p-8 max-w-sm w-full text-center space-y-4 shadow-2xl shadow-orange-500/30 overflow-hidden">
+          <div className="relative bg-gradient-to-b from-orange-500/20 via-slate-900 to-slate-950 border-2 border-orange-500/50 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl shadow-orange-500/30 overflow-hidden">
             {/* Close Button */}
             <button
               type="button"
@@ -91,15 +113,17 @@ export function NarutoEasterEgg() {
 
             {/* Naruto Eating Ramen Image */}
             <div className="relative overflow-hidden rounded-2xl border border-orange-500/40 shadow-2xl my-2">
-              <img
-                src="/naruto_ramen.png"
+              <Image
+                src={narutoRamenImg}
                 alt="Naruto Eating Ramen"
-                className="w-full h-auto object-cover max-h-56 rounded-2xl transition-transform hover:scale-105 duration-300"
+                placeholder="blur"
+                priority
+                className="w-full h-auto object-cover max-h-60 rounded-2xl transition-transform hover:scale-105 duration-300"
               />
             </div>
 
             {/* Title & Speech */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <h3 className="text-2xl font-black text-orange-400 tracking-wider font-heading uppercase">
                 🍥 DATTEBAYO! 🍥
               </h3>
