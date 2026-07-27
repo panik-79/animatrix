@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Star } from "lucide-react";
+import confetti from "canvas-confetti";
 import { MentionInput } from "./mention-input";
 import { useSubmitReview, type Review } from "@/hooks/use-reviews";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,12 @@ export function ReviewComposer({ animeId, existingReview, onCancel }: ReviewComp
     const nextScore = n === score ? null : n;
     setScore(nextScore);
     if (nextScore === 10) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ["#f59e0b", "#8b5cf6", "#ec4899", "#3b82f6"],
+      });
       toast.success("🔥 PEAK FICTION DETECTED!", "You have immaculate taste, cultured human. 👑");
     }
   };

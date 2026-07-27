@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
+import { useMatrixStore } from "@/components/shared/matrix-rain";
 
 import iconLogo from "@/assets/icon_transparent_blue_4k.png";
 
@@ -26,8 +27,16 @@ export function Logo({
   className,
   linked = true,
 }: LogoProps) {
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    useMatrixStore.getState().toggleMatrix();
+  };
+
   const content = (
-    <div className={cn("inline-flex items-center gap-3 select-none", className)}>
+    <div
+      onDoubleClick={handleDoubleClick}
+      title="Double-click to toggle Matrix Mode 🕶️"
+      className={cn("inline-flex items-center gap-3 select-none cursor-pointer", className)}
+    >
       {/* High-Res Transparent Torii Gate Brand Icon */}
       <Image
         src={iconLogo}
@@ -36,7 +45,7 @@ export function Logo({
         width={Math.round(height * (iconLogo.width / iconLogo.height))}
         priority
         draggable={false}
-        className="shrink-0"
+        className="shrink-0 transition-transform active:scale-95"
       />
 
       {/* Brand Wordmark (Theme-aware text-foreground, crystal clear in Light & Dark Mode) */}

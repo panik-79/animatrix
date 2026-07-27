@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/layout/theme-provider";
 import { ToastContainer } from "@/components/shared/toast-container";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { KonamiCodeListener } from "@/components/shared/konami-code";
+import { MatrixRainOverlay } from "@/components/shared/matrix-rain";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -31,6 +32,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <ToastContainer />
         <ConfirmDialog />
         <KonamiCodeListener />
+        <MatrixRainOverlay />
       </ThemeProvider>
     </QueryClientProvider>
   );

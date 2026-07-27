@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import confetti from "canvas-confetti";
 import { toast } from "@/store/toast-store";
 
 const KONAMI_KEYS = [
@@ -27,6 +28,25 @@ const IGNORE_KEYS = new Set([
 
 export function KonamiCodeListener() {
   const inputBuffer = useRef<string[]>([]);
+
+  const triggerConfettiExplosion = () => {
+    const count = 200;
+    const defaults = { origin: { y: 0.7 } };
+
+    function fire(particleRatio: number, opts: confetti.Options) {
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * particleRatio),
+      });
+    }
+
+    fire(0.25, { spread: 26, startVelocity: 55 });
+    fire(0.2, { spread: 60 });
+    fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+    fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+    fire(0.1, { spread: 120, startVelocity: 45 });
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -57,6 +77,7 @@ export function KonamiCodeListener() {
         inputBuffer.current.every((key, idx) => key === KONAMI_KEYS[idx])
       ) {
         inputBuffer.current = [];
+        triggerConfettiExplosion();
         toast.success(
           "🎮 KONAMI CODE UNLOCKED!",
           "GOD MODE ACTIVATED 🚀 You are a true legend of gaming culture!"
