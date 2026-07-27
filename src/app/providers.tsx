@@ -10,6 +10,7 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { KonamiCodeListener } from "@/components/shared/konami-code";
 import { MatrixRainOverlay } from "@/components/shared/matrix-rain";
 import { SuperSaiyanListener } from "@/components/shared/super-saiyan";
+import { NarutoEasterEgg } from "@/components/shared/naruto-easter-egg";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -35,6 +36,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <KonamiCodeListener />
         <MatrixRainOverlay />
         <SuperSaiyanListener />
+        <NarutoEasterEgg />
       </ThemeProvider>
     </QueryClientProvider>
   );
