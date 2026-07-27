@@ -72,8 +72,7 @@ export function Footer() {
           <p className="text-xs text-muted-foreground flex items-center gap-1 font-medium">
             <span>Made with</span>
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
-            <span>by</span>
-            <span className="font-bold text-foreground">Pujan</span>
+            <span>by Pujan</span>
           </p>
         </motion.div>
       )}
