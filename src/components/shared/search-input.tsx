@@ -28,7 +28,7 @@ export function SearchInput({
   };
 
   const sizeStyles = {
-    sm: "pl-9 pr-8 py-1.5 text-xs rounded-xl",
+    sm: "pl-9 pr-8 py-2 text-xs rounded-xl",
     md: "pl-10 pr-9 py-2.5 text-sm rounded-2xl",
     lg: "pl-11 pr-10 py-3 text-base rounded-2xl",
   };
@@ -41,14 +41,6 @@ export function SearchInput({
 
   return (
     <div className={cn("relative group w-full", containerClassName)}>
-      {/* Search Icon with hover/focus state transitions */}
-      <Search
-        className={cn(
-          "absolute top-1/2 -translate-y-1/2 text-muted-foreground group-hover:text-foreground group-focus-within:text-primary transition-colors pointer-events-none shrink-0",
-          iconSizes[variantSize]
-        )}
-      />
-
       {/* Input Field */}
       <input
         type="text"
@@ -56,22 +48,34 @@ export function SearchInput({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className={cn(
-          "w-full bg-card/60 dark:bg-slate-950/80 border border-white/20 dark:border-white/25 border-slate-400",
-          "hover:border-white/40 hover:bg-slate-900/90 dark:hover:bg-slate-950/90 text-foreground placeholder:text-muted-foreground",
-          "focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 backdrop-blur-md",
-          "transition-all duration-200 shadow-md",
+          "w-full bg-slate-950/80 border border-white/20 dark:border-white/25 border-slate-400",
+          "hover:border-primary/60 hover:bg-slate-950/90 hover:shadow-lg hover:shadow-primary/10",
+          "text-foreground placeholder:text-muted-foreground/70",
+          "focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 backdrop-blur-md",
+          "transition-all duration-300 ease-out shadow-sm",
           sizeStyles[variantSize],
           className
         )}
         {...props}
       />
 
-      {/* Clear Button */}
+      {/* Left Search Icon with primary color hover animation */}
+      <Search
+        className={cn(
+          "absolute top-1/2 -translate-y-1/2 z-10 pointer-events-none shrink-0",
+          "text-muted-foreground/70 group-hover:text-primary group-hover:scale-110",
+          "group-focus-within:text-primary group-focus-within:scale-110",
+          "transition-all duration-300 ease-out",
+          iconSizes[variantSize]
+        )}
+      />
+
+      {/* Right Clear Button */}
       {value && (
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all cursor-pointer"
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-1 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200 cursor-pointer"
           title="Clear search"
           aria-label="Clear search"
         >
