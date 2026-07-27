@@ -48,14 +48,14 @@ export function Navbar() {
     >
       <div
         className={cn(
-          "mx-3 md:mx-6 rounded-2xl transition-all duration-300 grid grid-cols-3 items-center h-14 px-4 md:px-6",
+          "mx-3 md:mx-6 rounded-2xl transition-all duration-300 flex items-center justify-between h-14 px-4 md:px-6",
           scrolled
             ? "bg-background/85 dark:bg-slate-900/90 backdrop-blur-xl border border-border shadow-lg"
             : "bg-background/60 dark:bg-slate-900/60 backdrop-blur-md border border-border/50"
         )}
       >
-        {/* Left Column: Collapse Button + Active Page Title */}
-        <div className="flex items-center gap-3 justify-start overflow-hidden">
+        {/* Left Side: Collapse Button + Active Page Title */}
+        <div className="flex items-center gap-3 shrink-0 overflow-hidden">
           <button 
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className="p-1.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all cursor-pointer group shrink-0"
@@ -80,22 +80,19 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Center Column: Perfectly Centered Search Input Bar */}
-        <div className="flex justify-center items-center">
+        {/* Right Side: Search Input Bar (Shifted to right, just left of account icon) + User Profile Button */}
+        <div className="flex items-center gap-3 shrink-0 ml-auto">
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="flex items-center w-full max-w-xs sm:max-w-sm px-4 py-1.5 space-x-2.5 text-sm rounded-full dark:bg-white/[0.06] bg-slate-200/70 hover:bg-slate-300/80 dark:hover:bg-white/[0.12] text-foreground transition-all duration-200 border border-border/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
+            className="flex items-center w-44 sm:w-60 md:w-72 lg:w-80 px-3.5 py-1.5 space-x-2 text-sm rounded-full dark:bg-white/[0.06] bg-slate-200/70 hover:bg-slate-300/80 dark:hover:bg-white/[0.12] text-foreground transition-all duration-200 border border-border/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
           >
             <Search className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
-            <span className="font-medium text-xs sm:text-sm text-muted-foreground truncate">Search anime, studios...</span>
-            <kbd className="hidden sm:inline-block px-2 py-0.5 ml-auto text-[10px] font-mono rounded-md dark:bg-white/10 bg-slate-300/80 text-muted-foreground group-hover:text-primary group-hover:bg-primary/15 group-hover:border-primary/40 border border-border shadow-sm transition-all duration-200 shrink-0">
+            <span className="font-medium text-xs text-muted-foreground truncate">Search anime, studios...</span>
+            <kbd className="hidden sm:inline-block px-1.5 py-0.5 ml-auto text-[10px] font-mono rounded-md dark:bg-white/10 bg-slate-300/80 text-muted-foreground group-hover:text-primary group-hover:bg-primary/15 group-hover:border-primary/40 border border-border shadow-sm transition-all duration-200 shrink-0">
               ⌘K
             </kbd>
           </button>
-        </div>
 
-        {/* Right Column: User Profile Button */}
-        <div className="flex items-center justify-end">
           <AuthUserButton />
         </div>
       </div>
@@ -144,14 +141,14 @@ function AuthUserButton() {
   };
 
   if (loading) {
-    return <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse" />;
+    return <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse shrink-0" />;
   }
 
   if (!user) {
     return (
       <Link
         href="/login"
-        className="px-4 py-1.5 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-sm transition-all"
+        className="px-4 py-1.5 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-sm transition-all shrink-0"
       >
         Sign In
       </Link>
@@ -159,7 +156,7 @@ function AuthUserButton() {
   }
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative shrink-0" ref={dropdownRef}>
       {/* Profile Avatar Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
