@@ -98,7 +98,7 @@ export default function UserLibraryPage() {
         </div>
 
         {/* Row 2: Search Input + Library Stats Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1 border-t border-slate-200 dark:border-white/10">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
           <div className="w-full sm:w-80">
             <SearchInput
               placeholder="Search in your library..."
