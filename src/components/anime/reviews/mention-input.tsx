@@ -129,8 +129,8 @@ export function MentionInput({
         disabled={disabled}
         rows={minRows}
         className={cn(
-          "w-full resize-none rounded-xl bg-slate-950/80 border border-white/20 dark:border-white/25 border-slate-600 hover:border-white/40 px-4 py-3 text-sm text-zinc-100",
-          "placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/80",
+          "w-full resize-none rounded-xl bg-slate-100/90 dark:bg-slate-950/80 border border-slate-300 dark:border-white/20 hover:border-primary/50 px-4 py-3 text-sm text-foreground",
+          "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/80",
           "transition-colors disabled:opacity-50 disabled:cursor-not-allowed leading-relaxed",
           className
         )}
@@ -139,7 +139,7 @@ export function MentionInput({
 
       {/* @mention autocomplete dropdown */}
       {hasMentionDropdown && (
-        <div className="absolute z-50 left-0 mt-1 w-64 rounded-2xl border border-white/[0.12] bg-zinc-900/95 backdrop-blur-xl shadow-2xl overflow-hidden p-1">
+        <div className="absolute z-50 left-0 mt-1 w-64 rounded-2xl border border-border bg-popover/95 backdrop-blur-xl shadow-2xl overflow-hidden p-1">
           {mentionUsers.map((user, idx) => (
             <button
               key={user.id}
@@ -152,7 +152,7 @@ export function MentionInput({
                 "flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-left transition-colors text-xs font-medium cursor-pointer",
                 idx === activeIndex
                   ? "bg-primary text-primary-foreground font-semibold"
-                  : "hover:bg-white/[0.08] text-zinc-300"
+                  : "hover:bg-muted text-popover-foreground"
               )}
             >
               {user.image ? (
@@ -160,10 +160,10 @@ export function MentionInput({
                   src={user.image}
                   alt={user.name}
                   referrerPolicy="no-referrer"
-                  className="w-6 h-6 rounded-full object-cover shrink-0 border border-white/10"
+                  className="w-6 h-6 rounded-full object-cover shrink-0 border border-border"
                 />
               ) : (
-                <div className="w-6 h-6 rounded-full bg-zinc-700 shrink-0 flex items-center justify-center text-[10px] font-bold text-zinc-200">
+                <div className="w-6 h-6 rounded-full bg-muted shrink-0 flex items-center justify-center text-[10px] font-bold text-muted-foreground border border-border">
                   {user.name[0]?.toUpperCase()}
                 </div>
               )}

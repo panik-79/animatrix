@@ -33,10 +33,10 @@ function ScoreBadge({ score }: { score: number | null }) {
       className={cn(
         "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border shadow-sm shrink-0",
         isHigh
-          ? "bg-amber-400/10 border-amber-400/30 text-amber-400"
+          ? "bg-amber-400/10 border-amber-400/30 text-amber-500 dark:text-amber-400"
           : isMid
-          ? "bg-indigo-400/10 border-indigo-400/30 text-indigo-400"
-          : "bg-rose-500/10 border-rose-500/30 text-rose-400"
+          ? "bg-indigo-400/10 border-indigo-400/30 text-indigo-500 dark:text-indigo-400"
+          : "bg-rose-500/10 border-rose-500/30 text-rose-500 dark:text-rose-400"
       )}
     >
       <Star className={cn("w-3.5 h-3.5 fill-current")} />
@@ -83,7 +83,7 @@ function BodyWithMentions({ body }: { body: string }) {
 function Avatar({ name, image }: { name: string; image: string | null }) {
   if (image) {
     return (
-      <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10 shadow-md">
+      <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-border shadow-md">
         <img
           src={image}
           alt={name}
@@ -140,22 +140,22 @@ export function ReviewCard({ review, animeId, currentUserId }: ReviewCardProps) 
   }
 
   return (
-    <div className="group rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-white/[0.01] backdrop-blur-md hover:border-white/[0.15] hover:bg-white/[0.04] transition-all duration-300 shadow-xl overflow-hidden">
+    <div className="group rounded-3xl border border-border bg-card backdrop-blur-md hover:border-primary/40 transition-all duration-300 shadow-md overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4 px-6 pt-6 pb-4 border-b border-white/[0.04]">
+      <div className="flex items-center justify-between gap-4 px-6 pt-6 pb-4 border-b border-border">
         <div className="flex items-center gap-3.5 min-w-0">
           <Avatar name={review.author.name} image={review.author.image} />
           <div className="space-y-0.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-bold text-white truncate">{review.author.name}</span>
+              <span className="text-sm font-bold text-foreground truncate">{review.author.name}</span>
               {review.isOwnReview && (
                 <span className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-semibold uppercase tracking-wider">
                   You
                 </span>
               )}
-              <span className="text-[11px] text-zinc-500">{timeAgo(review.createdAt)}</span>
+              <span className="text-[11px] text-muted-foreground">{timeAgo(review.createdAt)}</span>
               {review.createdAt !== review.updatedAt && (
-                <span className="text-[10px] text-zinc-600 italic">edited</span>
+                <span className="text-[10px] text-muted-foreground/60 italic">edited</span>
               )}
             </div>
           </div>
@@ -171,7 +171,7 @@ export function ReviewCard({ review, animeId, currentUserId }: ReviewCardProps) 
               <button
                 type="button"
                 onClick={() => setEditing(true)}
-                className="p-2 rounded-xl text-zinc-500 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
                 title="Edit review"
               >
                 <Pencil className="w-3.5 h-3.5" />
@@ -180,7 +180,7 @@ export function ReviewCard({ review, animeId, currentUserId }: ReviewCardProps) 
                 type="button"
                 onClick={handleDelete}
                 disabled={deleteMutation.isPending}
-                className="p-2 rounded-xl text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer"
                 title="Delete review"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -192,7 +192,7 @@ export function ReviewCard({ review, animeId, currentUserId }: ReviewCardProps) 
 
       {/* Body */}
       <div className="px-6 py-4">
-        <p className="text-sm text-zinc-200 leading-relaxed font-normal whitespace-pre-wrap">
+        <p className="text-sm text-foreground/90 leading-relaxed font-normal whitespace-pre-wrap">
           <BodyWithMentions body={displayBody} />
         </p>
         {isLong && (
@@ -207,7 +207,7 @@ export function ReviewCard({ review, animeId, currentUserId }: ReviewCardProps) 
       </div>
 
       {/* Footer / Interaction Bar */}
-      <div className="flex items-center gap-4 px-6 py-3.5 border-t border-white/[0.04] bg-white/[0.01]">
+      <div className="flex items-center gap-4 px-6 py-3.5 border-t border-border bg-muted/20">
         {/* Like */}
         <button
           type="button"
@@ -216,13 +216,13 @@ export function ReviewCard({ review, animeId, currentUserId }: ReviewCardProps) 
           className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border",
             review.isLikedByMe
-              ? "bg-rose-500/10 border-rose-500/30 text-rose-400"
-              : "bg-white/[0.03] border-white/[0.06] text-zinc-400 hover:text-white hover:bg-white/[0.07] hover:border-white/[0.1]",
+              ? "bg-rose-500/10 border-rose-500/30 text-rose-500 dark:text-rose-400"
+              : "bg-background border-border text-muted-foreground hover:text-foreground hover:bg-accent",
             !currentUserId && "cursor-default opacity-60"
           )}
         >
           <Heart
-            className={cn("w-3.5 h-3.5 transition-all", review.isLikedByMe && "fill-rose-400")}
+            className={cn("w-3.5 h-3.5 transition-all", review.isLikedByMe && "fill-rose-500 dark:fill-rose-400")}
           />
           <span className="tabular-nums">{review.likesCount}</span>
         </button>
@@ -235,7 +235,7 @@ export function ReviewCard({ review, animeId, currentUserId }: ReviewCardProps) 
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border",
             showComments
               ? "bg-primary/10 border-primary/30 text-primary"
-              : "bg-white/[0.03] border-white/[0.06] text-zinc-400 hover:text-white hover:bg-white/[0.07] hover:border-white/[0.1]"
+              : "bg-background border-border text-muted-foreground hover:text-foreground hover:bg-accent"
           )}
         >
           <MessageCircle className="w-3.5 h-3.5" />
@@ -247,7 +247,7 @@ export function ReviewCard({ review, animeId, currentUserId }: ReviewCardProps) 
 
       {/* Threaded Comments */}
       {showComments && (
-        <div className="px-6 pb-6 pt-2 border-t border-white/[0.04]">
+        <div className="px-6 pb-6 pt-2 border-t border-border">
           <CommentThread
             reviewId={review.id}
             animeId={animeId}

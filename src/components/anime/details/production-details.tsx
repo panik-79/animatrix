@@ -72,7 +72,7 @@ export function ProductionDetails({ anime }: ProductionDetailsProps) {
   ];
 
   return (
-    <div className="space-y-3.5 pt-4 border-t border-border">
+    <div className="space-y-3.5">
       <h3 className="text-sm font-semibold text-foreground">Production</h3>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-xs">

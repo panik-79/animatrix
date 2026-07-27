@@ -39,15 +39,15 @@ export function ReviewComposer({ animeId, existingReview, onCancel }: ReviewComp
   const displayScore = hoverScore ?? score;
 
   return (
-    <div className="rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl p-6 space-y-5 shadow-2xl">
-      <p className="text-sm font-bold text-white tracking-tight">
+    <div className="rounded-3xl border border-border bg-card backdrop-blur-xl p-6 space-y-5 shadow-lg">
+      <p className="text-sm font-bold text-foreground tracking-tight">
         {isEditing ? "Edit Your Review" : "Write a Community Review"}
       </p>
 
       {/* Star Rating Picker */}
       <div className="space-y-1.5">
-        <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">
-          Your Score {score !== null && <span className="text-white ml-1">{score}/10</span>}
+        <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
+          Your Score {score !== null && <span className="text-foreground ml-1 font-bold">{score}/10</span>}
         </p>
         <div className="flex items-center gap-1">
           {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
@@ -65,7 +65,7 @@ export function ReviewComposer({ animeId, existingReview, onCancel }: ReviewComp
                   "w-5 h-5 transition-colors",
                   (displayScore ?? 0) >= n
                     ? "fill-amber-400 text-amber-400"
-                    : "fill-transparent text-zinc-700 group-hover:text-amber-400/50"
+                    : "fill-transparent text-muted-foreground/30 group-hover:text-amber-400/50"
                 )}
               />
             </button>
@@ -74,7 +74,7 @@ export function ReviewComposer({ animeId, existingReview, onCancel }: ReviewComp
             <button
               type="button"
               onClick={() => setScore(null)}
-              className="ml-2 text-[11px] text-zinc-600 hover:text-zinc-400 transition-colors cursor-pointer"
+              className="ml-2 text-[11px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
               clear
             </button>
@@ -95,10 +95,10 @@ export function ReviewComposer({ animeId, existingReview, onCancel }: ReviewComp
 
       {/* Actions */}
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[11px] text-zinc-600">
-          <kbd className="px-1.5 py-0.5 rounded bg-white/[0.05] text-zinc-500 text-[10px] font-mono">Ctrl</kbd>
+        <p className="text-[11px] text-muted-foreground">
+          <kbd className="px-1.5 py-0.5 rounded bg-muted text-muted-foreground text-[10px] font-mono border border-border">Ctrl</kbd>
           {" + "}
-          <kbd className="px-1.5 py-0.5 rounded bg-white/[0.05] text-zinc-500 text-[10px] font-mono">Enter</kbd>
+          <kbd className="px-1.5 py-0.5 rounded bg-muted text-muted-foreground text-[10px] font-mono border border-border">Enter</kbd>
           {" to submit"}
         </p>
         <div className="flex items-center gap-2">
@@ -106,7 +106,7 @@ export function ReviewComposer({ animeId, existingReview, onCancel }: ReviewComp
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/[0.05] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -119,7 +119,7 @@ export function ReviewComposer({ animeId, existingReview, onCancel }: ReviewComp
               "px-5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer",
               body.trim() && !submitMutation.isPending
                 ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/20"
-                : "bg-white/[0.05] text-zinc-600 cursor-not-allowed"
+                : "bg-muted text-muted-foreground cursor-not-allowed"
             )}
           >
             {submitMutation.isPending ? "Posting…" : isEditing ? "Update Review" : "Post Review"}

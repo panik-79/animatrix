@@ -67,10 +67,10 @@ function BodyWithMentions({ body }: { body: string }) {
 function Avatar({ name, image, size = "sm" }: { name: string; image: string | null; size?: "sm" | "xs" }) {
   const dim = size === "sm" ? "w-8 h-8 text-[12px]" : "w-6 h-6 text-[10px]";
   if (image) {
-    return <img src={image} alt={name} className={cn(dim, "rounded-full object-cover shrink-0 border border-white/[0.08]")} />;
+    return <img src={image} alt={name} className={cn(dim, "rounded-full object-cover shrink-0 border border-border")} />;
   }
   return (
-    <div className={cn(dim, "rounded-full bg-zinc-800 border border-white/[0.06] flex items-center justify-center font-bold text-zinc-300 shrink-0")}>
+    <div className={cn(dim, "rounded-full bg-muted border border-border flex items-center justify-center font-bold text-muted-foreground shrink-0")}>
       {name[0]?.toUpperCase()}
     </div>
   );
@@ -124,20 +124,20 @@ function CommentItem({ comment, reviewId, animeId, currentUserId, depth = 0 }: C
   const isMaxDepth = depth >= maxDepth;
 
   return (
-    <div className={cn("group", depth > 0 && "ml-8 pl-4 border-l border-white/[0.06]")}>
+    <div className={cn("group", depth > 0 && "ml-8 pl-4 border-l border-border")}>
       <div className="flex items-start gap-2.5 py-2.5">
         <Avatar name={comment.author.name} image={comment.author.image} size={depth > 0 ? "xs" : "sm"} />
         <div className="flex-1 min-w-0 space-y-1">
           {/* Header */}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[13px] font-semibold text-zinc-200">
+            <span className="text-[13px] font-semibold text-foreground">
               {comment.author.name}
             </span>
-            <span className="text-[11px] text-zinc-600">{timeAgo(comment.createdAt)}</span>
+            <span className="text-[11px] text-muted-foreground">{timeAgo(comment.createdAt)}</span>
           </div>
 
           {/* Body */}
-          <p className="text-[13px] text-zinc-400 leading-relaxed">
+          <p className="text-[13px] text-muted-foreground leading-relaxed">
             <BodyWithMentions body={comment.body} />
           </p>
 
@@ -147,7 +147,7 @@ function CommentItem({ comment, reviewId, animeId, currentUserId, depth = 0 }: C
               <button
                 type="button"
                 onClick={() => setReplyOpen((v) => !v)}
-                className="flex items-center gap-1 text-[11px] text-zinc-600 hover:text-zinc-300 transition-colors cursor-pointer"
+                className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 <Reply className="w-3 h-3" />
                 Reply
@@ -157,7 +157,7 @@ function CommentItem({ comment, reviewId, animeId, currentUserId, depth = 0 }: C
               <button
                 type="button"
                 onClick={() => setShowReplies((v) => !v)}
-                className="flex items-center gap-1 text-[11px] text-zinc-600 hover:text-zinc-300 transition-colors cursor-pointer"
+                className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 {showReplies ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 {comment.replies.length} {comment.replies.length === 1 ? "reply" : "replies"}
@@ -168,7 +168,7 @@ function CommentItem({ comment, reviewId, animeId, currentUserId, depth = 0 }: C
                 type="button"
                 onClick={handleDelete}
                 disabled={deleteMutation.isPending}
-                className="flex items-center gap-1 text-[11px] text-zinc-700 hover:text-rose-400 transition-colors cursor-pointer ml-auto opacity-0 group-hover:opacity-100"
+                className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-rose-500 transition-colors cursor-pointer ml-auto opacity-0 group-hover:opacity-100"
               >
                 <Trash2 className="w-3 h-3" />
               </button>
@@ -181,7 +181,7 @@ function CommentItem({ comment, reviewId, animeId, currentUserId, depth = 0 }: C
       {replyOpen && currentUserId && (
         <div className="ml-10 mb-2 space-y-2">
           <div className="flex items-start gap-2">
-            <CornerDownRight className="w-3.5 h-3.5 text-zinc-600 mt-2.5 shrink-0" />
+            <CornerDownRight className="w-3.5 h-3.5 text-muted-foreground mt-2.5 shrink-0" />
             <div className="flex-1 space-y-2">
               <MentionInput
                 value={replyBody}
@@ -196,7 +196,7 @@ function CommentItem({ comment, reviewId, animeId, currentUserId, depth = 0 }: C
                 <button
                   type="button"
                   onClick={() => { setReplyOpen(false); setReplyBody(""); }}
-                  className="px-3 py-1.5 text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -208,7 +208,7 @@ function CommentItem({ comment, reviewId, animeId, currentUserId, depth = 0 }: C
                     "px-4 py-1.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer",
                     replyBody.trim() && !postMutation.isPending
                       ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "bg-white/[0.05] text-zinc-600 cursor-not-allowed"
+                      : "bg-muted text-muted-foreground cursor-not-allowed"
                   )}
                 >
                   {postMutation.isPending ? "Posting…" : "Reply"}
@@ -262,10 +262,10 @@ export function CommentThread({ reviewId, animeId, currentUserId }: CommentThrea
   };
 
   return (
-    <div className="border-t border-white/[0.05] pt-4 space-y-1">
+    <div className="border-t border-border pt-4 space-y-1">
       {isLoading && (
         <div className="py-4 flex justify-center">
-          <div className="w-5 h-5 border-2 border-white/10 border-t-primary/60 rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
         </div>
       )}
 
@@ -285,7 +285,7 @@ export function CommentThread({ reviewId, animeId, currentUserId }: CommentThrea
       )}
 
       {!isLoading && comments?.length === 0 && (
-        <p className="text-[12px] text-zinc-700 py-3 text-center">
+        <p className="text-[12px] text-muted-foreground py-3 text-center">
           {currentUserId ? "Be the first to comment." : "No comments yet."}
         </p>
       )}
@@ -293,7 +293,7 @@ export function CommentThread({ reviewId, animeId, currentUserId }: CommentThrea
       {/* New comment composer */}
       {currentUserId && (
         <div className="flex items-start gap-2.5 pt-2">
-          <div className="w-8 h-8 rounded-full bg-zinc-800 border border-white/[0.06] flex items-center justify-center shrink-0" />
+          <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center shrink-0" />
           <div className="flex-1 space-y-2">
             <MentionInput
               value={commentBody}
@@ -309,7 +309,7 @@ export function CommentThread({ reviewId, animeId, currentUserId }: CommentThrea
                 <button
                   type="button"
                   onClick={() => setCommentBody("")}
-                  className="px-3 py-1.5 text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>

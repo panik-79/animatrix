@@ -40,20 +40,20 @@ function ReviewStats({ reviews }: { reviews: Review[] }) {
   const totalScored = scored.length || 1;
 
   return (
-    <div className="rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl p-6 sm:p-7 shadow-2xl">
+    <div className="rounded-3xl border border-border bg-card backdrop-blur-xl p-6 sm:p-7 shadow-lg">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
         
         {/* Left Column: Big Bold Score + Stars */}
-        <div className="md:col-span-4 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-white/[0.08] pb-6 md:pb-0 md:pr-6 space-y-2">
-          <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">
+        <div className="md:col-span-4 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-border pb-6 md:pb-0 md:pr-6 space-y-2">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
             Community Rating
           </span>
           
           <div className="flex items-baseline gap-2">
-            <span className="text-5xl font-black text-white tracking-tight tabular-nums font-heading">
+            <span className="text-5xl font-black text-foreground tracking-tight tabular-nums font-heading">
               {avgScore ?? "N/A"}
             </span>
-            <span className="text-sm font-semibold text-zinc-500">/ 10</span>
+            <span className="text-sm font-semibold text-muted-foreground">/ 10</span>
           </div>
 
           {avgScore && (
@@ -65,15 +65,15 @@ function ReviewStats({ reviews }: { reviews: Review[] }) {
                     "w-4 h-4",
                     i < Math.round(Number(avgScore) / 2)
                       ? "fill-amber-400 text-amber-400"
-                      : "fill-transparent text-zinc-700"
+                      : "fill-transparent text-muted-foreground/30"
                   )}
                 />
               ))}
             </div>
           )}
 
-          <p className="text-xs text-zinc-400 font-medium">
-            Based on <span className="text-white font-semibold">{reviews.length}</span> {reviews.length === 1 ? "review" : "reviews"} ({scored.length} rated)
+          <p className="text-xs text-muted-foreground font-medium">
+            Based on <span className="text-foreground font-semibold">{reviews.length}</span> {reviews.length === 1 ? "review" : "reviews"} ({scored.length} rated)
           </p>
         </div>
 
@@ -84,12 +84,12 @@ function ReviewStats({ reviews }: { reviews: Review[] }) {
             return (
               <div key={bucket.label} className="flex items-center gap-3 group text-xs">
                 {/* Score Range Label */}
-                <span className="w-12 text-[11px] font-bold text-zinc-400 group-hover:text-white transition-colors tabular-nums">
+                <span className="w-12 text-[11px] font-bold text-muted-foreground group-hover:text-foreground transition-colors tabular-nums">
                   {bucket.label}★
                 </span>
 
                 {/* Progress Bar Track */}
-                <div className="flex-1 h-2.5 rounded-full bg-white/[0.06] overflow-hidden p-0.5 border border-white/[0.04]">
+                <div className="flex-1 h-2.5 rounded-full bg-muted overflow-hidden p-0.5 border border-border">
                   <div
                     className={cn("h-full rounded-full transition-all duration-700 bg-gradient-to-r", bucket.color)}
                     style={{ width: `${bucket.count > 0 ? Math.max(pct, 4) : 0}%` }}
@@ -97,9 +97,9 @@ function ReviewStats({ reviews }: { reviews: Review[] }) {
                 </div>
 
                 {/* Percentage & Count */}
-                <div className="w-16 text-right flex items-center justify-end gap-1.5 text-[11px] text-zinc-400 group-hover:text-zinc-200 transition-colors tabular-nums font-mono">
+                <div className="w-16 text-right flex items-center justify-end gap-1.5 text-[11px] text-muted-foreground group-hover:text-foreground transition-colors tabular-nums font-mono">
                   <span>{bucket.count}</span>
-                  <span className="text-[10px] text-zinc-500">({pct}%)</span>
+                  <span className="text-[10px] opacity-70">({pct}%)</span>
                 </div>
               </div>
             );
@@ -128,16 +128,16 @@ export function ReviewsSection({ animeId }: ReviewsSectionProps) {
   return (
     <section className="space-y-6 pt-4">
       {/* Section Header */}
-      <div className="flex items-center justify-between gap-4 border-b border-white/[0.06] pb-4">
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
         <div className="flex items-center gap-2.5">
           <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
             <MessageSquare className="w-4 h-4" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white tracking-tight font-heading flex items-center gap-2">
+            <h2 className="text-lg font-bold text-foreground tracking-tight font-heading flex items-center gap-2">
               <span>Reviews & Ratings</span>
               {reviews && reviews.length > 0 && (
-                <span className="px-2 py-0.5 rounded-full bg-white/[0.08] text-xs font-semibold text-zinc-400">
+                <span className="px-2 py-0.5 rounded-full bg-muted text-xs font-semibold text-muted-foreground">
                   {reviews.length}
                 </span>
               )}
@@ -176,8 +176,8 @@ export function ReviewsSection({ animeId }: ReviewsSectionProps) {
 
       {/* Error State */}
       {isError && (
-        <div className="flex items-center gap-3 text-sm text-zinc-400 py-6 px-6 rounded-2xl bg-rose-500/10 border border-rose-500/20">
-          <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+        <div className="flex items-center gap-3 text-sm text-muted-foreground py-6 px-6 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+          <AlertCircle className="w-5 h-5 text-rose-500 shrink-0" />
           <span>Failed to load community reviews for this title.</span>
         </div>
       )}
@@ -192,7 +192,7 @@ export function ReviewsSection({ animeId }: ReviewsSectionProps) {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-primary" />
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Your Review</h3>
+            <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Your Review</h3>
           </div>
           <ReviewCard review={myReview} animeId={animeId} currentUserId={currentUser?.id} />
         </div>
@@ -203,9 +203,9 @@ export function ReviewsSection({ animeId }: ReviewsSectionProps) {
         <div className="space-y-4">
           {myReview && (
             <div className="flex items-center gap-3 pt-2">
-              <div className="flex-1 h-px bg-white/[0.06]" />
-              <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest shrink-0">Community Reviews</span>
-              <div className="flex-1 h-px bg-white/[0.06]" />
+              <div className="flex-1 h-px bg-border" />
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest shrink-0">Community Reviews</span>
+              <div className="flex-1 h-px bg-border" />
             </div>
           )}
           {otherReviews.map((review) => (
@@ -221,13 +221,13 @@ export function ReviewsSection({ animeId }: ReviewsSectionProps) {
 
       {/* Empty State */}
       {!isLoading && !isError && reviews?.length === 0 && (
-        <div className="flex flex-col items-center gap-3 py-14 px-6 text-center rounded-3xl border border-white/[0.06] bg-gradient-to-b from-white/[0.02] to-transparent">
-          <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-zinc-500">
+        <div className="flex flex-col items-center gap-3 py-14 px-6 text-center rounded-3xl border border-border bg-card">
+          <div className="w-12 h-12 rounded-2xl bg-muted border border-border flex items-center justify-center text-muted-foreground">
             <TrendingUp className="w-6 h-6 stroke-[1.5]" />
           </div>
           <div className="space-y-1">
-            <h3 className="text-sm font-bold text-white">No Reviews Yet</h3>
-            <p className="text-xs text-zinc-500 max-w-sm">
+            <h3 className="text-sm font-bold text-foreground">No Reviews Yet</h3>
+            <p className="text-xs text-muted-foreground max-w-sm">
               {currentUser
                 ? "Be the first to rate and review this anime for the community."
                 : "Sign in to share your thoughts and score."}
@@ -247,7 +247,7 @@ export function ReviewsSection({ animeId }: ReviewsSectionProps) {
 
       {/* Sign-in prompt for guest users */}
       {!currentUser && !isLoading && reviews && reviews.length > 0 && (
-        <p className="text-center text-xs text-zinc-500 py-3">
+        <p className="text-center text-xs text-muted-foreground py-3">
           <a href="/login" className="text-primary font-semibold hover:underline">Sign in</a>
           {" "}to post your review and reply to comments.
         </p>
