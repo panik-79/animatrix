@@ -89,14 +89,13 @@ export function NarutoEasterEgg() {
             {/* Glowing Accent */}
             <div className="absolute -top-16 -left-16 w-36 h-36 bg-orange-500/20 rounded-full blur-2xl pointer-events-none" />
 
-            {/* Big Ramen Emoji & Steam */}
-            <div className="relative inline-block my-2">
-              <span className="text-8xl block animate-bounce drop-shadow-[0_0_30px_rgba(249,115,22,0.9)]">
-                🍜
-              </span>
-              <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-2xl animate-pulse">
-                ♨️
-              </span>
+            {/* Naruto Eating Ramen Image */}
+            <div className="relative overflow-hidden rounded-2xl border border-orange-500/40 shadow-2xl my-2">
+              <img
+                src="/naruto_ramen.png"
+                alt="Naruto Eating Ramen"
+                className="w-full h-auto object-cover max-h-56 rounded-2xl transition-transform hover:scale-105 duration-300"
+              />
             </div>
 
             {/* Title & Speech */}
