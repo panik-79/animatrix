@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, use } from "react";
-import { ArrowLeft, Trash2, Pin, Layers, Plus, Calendar, ExternalLink, X } from "lucide-react";
+import { ArrowLeft, Trash2, Pin, Layers, Plus, Calendar, ExternalLink, X, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -138,7 +138,7 @@ export default function CollectionDetailPage({
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 space-y-6">
+      <div className="w-full px-4 md:px-6 pb-20 space-y-6">
         <SkeletonLoader className="h-10 w-48 rounded-xl" />
         <SkeletonLoader className="h-40 w-full rounded-3xl" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -153,7 +153,7 @@ export default function CollectionDetailPage({
   if (!collection) return null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 space-y-8">
+    <div className="w-full px-4 md:px-6 pb-20 space-y-8">
       {/* Back Navigation */}
       <Link
         href={ROUTES.COLLECTIONS}
@@ -219,10 +219,19 @@ export default function CollectionDetailPage({
       </div>
 
       {/* Items Grid */}
-      <div>
-        <h2 className="text-lg font-bold font-heading text-foreground mb-4">
-          Anime in this Collection ({collection.items.length})
-        </h2>
+      <div className="mt-10">
+        <div className="flex items-center justify-between gap-4 mb-5">
+          <h2 className="text-lg font-bold font-heading text-foreground">
+            Anime in this Collection ({collection.items.length})
+          </h2>
+          <Link
+            href={ROUTES.DISCOVERY}
+            className="px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold flex items-center gap-2 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Anime</span>
+          </Link>
+        </div>
 
         {collection.items.length === 0 ? (
           <div className="text-center py-16 px-4 bg-card/40 border border-border rounded-3xl space-y-3">
