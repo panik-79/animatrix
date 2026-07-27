@@ -157,7 +157,7 @@ function DiscoveryContent() {
   const animeList = data?.pages.flatMap((page) => page.data) || [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-2 space-y-6">
+    <div className="w-full px-4 md:px-6 pb-20 pt-2 space-y-6">
       {/* ── TOP HEADER SEARCH BAR & FILTER CONTROLS ── */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:max-w-md group">
@@ -454,7 +454,7 @@ export default function DiscoveryPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-2 space-y-6">
+        <div className="w-full px-4 md:px-6 pb-20 pt-2 space-y-6">
           <div className="h-12 w-full md:max-w-md bg-card/25 border border-white/[0.05] rounded-2xl">
             <SkeletonLoader className="w-full h-full" />
           </div>

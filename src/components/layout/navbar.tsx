@@ -27,14 +27,14 @@ export function Navbar() {
   // Map pathname to active Page Title
   const getPageTitle = (path: string) => {
     if (path === "/") return "Home";
-    if (path.startsWith("/discovery")) return "Discover";
+    if (path === "/anime" || path.startsWith("/discovery")) return "Discover";
+    if (path.startsWith("/anime/")) return "Anime Details";
     if (path.startsWith("/library")) return "Library";
     if (path.startsWith("/collections")) return "Collections";
     if (path.startsWith("/stats")) return "Statistics";
     if (path.startsWith("/settings")) return "Settings";
     if (path.startsWith("/account")) return "My Account";
-    if (path.startsWith("/anime/")) return "Anime Details";
-    return "";
+    return "Explore";
   };
 
   const pageTitle = getPageTitle(pathname);
