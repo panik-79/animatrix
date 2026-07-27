@@ -91,7 +91,7 @@ export function Sidebar() {
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto hide-scrollbar py-4 flex flex-col gap-6 px-3">
+      <div className={cn("flex-1 overflow-y-auto hide-scrollbar py-4 flex flex-col px-3", sidebarCollapsed ? "gap-1.5" : "gap-6")}>
         <div>
           {!sidebarCollapsed && (
             <h4 className="px-3 text-[11px] font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">
@@ -110,7 +110,7 @@ export function Sidebar() {
           {renderLinks(USER_NAV)}
         </div>
         
-        <div className="mt-auto pt-4 border-t border-white/[0.04]">
+        <div className={cn("mt-auto pt-3", !sidebarCollapsed && "border-t border-border/40")}>
           {renderLinks(EXTRA_NAV)}
         </div>
       </div>
