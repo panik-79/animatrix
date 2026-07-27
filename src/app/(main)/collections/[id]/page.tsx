@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { toast } from "@/store/toast-store";
+import { confirmDialog } from "@/store/confirm-store";
 
 interface CollectionItem {
   id: string;
@@ -64,7 +65,15 @@ export default function CollectionDetailPage({
   }, [id]);
 
   const handleRemoveItem = async (itemId: string, title: string) => {
-    if (!confirm(`Remove "${title}" from this collection?`)) return;
+    const confirmed = await confirmDialog({
+      title: "Remove Anime",
+      message: `Are you sure you want to remove "${title}" from this collection?`,
+      confirmText: "Remove",
+      cancelText: "Keep",
+      variant: "danger",
+    });
+
+    if (!confirmed) return;
 
     try {
       await fetch(`/api/collections/${id}/items?itemId=${itemId}`, {
@@ -107,7 +116,16 @@ export default function CollectionDetailPage({
 
   const handleDeleteCollection = async () => {
     if (!collection) return;
-    if (!confirm(`Delete "${collection.name}"? This action cannot be undone.`)) return;
+
+    const confirmed = await confirmDialog({
+      title: "Delete Collection",
+      message: `Are you sure you want to delete "${collection.name}"? This action cannot be undone.`,
+      confirmText: "Delete Collection",
+      cancelText: "Cancel",
+      variant: "danger",
+    });
+
+    if (!confirmed) return;
 
     try {
       await fetch(`/api/collections/${id}`, { method: "DELETE" });

@@ -8,6 +8,7 @@ import { ROUTES } from "@/lib/constants";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "@/components/shared/logo";
+import { confirmDialog } from "@/store/confirm-store";
 
 export function Navbar() {
   const { setCommandPaletteOpen, sidebarCollapsed, setSidebarCollapsed } = useAppStore();
@@ -106,6 +107,17 @@ function AuthUserButton() {
   }, []);
 
   const handleLogout = async () => {
+    setIsOpen(false);
+    const confirmed = await confirmDialog({
+      title: "Sign Out",
+      message: "Are you sure you want to sign out of your Animatrix account?",
+      confirmText: "Sign Out",
+      cancelText: "Stay Signed In",
+      variant: "danger",
+    });
+
+    if (!confirmed) return;
+
     await fetch("/api/auth/logout", { method: "POST" });
     window.location.reload();
   };

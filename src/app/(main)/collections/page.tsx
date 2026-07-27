@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { toast } from "@/store/toast-store";
+import { confirmDialog } from "@/store/confirm-store";
 
 interface CollectionItem {
   id: string;
@@ -140,7 +141,15 @@ export default function CollectionsPage() {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+    const confirmed = await confirmDialog({
+      title: "Delete Collection",
+      message: `Are you sure you want to delete "${name}"? This action cannot be undone.`,
+      confirmText: "Delete Collection",
+      cancelText: "Cancel",
+      variant: "danger",
+    });
+
+    if (!confirmed) return;
 
     try {
       await fetch(`/api/collections/${id}`, { method: "DELETE" });
