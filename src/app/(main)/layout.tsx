@@ -26,7 +26,7 @@ export default function MainLayout({
         )}
       >
         <Navbar />
-        <main className="flex-1 pt-16">
+        <main className="flex-1 pt-20 sm:pt-24">
           <PageTransition>
             {children}
           </PageTransition>

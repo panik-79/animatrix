@@ -49,9 +49,9 @@ export function HeroSection({
   const progressPercent = Math.min(100, Math.round((episodesWatched / totalEpisodes) * 100));
 
   return (
-    <div className="relative w-full border-b border-border pb-6 pt-2 -mt-6">
+    <div className="relative w-full border-b border-border pb-8 pt-4">
       
-      {/* ── CLEAN AMBIENT BACKDROP (Strictly constrained with zero color bleed) ── */}
+      {/* ── CLEAN AMBIENT BACKDROP ── */}
       <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden opacity-10">
         <img
           src={bannerSrc}
@@ -62,7 +62,7 @@ export function HeroSection({
       </div>
 
       {/* ── HERO CONTAINER ── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-2">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-start">
           
           {/* ── POSTER ON LEFT (3-4 Cols) ── */}
