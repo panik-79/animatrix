@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, ChevronLeft, ChevronRight, Play, Flame } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, Info, Flame } from "lucide-react";
 import { useTrendingAnime } from "@/hooks/use-anime";
 import { ROUTES } from "@/lib/constants";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
@@ -101,31 +101,20 @@ export function HomeHero() {
         )}
       </div>
 
-      {/* ── CONTENT OVERLAY (Vertically Centered & Lifted) ── */}
-      <div className="relative z-20 h-full flex items-center pt-16 sm:pt-20 pb-8 px-6 sm:px-10 md:px-14">
-        <div className="max-w-2xl space-y-4">
-
+      {/* ── CONTENT OVERLAY (Title & Expanded Synopsis) ── */}
+      <div className="relative z-20 h-full flex items-center pt-16 sm:pt-20 pb-20 px-6 sm:px-10 md:px-14">
+        <div className="max-w-2xl space-y-3">
           {/* Title */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.08] font-heading line-clamp-2 drop-shadow-lg">
             {title}
           </h1>
 
-          {/* Synopsis snippet */}
+          {/* Expanded Synopsis snippet */}
           {featured.synopsis && (
-            <p className="text-xs sm:text-sm text-slate-300/90 line-clamp-2 sm:line-clamp-3 leading-relaxed max-w-xl font-normal drop-shadow">
+            <p className="text-xs sm:text-sm text-slate-300/90 line-clamp-3 sm:line-clamp-4 leading-relaxed max-w-xl font-normal drop-shadow">
               {featured.synopsis.replace(/\[Written by MAL Rewrite\]/g, "")}
             </p>
           )}
-
-          {/* Action CTA Buttons */}
-          <div className="pt-3 flex items-center gap-3">
-            <Link href={ROUTES.ANIME_DETAIL(featured.id)}>
-              <button className="px-6 py-3 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-xl shadow-primary/30 transition-all hover:scale-[1.03] active:scale-[0.98] cursor-pointer">
-                <Play className="w-4 h-4 fill-primary-foreground" />
-                <span>Watch & Details</span>
-              </button>
-            </Link>
-          </div>
         </div>
 
         {/* Right Floating Poster Card (Desktop Only) */}
@@ -149,7 +138,19 @@ export function HomeHero() {
         </div>
       </div>
 
-      {/* ── ARROWS & PAGINATION INDICATORS ── */}
+      {/* ── BOTTOM LEFT: ATTRACTIVE PRIMARY-OUTLINED "KNOW MORE" BUTTON ── */}
+      <div className="absolute bottom-5 left-6 sm:left-10 z-30">
+        <Link href={ROUTES.ANIME_DETAIL(featured.id)}>
+          <button className="px-5 py-2.5 rounded-full border-2 border-primary bg-primary/10 hover:bg-primary/20 backdrop-blur-md text-primary font-bold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all cursor-pointer">
+            <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0">
+              <Info className="w-3.5 h-3.5 text-primary" />
+            </div>
+            <span>Know More</span>
+          </button>
+        </Link>
+      </div>
+
+      {/* ── BOTTOM RIGHT: ARROWS & PAGINATION INDICATORS ── */}
       <div className="absolute bottom-5 right-6 sm:right-10 z-30 flex items-center gap-4">
         {/* Arrow Buttons */}
         <div className="hidden sm:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
