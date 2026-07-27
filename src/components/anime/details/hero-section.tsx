@@ -17,8 +17,6 @@ import {
   Flame,
   Users,
   Building2,
-  Sparkles,
-  Award,
 } from "lucide-react";
 import Link from "next/link";
 import { Anime } from "@/core/models/anime";
@@ -46,6 +44,19 @@ const STATUS_OPTIONS = [
   { id: "Dropped", label: "Dropped" },
 ];
 
+const STATUS_LABEL_MAP: Record<string, string> = {
+  WATCHING: "Watching",
+  PLAN_TO_WATCH: "Plan to Watch",
+  COMPLETED: "Completed",
+  ON_HOLD: "On Hold",
+  DROPPED: "Dropped",
+  Watching: "Watching",
+  "Plan to Watch": "Plan to Watch",
+  Completed: "Completed",
+  "On Hold": "On Hold",
+  Dropped: "Dropped",
+};
+
 export function HeroSection({
   anime,
   onOpenTrailer,
@@ -68,8 +79,10 @@ export function HeroSection({
   const totalEpisodes = anime.episodes || 100;
   const progressPercent = Math.min(100, Math.round((episodesWatched / totalEpisodes) * 100));
 
+  const displayStatusLabel = status ? (STATUS_LABEL_MAP[status] ?? status) : null;
+
   return (
-    <div className="relative w-full min-h-[calc(100vh-5rem)] flex items-center justify-center border-b border-border py-12 md:py-16 overflow-hidden">
+    <div className="relative w-full min-h-[calc(100vh-5rem)] flex items-center justify-center border-b border-border py-12 md:py-16">
       
       {/* ── FULL WINDOW BACKDROP COVERAGE ── */}
       <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
@@ -269,7 +282,7 @@ export function HeroSection({
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-xs flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                 >
-                  <span>{status || "Add to Library"}</span>
+                  <span>{displayStatusLabel || "Add to Library"}</span>
                   <ChevronDown className="w-3.5 h-3.5 opacity-80" />
                 </button>
 
@@ -280,24 +293,27 @@ export function HeroSection({
                       initial={{ opacity: 0, y: 4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
-                      className="absolute left-0 mt-1.5 w-44 rounded-xl bg-popover border border-border shadow-2xl z-30 py-1 overflow-hidden"
+                      className="absolute left-0 mt-1.5 w-48 rounded-2xl bg-popover border border-border shadow-2xl z-50 py-1.5 overflow-hidden backdrop-blur-xl"
                     >
-                      {STATUS_OPTIONS.map((opt) => (
-                        <button
-                          key={opt.id}
-                          onClick={() => {
-                            onStatusChange(status === opt.id ? null : opt.id);
-                            setIsDropdownOpen(false);
-                          }}
-                          className={cn(
-                            "w-full px-3.5 py-2 text-left text-xs font-medium flex items-center justify-between hover:bg-accent transition-colors cursor-pointer",
-                            status === opt.id ? "text-primary bg-primary/10 font-semibold" : "text-popover-foreground"
-                          )}
-                        >
-                          <span>{opt.label}</span>
-                          {status === opt.id && <Check className="w-3.5 h-3.5 text-primary" />}
-                        </button>
-                      ))}
+                      {STATUS_OPTIONS.map((opt) => {
+                        const isSelected = displayStatusLabel === opt.label;
+                        return (
+                          <button
+                            key={opt.id}
+                            onClick={() => {
+                              onStatusChange(isSelected ? null : opt.id);
+                              setIsDropdownOpen(false);
+                            }}
+                            className={cn(
+                              "w-full px-4 py-2.5 text-left text-xs font-medium flex items-center justify-between hover:bg-accent transition-colors cursor-pointer",
+                              isSelected ? "text-primary bg-primary/10 font-bold" : "text-popover-foreground"
+                            )}
+                          >
+                            <span>{opt.label}</span>
+                            {isSelected && <Check className="w-4 h-4 text-primary" />}
+                          </button>
+                        );
+                      })}
                     </motion.div>
                   )}
                 </AnimatePresence>
