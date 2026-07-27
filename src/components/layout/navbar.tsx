@@ -160,17 +160,20 @@ function AuthUserButton() {
       {/* Profile Avatar Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-0.5 rounded-full hover:ring-2 hover:ring-primary/40 transition-all duration-200 cursor-pointer"
+        className="flex items-center gap-2 rounded-full hover:ring-2 hover:ring-primary/40 transition-all duration-200 cursor-pointer shrink-0"
         title="Account Menu"
       >
         {user.image ? (
-          <img
-            src={user.image}
-            alt={user.name}
-            className="w-8 h-8 rounded-full object-cover border border-border shadow-md"
-          />
+          <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-border shadow-md">
+            <img
+              src={user.image}
+              alt={user.name}
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+          </div>
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-rose-600 flex items-center justify-center text-white font-bold text-xs shadow-md">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-600 to-rose-600 flex items-center justify-center text-white font-bold text-xs shadow-md shrink-0">
             {user.name[0]?.toUpperCase() || "U"}
           </div>
         )}
