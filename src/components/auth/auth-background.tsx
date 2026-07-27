@@ -20,11 +20,11 @@ export function AuthBackground() {
         />
       </div>
 
-      {/* Dark Cinematic Atmosphere Overlay (Room remains clearly visible) */}
-      <div className="absolute inset-0 bg-[#060911]/45" />
+      {/* Dark Cinematic Atmosphere Overlay */}
+      <div className="absolute inset-0 bg-[#060911]/52" />
 
-      {/* Right-Side Dark Gradient (Ensures high contrast readability for authentication card & right-aligned content) */}
-      <div className="absolute inset-0 bg-gradient-to-l from-[#060911]/90 via-[#060911]/55 to-transparent" />
+      {/* Right-to-left gradient — deepened on the left for left-column text contrast */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#060911]/80 via-[#060911]/40 to-transparent" />
 
       {/* Soft Radial Vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_35%,_rgba(6,9,17,0.75)_100%)]" />
