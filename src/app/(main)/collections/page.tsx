@@ -169,7 +169,7 @@ export default function CollectionsPage() {
   );
 
   return (
-    <div className="w-full px-4 md:px-6 pb-20 pt-2 space-y-6">
+    <div className="w-full px-3 md:px-6 pb-20 pt-2 space-y-6">
       {/* ── TOP CONTROLS: SEARCH FILTER, VIEW TOGGLE & CREATE BUTTON ── */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         {/* Filter collections search bar (top left) */}

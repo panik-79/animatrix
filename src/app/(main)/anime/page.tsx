@@ -193,7 +193,7 @@ function DiscoveryContent() {
   const animeList = data?.pages.flatMap((page) => page.data) || [];
 
   return (
-    <div className="w-full px-4 md:px-6 pb-20 pt-2 space-y-6">
+    <div className="w-full px-3 md:px-6 pb-20 pt-2 space-y-6">
       {/* ── TOP HEADER SEARCH BAR & FILTER CONTROLS ── */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="w-full md:max-w-md">

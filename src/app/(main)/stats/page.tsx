@@ -472,7 +472,7 @@ export default function StatsPage() {
   const isEmpty = stats.totalEntries === 0;
 
   return (
-    <div className="w-full px-4 md:px-8 pb-24 pt-4 space-y-8">
+    <div className="w-full px-3 md:px-6 pb-24 pt-4 space-y-8">
 
       {/* ── PAGE HEADER ── */}
       <div className="space-y-1">
