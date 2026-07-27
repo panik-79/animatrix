@@ -34,8 +34,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const origin = request.nextUrl.origin;
-    const redirectUri = `${origin}/api/auth/google/callback`;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ? process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "") : request.nextUrl.origin;
+    const redirectUri = `${baseUrl}/api/auth/google/callback`;
 
     // 1. Exchange code for Google tokens
     const tokens = await exchangeCodeForTokens(code, redirectUri);
