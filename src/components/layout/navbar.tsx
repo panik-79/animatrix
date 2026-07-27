@@ -42,8 +42,8 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-3 md:top-4 left-0 right-0 z-40 transition-all duration-300",
-        sidebarCollapsed ? "md:pl-20" : "md:pl-64"
+        "fixed top-3 md:top-4 right-0 z-40 transition-all duration-300 left-0",
+        sidebarCollapsed ? "md:left-20" : "md:left-64"
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
