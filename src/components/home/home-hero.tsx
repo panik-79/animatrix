@@ -1,60 +1,47 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Play, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { Star, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useTrendingAnime } from "@/hooks/use-anime";
 import { ROUTES } from "@/lib/constants";
-import { SkeletonLoader } from "../shared/skeleton-loader";
+import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { cn } from "@/lib/utils";
 
-const SLIDE_COUNT = 5;
-const AUTO_PLAY_MS = 7000;
-
 export function HomeHero() {
-  const { data, isLoading } = useTrendingAnime();
+  const { data: trendingData, isLoading } = useTrendingAnime();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
-  const trendingItems = data?.data.slice(0, SLIDE_COUNT) || [];
+  // Take top 5 items for the carousel
+  const trendingItems = trendingData?.data.slice(0, 5) || [];
 
-  const resetTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (trendingItems.length <= 1) return;
-    timerRef.current = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % trendingItems.length);
-    }, AUTO_PLAY_MS);
-  }, [trendingItems.length]);
+  const goTo = useCallback(
+    (index: number) => {
+      if (!trendingItems.length) return;
+      setCurrentIndex((index + trendingItems.length) % trendingItems.length);
+    },
+    [trendingItems.length]
+  );
 
+  // Auto-advance carousel every 6s unless hovered
   useEffect(() => {
-    resetTimer();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [resetTimer]);
-
-  const goTo = useCallback((idx: number) => {
-    setCurrentIndex(idx);
-    resetTimer();
-  }, [resetTimer]);
-
-  const goNext = useCallback(() => {
-    if (trendingItems.length === 0) return;
-    goTo((currentIndex + 1) % trendingItems.length);
-  }, [currentIndex, trendingItems.length, goTo]);
-
-  const goPrev = useCallback(() => {
-    if (trendingItems.length === 0) return;
-    goTo((currentIndex - 1 + trendingItems.length) % trendingItems.length);
-  }, [currentIndex, trendingItems.length, goTo]);
+    if (isHovered || !trendingItems.length) return;
+    const timer = setInterval(() => {
+      goTo(currentIndex + 1);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [currentIndex, trendingItems.length, goTo, isHovered]);
 
   const featured = trendingItems[currentIndex];
 
   if (isLoading || !trendingItems.length || !featured) {
     return (
-      <div className="relative h-[400px] md:h-[460px] lg:h-[500px] bg-slate-950 overflow-hidden rounded-2xl md:rounded-3xl mx-3 md:mx-6 mt-3">
-        <SkeletonLoader className="absolute inset-0 w-full h-full" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
+        <div className="relative h-[400px] md:h-[460px] lg:h-[500px] bg-slate-950 overflow-hidden rounded-2xl md:rounded-3xl">
+          <SkeletonLoader className="absolute inset-0 w-full h-full" />
+        </div>
       </div>
     );
   }
@@ -64,137 +51,133 @@ export function HomeHero() {
   const backdropSrc = featured.images.banner || posterSrc;
 
   return (
-    <div className="relative h-[400px] md:h-[460px] lg:h-[500px] overflow-hidden rounded-2xl md:rounded-3xl mx-3 md:mx-6 mt-3 group isolate shadow-2xl bg-slate-950 border border-black/10">
-      {/* ── BACKDROP IMAGE (Strictly constrained inside rounded hero card) ── */}
-      <AnimatePresence initial={false}>
-        <motion.div
-          key={`bg-${featured.id}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
-          className="absolute inset-0 z-0 overflow-hidden"
-        >
-          <img
-            src={backdropSrc}
-            alt=""
-            aria-hidden
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </motion.div>
-      </AnimatePresence>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
+      <div
+        className="relative h-[400px] md:h-[460px] lg:h-[500px] overflow-hidden rounded-2xl md:rounded-3xl group isolate shadow-2xl bg-slate-950 border border-black/10"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* ── BACKDROP IMAGE (Strictly constrained inside rounded hero card) ── */}
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={featured.id}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="absolute inset-0 z-0 overflow-hidden rounded-2xl md:rounded-3xl"
+          >
+            <img
+              src={backdropSrc}
+              alt={title}
+              className="w-full h-full object-cover object-center filter contrast-105 brightness-[0.85] rounded-2xl md:rounded-3xl"
+            />
+            
+            {/* Cinematic Gradient Vignette Overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent z-10 w-full md:w-3/4" />
+          </motion.div>
+        </AnimatePresence>
 
-      {/* ── CINEMATIC DARK VIGNETTE GRADIENTS (Contained within hero card) ── */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-slate-950 via-slate-950/65 to-black/30" />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-slate-950/95 via-slate-950/50 to-transparent w-full md:w-3/4" />
-
-      {/* ── HERO CONTENT ── */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={`content-${featured.id}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="absolute inset-0 z-[2] flex items-center justify-between p-6 md:p-10 lg:p-14"
-        >
-          {/* Left Side: Text Details */}
-          <div className="w-full md:w-[60%] lg:w-[50%] flex flex-col justify-end h-full pb-4">
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-            >
-              {/* Badges */}
-              <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="px-2.5 py-1 bg-rose-600/90 text-white border border-rose-500/40 rounded-md text-[11px] font-bold tracking-wider uppercase backdrop-blur-sm">
-                  #{currentIndex + 1} Trending
+        {/* ── CONTENT OVERLAY ── */}
+        <div className="relative z-20 h-full flex items-end p-6 sm:p-10 md:p-12">
+          <div className="max-w-xl space-y-4">
+            {/* Badges */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-2.5 py-1 rounded-md bg-primary text-primary-foreground text-[10px] font-extrabold uppercase tracking-wider shadow-md shadow-primary/20">
+                #{currentIndex + 1} Trending
+              </span>
+              {featured.score && (
+                <span className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-amber-400 text-[11px] font-bold flex items-center gap-1">
+                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                  {featured.score}
                 </span>
-                {featured.score && (
-                  <span className="flex items-center gap-1 text-amber-400 font-semibold bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md text-[11px] border border-white/10">
-                    <Star className="w-3 h-3 fill-current" />
-                    {featured.score}
-                  </span>
-                )}
-                {featured.type && (
-                  <span className="text-[11px] font-medium text-white/80 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10">
-                    {featured.type}
-                  </span>
-                )}
-              </div>
-
-              {/* Title */}
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-heading leading-tight mb-3 text-white drop-shadow-xl line-clamp-3">
-                {title}
-              </h1>
-
-              {/* Synopsis */}
-              {featured.synopsis && (
-                <p className="text-sm text-white/80 line-clamp-2 mb-6 leading-relaxed max-w-xl drop-shadow-md">
-                  {featured.synopsis}
-                </p>
               )}
+              {featured.type && (
+                <span className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-white/80 text-[11px] font-semibold">
+                  {featured.type}
+                </span>
+              )}
+            </div>
 
-              {/* CTA */}
-              <Link
-                href={ROUTES.ANIME_DETAIL(featured.id)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-semibold text-sm shadow-lg shadow-rose-600/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <Play className="w-4 h-4 fill-current" />
-                View Details
+            {/* Title */}
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.1] font-heading line-clamp-2 drop-shadow-md">
+              {title}
+            </h1>
+
+            {/* Synopsis snippet */}
+            {featured.synopsis && (
+              <p className="text-xs sm:text-sm text-slate-300 line-clamp-2 sm:line-clamp-3 leading-relaxed max-w-lg font-normal drop-shadow">
+                {featured.synopsis.replace(/\[Written by MAL Rewrite\]/g, "")}
+              </p>
+            )}
+
+            {/* CTA Button */}
+            <div className="pt-2 flex items-center gap-3">
+              <Link href={ROUTES.ANIME_DETAIL(featured.id)}>
+                <button className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-lg shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+                  <Play className="w-4 h-4 fill-primary-foreground" />
+                  <span>View Details</span>
+                </button>
               </Link>
-            </motion.div>
+            </div>
           </div>
 
-          {/* Right Side: Poster */}
-          <div className="hidden md:flex pr-4 lg:pr-8 xl:pr-12 items-center justify-end flex-1 h-full py-6">
+          {/* Right Poster Thumbnail (Desktop Only) */}
+          <div className="hidden lg:block ml-auto self-center z-20 shrink-0">
             <motion.div
+              key={`poster-${featured.id}`}
               initial={{ opacity: 0, x: 20, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative"
+              transition={{ duration: 0.5 }}
+              className="w-48 h-72 rounded-2xl overflow-hidden shadow-2xl border-2 border-white/20 relative group/poster"
             >
               <img
                 src={posterSrc}
                 alt={title}
-                className="h-[250px] lg:h-[300px] xl:h-[340px] w-auto object-cover rounded-xl shadow-2xl shadow-black/90 border border-white/20 transition-transform duration-500 group-hover:scale-[1.02]"
+                className="w-full h-full object-cover"
               />
             </motion.div>
           </div>
-        </motion.div>
-      </AnimatePresence>
+        </div>
 
-      {/* ── NAV ARROWS ── */}
-      <button
-        onClick={goPrev}
-        className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 z-[5] p-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-black/80 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer focus:outline-none"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="w-5 h-5" />
-      </button>
-      <button
-        onClick={goNext}
-        className="absolute right-3 md:left-auto md:right-4 top-1/2 -translate-y-1/2 z-[5] p-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-black/80 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer focus:outline-none"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="w-5 h-5" />
-      </button>
+        {/* ── ARROWS & PAGINATION INDICATORS ── */}
+        <div className="absolute bottom-4 right-6 sm:right-10 z-30 flex items-center gap-4">
+          {/* Arrow Buttons (Desktop Hover) */}
+          <div className="hidden sm:flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={() => goTo(currentIndex - 1)}
+              className="p-2 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/10 text-white transition-all cursor-pointer"
+              title="Previous"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => goTo(currentIndex + 1)}
+              className="p-2 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/10 text-white transition-all cursor-pointer"
+              title="Next"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
 
-      {/* ── SLIDE INDICATORS ── */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-[5]">
-        {trendingItems.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => goTo(idx)}
-            className={cn(
-              "transition-all duration-300 cursor-pointer",
-              idx === currentIndex
-                ? "w-6 h-1.5 bg-white rounded-full shadow-md"
-                : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60 rounded-full"
-            )}
-            aria-label={`Go to slide ${idx + 1}`}
-          />
-        ))}
+          {/* Dot Indicators */}
+          <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+            {trendingItems.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => goTo(idx)}
+                className={cn(
+                  "h-1.5 rounded-full transition-all duration-300 cursor-pointer",
+                  idx === currentIndex
+                    ? "w-6 bg-primary"
+                    : "w-1.5 bg-white/40 hover:bg-white/70"
+                )}
+                title={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

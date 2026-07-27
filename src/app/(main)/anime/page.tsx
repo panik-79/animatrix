@@ -45,7 +45,7 @@ function DiscoveryContent() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 45000 / 100); // 450ms debounce
+    }, 450); // 450ms debounce
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
@@ -157,9 +157,9 @@ function DiscoveryContent() {
   const animeList = data?.pages.flatMap((page) => page.data) || [];
 
   return (
-    <div className="min-h-screen pb-20 px-4 md:px-8 pt-6">
-      {/* ── TOP HEADER SEARCH BAR ── */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-2 space-y-6">
+      {/* ── TOP HEADER SEARCH BAR & FILTER CONTROLS ── */}
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:max-w-md group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
           <input
@@ -235,7 +235,7 @@ function DiscoveryContent() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="overflow-hidden mb-6"
+            className="overflow-hidden"
           >
             <div className="p-5 rounded-2xl bg-card/30 border border-white/[0.05] backdrop-blur-md space-y-5">
               {/* Core filters rows */}
@@ -345,7 +345,7 @@ function DiscoveryContent() {
 
       {/* ── ACTIVE FILTER PILLS / CLEAR ROW ── */}
       {hasActiveFilters && (
-        <div className="flex flex-wrap items-center gap-2 mb-6">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs text-muted-foreground font-semibold">Active filters:</span>
           {searchQuery && (
             <span className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] border border-white/[0.06] rounded-lg text-xs text-white/80">
@@ -423,7 +423,7 @@ function DiscoveryContent() {
         />
       ) : (
         <>
-          <div className="text-xs text-muted-foreground font-semibold mb-4">
+          <div className="text-xs text-muted-foreground font-semibold">
             Showing {animeList.length} results
           </div>
 
@@ -454,7 +454,7 @@ export default function DiscoveryPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen pb-20 px-4 md:px-8 pt-6 space-y-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-2 space-y-6">
           <div className="h-12 w-full md:max-w-md bg-card/25 border border-white/[0.05] rounded-2xl">
             <SkeletonLoader className="w-full h-full" />
           </div>

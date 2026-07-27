@@ -50,10 +50,10 @@ export default function Home() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: "-80px" }}
-        className="mt-10 md:mt-14 space-y-10 md:space-y-14"
+        className="mt-8 md:mt-12 space-y-10 md:space-y-14"
       >
         {/* Genre Quick Access */}
-        <motion.section variants={fadeUp} className="px-5 md:px-8">
+        <motion.section variants={fadeUp} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-semibold mb-3">
             Browse by Genre
           </p>

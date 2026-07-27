@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Search, Settings, User as UserIcon, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,7 @@ import { Logo } from "@/components/shared/logo";
 import { confirmDialog } from "@/store/confirm-store";
 
 export function Navbar() {
+  const pathname = usePathname();
   const { setCommandPaletteOpen, sidebarCollapsed, setSidebarCollapsed } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
 
@@ -22,6 +24,21 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Map pathname to active Page Title
+  const getPageTitle = (path: string) => {
+    if (path === "/") return "Home";
+    if (path.startsWith("/discovery")) return "Discover";
+    if (path.startsWith("/library")) return "Library";
+    if (path.startsWith("/collections")) return "Collections";
+    if (path.startsWith("/stats")) return "Statistics";
+    if (path.startsWith("/settings")) return "Settings";
+    if (path.startsWith("/account")) return "My Account";
+    if (path.startsWith("/anime/")) return "Anime Details";
+    return "";
+  };
+
+  const pageTitle = getPageTitle(pathname);
+
   return (
     <header
       className={cn(
@@ -31,18 +48,17 @@ export function Navbar() {
     >
       <div
         className={cn(
-          "mx-3 md:mx-6 rounded-2xl transition-all duration-300 flex items-center justify-between h-14 px-4 md:px-6",
+          "mx-3 md:mx-6 rounded-2xl transition-all duration-300 grid grid-cols-3 items-center h-14 px-4 md:px-6",
           scrolled
             ? "bg-background/85 dark:bg-slate-900/90 backdrop-blur-xl border border-border shadow-lg"
             : "bg-background/60 dark:bg-slate-900/60 backdrop-blur-md border border-border/50"
         )}
       >
-        {/* Left Side: Collapse/Expand Sidebar Toggle + Mobile Logo */}
-        <div className="flex items-center gap-2">
-          {/* Desktop & Mobile Collapse Button */}
+        {/* Left Column: Collapse Button + Active Page Title */}
+        <div className="flex items-center gap-3 justify-start overflow-hidden">
           <button 
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-1.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all cursor-pointer group"
+            className="p-1.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all cursor-pointer group shrink-0"
             title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             aria-label={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
@@ -53,28 +69,33 @@ export function Navbar() {
             )}
           </button>
 
+          {/* Active Top Level Page Title */}
+          <h2 className="text-sm font-bold font-heading text-foreground hidden sm:block truncate">
+            {pageTitle}
+          </h2>
+
           {/* Mobile Logo Only */}
-          <div className="flex items-center md:hidden">
-            <Logo variant="full" height={32} className="ml-1" linked />
+          <div className="flex items-center md:hidden shrink-0">
+            <Logo variant="full" height={28} className="ml-1" linked />
           </div>
         </div>
 
-        {/* Center: Search Input Bar */}
-        <div className="flex-1 flex justify-center md:justify-start max-w-xl mx-auto md:ml-4">
+        {/* Center Column: Perfectly Centered Search Input Bar */}
+        <div className="flex justify-center items-center">
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="flex items-center w-full max-w-sm px-4 py-1.5 space-x-2.5 text-sm rounded-full dark:bg-white/[0.06] bg-slate-200/70 hover:bg-slate-300/80 dark:hover:bg-white/[0.12] text-foreground transition-all duration-200 border border-border/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
+            className="flex items-center w-full max-w-xs sm:max-w-sm px-4 py-1.5 space-x-2.5 text-sm rounded-full dark:bg-white/[0.06] bg-slate-200/70 hover:bg-slate-300/80 dark:hover:bg-white/[0.12] text-foreground transition-all duration-200 border border-border/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
           >
-            <Search className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-            <span className="font-medium text-xs sm:text-sm text-muted-foreground">Search anime, studios, genres...</span>
-            <kbd className="hidden sm:inline-block px-2 py-0.5 ml-auto text-[10px] font-mono rounded-md dark:bg-white/10 bg-slate-300/80 text-muted-foreground group-hover:text-primary group-hover:bg-primary/15 group-hover:border-primary/40 border border-border shadow-sm transition-all duration-200">
+            <Search className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+            <span className="font-medium text-xs sm:text-sm text-muted-foreground truncate">Search anime, studios...</span>
+            <kbd className="hidden sm:inline-block px-2 py-0.5 ml-auto text-[10px] font-mono rounded-md dark:bg-white/10 bg-slate-300/80 text-muted-foreground group-hover:text-primary group-hover:bg-primary/15 group-hover:border-primary/40 border border-border shadow-sm transition-all duration-200 shrink-0">
               ⌘K
             </kbd>
           </button>
         </div>
 
-        {/* Right Side: User Profile Button */}
-        <div className="flex items-center space-x-3">
+        {/* Right Column: User Profile Button */}
+        <div className="flex items-center justify-end">
           <AuthUserButton />
         </div>
       </div>
