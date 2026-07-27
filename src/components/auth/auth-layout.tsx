@@ -10,25 +10,29 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="relative min-h-screen w-full bg-slate-950 text-slate-100 flex items-center justify-center p-4 sm:p-6 lg:p-12 overflow-x-hidden">
-      {/* Background Anime Visual Collage & Vignette */}
+    <div className="relative min-h-screen w-full bg-[#060911] text-slate-100 flex items-center justify-center p-4 sm:p-8 lg:p-14 overflow-x-hidden font-sans">
+      {/* Background Room Atmosphere with Subtle 60s Ken Burns */}
       <AuthBackground />
 
-      {/* Main Content Grid */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center min-h-[80vh]">
-        {/* Left Side: Cinematic Branding & Value Props (Hidden on mobile header only, visible on lg) */}
+      {/* Main Content Split Grid */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center min-h-[82vh]">
+        {/* Left Side: Brand & Headline (Visible on desktop) */}
         <div className="hidden lg:block lg:col-span-7">
           <AuthLeftBranding />
         </div>
 
-        {/* Mobile Header (Shown on screens smaller than lg) */}
+        {/* Mobile Header (Minimal mobile brand representation) */}
         <div className="block lg:hidden text-center space-y-2 mb-2">
-          <h2 className="font-extrabold text-2xl tracking-wider text-white">ANIMATRIX</h2>
-          <p className="text-xs text-slate-400">Anime, perfectly matched to your taste.</p>
+          <span className="font-extrabold text-2xl tracking-widest text-white uppercase">
+            ANIMATRIX
+          </span>
+          <p className="text-xs text-slate-400 font-normal">
+            Find your next masterpiece.
+          </p>
         </div>
 
-        {/* Right Side: Luxurious Glassmorphism Form Card */}
-        <div className="lg:col-span-5 flex justify-center w-full">
+        {/* Right Side: Authentication Card sitting in the darker right-hand portion */}
+        <div className="lg:col-span-5 flex justify-center lg:justify-end w-full">
           {children}
         </div>
       </div>
