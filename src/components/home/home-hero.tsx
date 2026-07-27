@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, ChevronLeft, ChevronRight, Play, Info, Flame, Sparkles } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, Play, Info, Flame } from "lucide-react";
 import { useTrendingAnime } from "@/hooks/use-anime";
 import { ROUTES } from "@/lib/constants";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
@@ -117,17 +117,11 @@ export function HomeHero() {
           )}
 
           {/* Action CTA Buttons */}
-          <div className="pt-3 flex flex-wrap items-center gap-3">
+          <div className="pt-3 flex items-center gap-3">
             <Link href={ROUTES.ANIME_DETAIL(featured.id)}>
               <button className="px-6 py-3 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-xl shadow-primary/30 transition-all hover:scale-[1.03] active:scale-[0.98] cursor-pointer">
                 <Play className="w-4 h-4 fill-primary-foreground" />
                 <span>Watch & Details</span>
-              </button>
-            </Link>
-            <Link href={ROUTES.DISCOVERY}>
-              <button className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15 backdrop-blur-xl border border-white/15 text-white text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all hover:scale-[1.02] cursor-pointer">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                <span>Browse All</span>
               </button>
             </Link>
           </div>
