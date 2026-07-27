@@ -110,9 +110,9 @@ function AuthUserButton() {
     setIsOpen(false);
     const confirmed = await confirmDialog({
       title: "Sign Out",
-      message: "Are you sure you want to sign out of your Animatrix account?",
-      confirmText: "Sign Out",
-      cancelText: "Stay Signed In",
+      message: "Are you sure you want to sign out?",
+      confirmText: "Yup!",
+      cancelText: "Hell Nahhh",
       variant: "danger",
     });
 
