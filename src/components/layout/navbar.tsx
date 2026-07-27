@@ -66,7 +66,7 @@ export function Navbar() {
           >
             <Search className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
             <span className="font-medium text-xs sm:text-sm text-muted-foreground">Search anime, studios, genres...</span>
-            <kbd className="hidden sm:inline-block px-2 py-0.5 ml-auto text-[10px] font-mono rounded-md dark:bg-white/10 bg-slate-300/80 text-foreground/70 border border-border shadow-sm">
+            <kbd className="hidden sm:inline-block px-2 py-0.5 ml-auto text-[10px] font-mono rounded-md dark:bg-white/10 bg-slate-300/80 text-muted-foreground group-hover:text-primary group-hover:bg-primary/15 group-hover:border-primary/40 border border-border shadow-sm transition-all duration-200">
               ⌘K
             </kbd>
           </button>
