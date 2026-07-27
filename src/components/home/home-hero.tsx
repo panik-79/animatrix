@@ -109,12 +109,24 @@ export function HomeHero() {
             {title}
           </h1>
 
-          {/* Expanded Synopsis snippet */}
+          {/* Synopsis snippet */}
           {featured.synopsis && (
             <p className="text-xs sm:text-sm text-slate-300/90 line-clamp-3 sm:line-clamp-4 leading-relaxed max-w-xl font-normal drop-shadow">
               {featured.synopsis.replace(/\[Written by MAL Rewrite\]/g, "")}
             </p>
           )}
+
+          {/* Action CTA Button */}
+          <div className="pt-2">
+            <Link href={ROUTES.ANIME_DETAIL(featured.id)}>
+              <button className="px-5 py-2.5 rounded-full border-2 border-primary bg-primary/10 hover:bg-primary/20 backdrop-blur-md text-primary font-bold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all cursor-pointer">
+                <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0">
+                  <Info className="w-3.5 h-3.5 text-primary" />
+                </div>
+                <span>Know More</span>
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* Right Floating Poster Card (Desktop Only) */}
@@ -136,18 +148,6 @@ export function HomeHero() {
             </div>
           </motion.div>
         </div>
-      </div>
-
-      {/* ── BOTTOM LEFT: ATTRACTIVE PRIMARY-OUTLINED "KNOW MORE" BUTTON ── */}
-      <div className="absolute bottom-5 left-6 sm:left-10 z-30">
-        <Link href={ROUTES.ANIME_DETAIL(featured.id)}>
-          <button className="px-5 py-2.5 rounded-full border-2 border-primary bg-primary/10 hover:bg-primary/20 backdrop-blur-md text-primary font-bold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all cursor-pointer">
-            <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0">
-              <Info className="w-3.5 h-3.5 text-primary" />
-            </div>
-            <span>Know More</span>
-          </button>
-        </Link>
       </div>
 
       {/* ── BOTTOM RIGHT: ARROWS & PAGINATION INDICATORS ── */}
