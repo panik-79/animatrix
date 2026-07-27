@@ -27,7 +27,6 @@ import { toast } from "@/store/toast-store";
 import { normalizeAnimeId } from "@/lib/utils";
 import { WatchStatus } from "@prisma/client";
 import { useState } from "react";
-import { useTouchpadSnap } from "@/hooks/use-touchpad-snap";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -36,17 +35,6 @@ interface PageProps {
 export default function AnimeDetailPage({ params }: PageProps) {
   const { id: rawId } = use(params);
   const id = normalizeAnimeId(rawId);
-
-  // Enable Touchpad & Wheel Scroll Snapping
-  useTouchpadSnap({
-    sectionIds: [
-      "section-hero",
-      "section-cast",
-      "section-production",
-      "section-reviews",
-      "section-recommendations",
-    ],
-  });
 
   // Core API Queries
   const { data: anime, isLoading: isAnimeLoading, isError: isAnimeError, refetch } = useAnimeById(id);
@@ -68,10 +56,10 @@ export default function AnimeDetailPage({ params }: PageProps) {
   if (isAnimeLoading) {
     return (
       <div className="min-h-screen pb-16 space-y-6 px-4 md:px-8 pt-6 max-w-6xl mx-auto">
-        <div className="h-[320px] rounded-xl overflow-hidden bg-slate-900/50">
+        <div className="h-[320px] rounded-xl overflow-hidden bg-card border border-border">
           <SkeletonLoader className="w-full h-full" />
         </div>
-        <div className="h-32 rounded-xl bg-slate-900/50">
+        <div className="h-32 rounded-xl bg-card border border-border">
           <SkeletonLoader className="w-full h-full" />
         </div>
       </div>
@@ -80,7 +68,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
 
   if (isAnimeError || !anime) {
     return (
-      <div className="min-h-screen pt-16 px-4 max-w-6xl mx-auto">
+      <div className="min-h-screen pt-16 px-4 max-w-6xl mx-auto flex justify-center items-center">
         <EmptyState
           title="Anime Entry Not Found"
           description="We couldn't fetch the details for this anime entry from our database."
@@ -166,9 +154,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
         isFavorite: nextState,
       },
       {
-        onError: () => {
-          setOptimisticFavorite(!nextState);
-        },
+        onError: () => setOptimisticFavorite(null),
       }
     );
 
@@ -176,7 +162,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen pb-16 relative bg-background text-foreground snap-y snap-mandatory scroll-smooth">
+    <div className="min-h-screen pb-16 relative bg-background text-foreground">
       
       {/* ── HERO SECTION WITH LIVE DB SYNC ── */}
       <HeroSection
@@ -191,43 +177,36 @@ export default function AnimeDetailPage({ params }: PageProps) {
         onShare={handleShare}
       />
 
-      {/* ── CONTENT JOURNEY CONTAINER WITH CSS SCROLL SNAP ── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 md:space-y-24 mt-10 md:mt-14">
+      {/* ── CONTENT JOURNEY CONTAINER ── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 md:space-y-16 mt-10 md:mt-14">
         
-        {/* ── CHARACTERS & RELATIONS SNAP SECTION ── */}
-        <section id="section-cast" className="snap-start snap-always pt-6 space-y-12">
-          <CharacterCast
-            characters={characters}
-            isLoading={isCharsLoading}
-          />
+        {/* ── CHARACTERS ── */}
+        <CharacterCast
+          characters={characters}
+          isLoading={isCharsLoading}
+        />
 
-          <FranchiseTimeline
-            relations={relations}
-            isLoading={isRelsLoading}
-          />
-        </section>
+        {/* ── RELATIONS ── */}
+        <FranchiseTimeline
+          relations={relations}
+          isLoading={isRelsLoading}
+        />
 
-        {/* ── PRODUCTION DETAILS SNAP SECTION ── */}
-        <section id="section-production" className="snap-start snap-always pt-6">
-          <ProductionDetails
-            anime={anime}
-          />
-        </section>
+        {/* ── PRODUCTION DETAILS ── */}
+        <ProductionDetails
+          anime={anime}
+        />
 
-        {/* ── COMMUNITY REVIEWS SNAP SECTION ── */}
-        <section id="section-reviews" className="snap-start snap-always pt-6">
-          <ReviewsSection animeId={id} />
-        </section>
+        {/* ── COMMUNITY REVIEWS ── */}
+        <ReviewsSection animeId={id} />
 
-        {/* ── RECOMMENDATIONS SNAP SECTION ── */}
-        <section id="section-recommendations" className="snap-start snap-always pt-6">
-          <AnimeCarousel
-            title="Recommendations"
-            items={recommendations}
-            isLoading={isRecsLoading}
-            disablePadding={true}
-          />
-        </section>
+        {/* ── RECOMMENDATIONS ── */}
+        <AnimeCarousel
+          title="Recommendations"
+          items={recommendations}
+          isLoading={isRecsLoading}
+          disablePadding={true}
+        />
 
       </div>
 
