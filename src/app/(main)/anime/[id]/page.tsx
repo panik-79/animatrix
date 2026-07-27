@@ -164,7 +164,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen pb-16 relative overflow-hidden bg-background text-foreground">
+    <div className="min-h-screen pb-16 relative bg-background text-foreground snap-y snap-mandatory scroll-smooth">
       
       {/* ── HERO SECTION WITH LIVE DB SYNC ── */}
       <HeroSection
@@ -179,36 +179,43 @@ export default function AnimeDetailPage({ params }: PageProps) {
         onShare={handleShare}
       />
 
-      {/* ── CONTENT JOURNEY CONTAINER (100% Smooth Continuous Scroll Flow) ── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 md:space-y-16 mt-10 md:mt-14 scroll-smooth">
+      {/* ── CONTENT JOURNEY CONTAINER WITH CSS SCROLL SNAP ── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 md:space-y-24 mt-10 md:mt-14">
         
-        {/* ── CHARACTERS ── */}
-        <CharacterCast
-          characters={characters}
-          isLoading={isCharsLoading}
-        />
+        {/* ── CHARACTERS & RELATIONS SNAP SECTION ── */}
+        <section className="snap-start snap-always pt-6 space-y-12">
+          <CharacterCast
+            characters={characters}
+            isLoading={isCharsLoading}
+          />
 
-        {/* ── RELATIONS ── */}
-        <FranchiseTimeline
-          relations={relations}
-          isLoading={isRelsLoading}
-        />
+          <FranchiseTimeline
+            relations={relations}
+            isLoading={isRelsLoading}
+          />
+        </section>
 
-        {/* ── PRODUCTION ── */}
-        <ProductionDetails
-          anime={anime}
-        />
+        {/* ── PRODUCTION DETAILS SNAP SECTION ── */}
+        <section className="snap-start snap-always pt-6">
+          <ProductionDetails
+            anime={anime}
+          />
+        </section>
 
-        {/* ── COMMUNITY REVIEWS ── */}
-        <ReviewsSection animeId={id} />
+        {/* ── COMMUNITY REVIEWS SNAP SECTION ── */}
+        <section className="snap-start snap-always pt-6">
+          <ReviewsSection animeId={id} />
+        </section>
 
-        {/* ── RECOMMENDATIONS ── */}
-        <AnimeCarousel
-          title="Recommendations"
-          items={recommendations}
-          isLoading={isRecsLoading}
-          disablePadding={true}
-        />
+        {/* ── RECOMMENDATIONS SNAP SECTION ── */}
+        <section className="snap-start snap-always pt-6">
+          <AnimeCarousel
+            title="Recommendations"
+            items={recommendations}
+            isLoading={isRecsLoading}
+            disablePadding={true}
+          />
+        </section>
 
       </div>
 

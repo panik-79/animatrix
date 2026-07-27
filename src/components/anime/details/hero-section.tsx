@@ -69,7 +69,7 @@ export function HeroSection({
   const progressPercent = Math.min(100, Math.round((episodesWatched / totalEpisodes) * 100));
 
   return (
-    <div className="relative w-full min-h-[calc(100vh-5rem)] flex items-center justify-center border-b border-border py-12 md:py-16 overflow-hidden">
+    <div className="relative w-full min-h-[calc(100vh-5rem)] flex items-center justify-center border-b border-border py-12 md:py-16 overflow-hidden snap-start snap-always">
       
       {/* ── FULL WINDOW BACKDROP COVERAGE ── */}
       <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
