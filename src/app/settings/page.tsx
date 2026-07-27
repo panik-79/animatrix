@@ -117,7 +117,20 @@ export default function SettingsPage() {
                   <button
                     key={mode.id}
                     type="button"
-                    onClick={() => setTheme(mode.id as any)}
+                    onClick={() => {
+                      setTheme(mode.id as any);
+                      if (mode.id === "light") {
+                        toast.warn(
+                          "⚠️ FLASHBANG WARNING!",
+                          "Proceeding to Light Mode at your own risk! Your eyes might request a refund. ☀️🕶️"
+                        );
+                      } else if (mode.id === "dark") {
+                        toast.success(
+                          "🦇 BACK TO THE DARK SIDE",
+                          "Welcome back to safety. Your retinas thank you."
+                        );
+                      }
+                    }}
                     className={cn(
                       "flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer shadow-sm",
                       isSelected

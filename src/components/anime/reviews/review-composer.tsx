@@ -5,6 +5,7 @@ import { Star } from "lucide-react";
 import { MentionInput } from "./mention-input";
 import { useSubmitReview, type Review } from "@/hooks/use-reviews";
 import { cn } from "@/lib/utils";
+import { toast } from "@/store/toast-store";
 
 interface ReviewComposerProps {
   animeId: string;
@@ -19,6 +20,14 @@ export function ReviewComposer({ animeId, existingReview, onCancel }: ReviewComp
 
   const submitMutation = useSubmitReview(animeId);
   const isEditing = Boolean(existingReview);
+
+  const handleScoreClick = (n: number) => {
+    const nextScore = n === score ? null : n;
+    setScore(nextScore);
+    if (nextScore === 10) {
+      toast.success("🔥 PEAK FICTION DETECTED!", "You have immaculate taste, cultured human. 👑");
+    }
+  };
 
   const handleSubmit = () => {
     if (!body.trim()) return;
@@ -56,7 +65,7 @@ export function ReviewComposer({ animeId, existingReview, onCancel }: ReviewComp
               type="button"
               onMouseEnter={() => setHoverScore(n)}
               onMouseLeave={() => setHoverScore(null)}
-              onClick={() => setScore(n === score ? null : n)}
+              onClick={() => handleScoreClick(n)}
               className="group p-0.5 cursor-pointer transition-transform hover:scale-110"
               aria-label={`Score ${n}`}
             >

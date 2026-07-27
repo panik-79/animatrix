@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "@/store/toast-store";
 
 export interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   value: string;
@@ -22,6 +23,23 @@ export function SearchInput({
   className,
   ...props
 }: SearchInputProps) {
+  const triggeredEasterEggs = useRef<Set<string>>(new Set());
+
+  const handleInputChange = (newVal: string) => {
+    onChange(newVal);
+    const lower = newVal.toLowerCase().trim();
+
+    if (lower === "goku" && !triggeredEasterEggs.current.has("goku")) {
+      triggeredEasterEggs.current.add("goku");
+      toast.info("💥 POWER LEVEL OVER 9000!", "Can he beat Goku though? 🤔");
+    } else if (lower === "one piece" && !triggeredEasterEggs.current.has("op")) {
+      triggeredEasterEggs.current.add("op");
+      toast.info("🏴‍☠️ CAN WE GET MUCH HIGHER?", "THE ONE PIECE IS REAL!");
+    } else if (lower === "naruto" && !triggeredEasterEggs.current.has("naruto")) {
+      triggeredEasterEggs.current.add("naruto");
+      toast.info("🍥 DATTEBAYO!", "Believe it! Ramen time 🍜");
+    }
+  };
   const handleClear = () => {
     onChange("");
     onClear?.();
@@ -45,7 +63,7 @@ export function SearchInput({
       <input
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => handleInputChange(e.target.value)}
         placeholder={placeholder}
         className={cn(
           "w-full bg-slate-100/90 dark:bg-slate-950/80 border border-slate-300 dark:border-white/20",
