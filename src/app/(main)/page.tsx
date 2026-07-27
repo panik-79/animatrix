@@ -56,7 +56,7 @@ export default function Home() {
           <div className="flex items-center justify-between gap-4 mb-3">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-4.5 rounded-full bg-primary shadow-[0_0_12px_rgba(139,92,246,0.8)]" />
-              <h3 className="text-xs uppercase tracking-widest text-zinc-400 font-bold">
+              <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-bold">
                 Browse by Genre
               </h3>
             </div>
@@ -68,7 +68,7 @@ export default function Home() {
                 <motion.span
                   whileHover={{ scale: 1.05, y: -1 }}
                   whileTap={{ scale: 0.97 }}
-                  className="inline-block px-4 py-2 bg-gradient-to-b from-white/[0.04] to-white/[0.01] border border-white/[0.08] hover:border-primary/40 hover:bg-primary/10 rounded-xl text-xs font-semibold text-zinc-300 hover:text-primary transition-all duration-200 shadow-sm cursor-pointer"
+                  className="inline-block px-4 py-2 bg-slate-100/90 dark:bg-slate-950/80 border border-slate-300 dark:border-white/20 hover:border-primary/60 hover:bg-slate-200/90 dark:hover:bg-slate-900/90 rounded-xl text-xs font-bold text-foreground hover:text-primary transition-all duration-200 shadow-sm cursor-pointer"
                 >
                   {genre}
                 </motion.span>

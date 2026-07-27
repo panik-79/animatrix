@@ -50,7 +50,7 @@ export function HomeHero() {
 
   return (
     <div
-      className="relative h-[440px] md:h-[500px] lg:h-[540px] overflow-hidden rounded-3xl mx-3 md:mx-6 mt-3 group isolate shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-slate-950 border border-white/[0.1] transition-all duration-300 hover:border-primary/40"
+      className="relative h-[440px] md:h-[500px] lg:h-[540px] overflow-hidden rounded-3xl mx-3 md:mx-6 mt-3 group isolate shadow-xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-slate-950 border border-white/20 transition-all duration-300 hover:border-primary/50"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
