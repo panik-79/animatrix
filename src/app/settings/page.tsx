@@ -10,6 +10,7 @@ import {
   Monitor,
 } from "lucide-react";
 import { toast } from "@/store/toast-store";
+import { cn } from "@/lib/utils";
 
 export default function SettingsPage() {
   const {
@@ -24,7 +25,7 @@ export default function SettingsPage() {
       <div className="max-w-4xl mx-auto space-y-10">
         {/* Page Header */}
         <div className="space-y-1">
-          <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
+          <h1 className="text-3xl font-extrabold text-foreground tracking-tight font-heading">
             Settings & Preferences
           </h1>
           <p className="text-sm text-muted-foreground font-normal">
@@ -35,11 +36,11 @@ export default function SettingsPage() {
         {/* Section 1: Appearance & Theme Presets */}
         <section className="bg-card backdrop-blur-xl border border-border rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
           <div className="flex items-center gap-3 border-b border-border pb-4">
-            <div className="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-500">
+            <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
               <Palette className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-foreground tracking-tight">Appearance & Theme Presets</h2>
+              <h2 className="text-lg font-bold text-foreground tracking-tight font-heading">Appearance & Theme Presets</h2>
               <p className="text-xs text-muted-foreground">Choose your favorite color palette and dark/light mode.</p>
             </div>
           </div>
@@ -62,16 +63,17 @@ export default function SettingsPage() {
                       setThemePreset(key);
                       toast.info("Theme Updated", `Switched to ${preset.name} theme.`);
                     }}
-                    className={`relative p-3.5 rounded-2xl border text-left transition-all group cursor-pointer ${
+                    className={cn(
+                      "relative p-4 rounded-2xl border text-left transition-all duration-200 group cursor-pointer flex flex-col justify-between h-20 shadow-sm",
                       isSelected
                         ? "bg-primary/10 border-primary ring-2 ring-primary/30"
-                        : "dark:bg-slate-950/50 bg-slate-100/70 border-border hover:border-primary/40 hover:bg-accent"
-                    }`}
+                        : "bg-card border-border hover:border-primary/40 hover:bg-accent"
+                    )}
                   >
                     {/* Swatch Header */}
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between">
                       <span
-                        className="w-5 h-5 rounded-full shadow-md border border-white/20"
+                        className="w-5 h-5 rounded-full shadow-md border border-white/20 shrink-0"
                         style={{ backgroundColor: preset.primaryColor }}
                       />
                       {isSelected && <Check className="w-4 h-4 text-primary stroke-[3]" />}
@@ -80,17 +82,6 @@ export default function SettingsPage() {
                     <p className="text-xs font-bold text-foreground tracking-tight group-hover:text-primary transition-colors">
                       {preset.name}
                     </p>
-
-                    {/* Gradient Preview Bar */}
-                    <div className="mt-2.5 h-1.5 w-full rounded-full overflow-hidden flex">
-                      {preset.gradientColors.map((color, i) => (
-                        <div
-                          key={i}
-                          className="h-full flex-1"
-                          style={{ backgroundColor: color }}
-                        />
-                      ))}
-                    </div>
                   </button>
                 );
               })}
@@ -116,11 +107,12 @@ export default function SettingsPage() {
                     key={mode.id}
                     type="button"
                     onClick={() => setTheme(mode.id as any)}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
+                    className={cn(
+                      "flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer shadow-sm",
                       isSelected
-                        ? "bg-primary text-primary-foreground border-primary shadow-md ring-2 ring-primary/20"
-                        : "dark:bg-slate-950/50 bg-slate-100/70 border-border text-muted-foreground hover:text-foreground hover:bg-accent"
-                    }`}
+                        ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 ring-2 ring-primary/20"
+                        : "bg-card border-border text-muted-foreground hover:text-foreground hover:bg-accent"
+                    )}
                   >
                     <Icon className="w-4 h-4" />
                     <span>{mode.label}</span>
