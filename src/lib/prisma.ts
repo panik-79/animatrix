@@ -7,12 +7,23 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
-  // dev.db lives at the project root (same level as prisma.config.ts)
-  const dbPath = path.resolve(process.cwd(), "dev.db");
-  const adapter = new PrismaLibSql({
-    url: `file:${dbPath}`,
-  });
-  return new PrismaClient({ adapter });
+  const dbUrl = process.env.DATABASE_URL || "";
+
+  // If using PostgreSQL (Neon / Supabase / Vercel Postgres)
+  if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
+    return new PrismaClient();
+  }
+
+  // Otherwise fallback for local SQLite
+  try {
+    const dbPath = path.resolve(process.cwd(), "dev.db");
+    const adapter = new PrismaLibSql({
+      url: `file:${dbPath}`,
+    });
+    return new PrismaClient({ adapter });
+  } catch {
+    return new PrismaClient();
+  }
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
