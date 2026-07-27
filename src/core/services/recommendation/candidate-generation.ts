@@ -294,16 +294,14 @@ export async function generateCandidates(
 
   // ── 3. Onboarding genre fallback (especially for cold-start) ─────────────
   if (tasteVector.libraryCount < LIMITS.MIN_ENTRIES_FOR_CONTENT_SIGNAL) {
+    const GENRE_MAP: Record<string, number> = {
+      action: 1, adventure: 2, comedy: 4, drama: 8, fantasy: 10,
+      mystery: 7, "sci-fi": 24, supernatural: 37, sports: 30,
+      romance: 22, "slice of life": 36, suspense: 41, thriller: 41,
+      horror: 14, psychological: 40, school: 23,
+    };
     const onboardingGenreIds = preferences.genres
-      .map((name) => {
-        const GENRE_NAME_TO_MAL_ID: Record<string, number> = {
-          Action: 1, Adventure: 2, Comedy: 4, Drama: 8, Fantasy: 10,
-          Mystery: 7, "Sci-Fi": 24, Supernatural: 37, Sports: 30,
-          Romance: 22, "Slice of Life": 36, Suspense: 41, Thriller: 41,
-          Horror: 14, "Slice of life": 36, Psychological: 40, School: 23,
-        };
-        return GENRE_NAME_TO_MAL_ID[name] ?? null;
-      })
+      .map((name) => GENRE_MAP[name.toLowerCase()] ?? null)
       .filter((id): id is number => id != null)
       .slice(0, 3);
 

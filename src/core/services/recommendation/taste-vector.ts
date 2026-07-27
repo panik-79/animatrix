@@ -227,13 +227,21 @@ const GENRE_NAME_TO_MAL_ID: Record<string, number> = {
   "Love Polygon": 74, Isekai: 62, "Historical": 13,
 };
 
+const LOWER_GENRE_TO_MAL_ID: Record<string, number> = Object.entries(GENRE_NAME_TO_MAL_ID).reduce(
+  (acc, [name, id]) => {
+    acc[name.toLowerCase()] = id;
+    return acc;
+  },
+  {} as Record<string, number>
+);
+
 function extractTopGenreIds(vector: TasteVector, limit: number): number[] {
   return Object.entries(vector)
     .filter(([, v]) => v > 0)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, limit)
-    .map(([name]) => GENRE_NAME_TO_MAL_ID[name])
-    .filter((id): id is number => id != null);
+    .map(([name]) => LOWER_GENRE_TO_MAL_ID[name.toLowerCase()])
+    .filter((id): id is number => id != null)
+    .slice(0, limit);
 }
 
 // ─── Main Builder ─────────────────────────────────────────────────────────

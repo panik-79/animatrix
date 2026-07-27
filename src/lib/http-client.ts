@@ -78,11 +78,14 @@ export class HttpClient {
    * external APIs directly (eliminates CORS, enables server-side timeouts).
    */
   private static proxyUrl(url: string): string {
-    if (url.startsWith(API_CONFIG.JIKAN.BASE_URL)) {
-      return url.replace(API_CONFIG.JIKAN.BASE_URL, API_CONFIG.JIKAN.PROXY_BASE_URL);
-    }
-    if (url.startsWith(API_CONFIG.KITSU.BASE_URL)) {
-      return url.replace(API_CONFIG.KITSU.BASE_URL, API_CONFIG.KITSU.PROXY_BASE_URL);
+    // Only proxy to relative URLs on the client (browser). Server-side Node.js fetch needs absolute URLs.
+    if (typeof window !== "undefined") {
+      if (url.startsWith(API_CONFIG.JIKAN.BASE_URL)) {
+        return url.replace(API_CONFIG.JIKAN.BASE_URL, API_CONFIG.JIKAN.PROXY_BASE_URL);
+      }
+      if (url.startsWith(API_CONFIG.KITSU.BASE_URL)) {
+        return url.replace(API_CONFIG.KITSU.BASE_URL, API_CONFIG.KITSU.PROXY_BASE_URL);
+      }
     }
     return url;
   }
