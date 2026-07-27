@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, User, Settings } from "lucide-react";
+import { Search, Menu, Settings, User as UserIcon, LogOut, Shield } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { useSettingsStore } from "@/store/settings-store";
 import { cn } from "@/lib/utils";
 import { ROUTES, APP_NAME } from "@/lib/constants";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "@/components/shared/logo";
 
 export function Navbar() {
@@ -58,6 +58,7 @@ export function Navbar() {
           <Link 
             href={ROUTES.SETTINGS}
             className="p-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80 transition-colors"
+            title="Settings"
           >
             <Settings className="w-5 h-5" />
           </Link>
@@ -71,6 +72,8 @@ export function Navbar() {
 function AuthUserButton() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -80,20 +83,30 @@ function AuthUserButton() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     window.location.reload();
   };
 
   if (loading) {
-    return <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse" />;
+    return <div className="w-9 h-9 rounded-full bg-slate-800 animate-pulse" />;
   }
 
   if (!user) {
     return (
       <Link
         href="/login"
-        className="px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-sm transition-all"
+        className="px-4 py-2 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-sm transition-all"
       >
         Sign In
       </Link>
@@ -101,19 +114,71 @@ function AuthUserButton() {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <div
-        className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-rose-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-primary/20"
-        title={user.name}
-      >
-        {user.name[0]?.toUpperCase() || "U"}
-      </div>
+    <div className="relative" ref={dropdownRef}>
+      {/* Profile Avatar Button */}
       <button
-        onClick={handleLogout}
-        className="text-[11px] font-semibold text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 p-0.5 rounded-full hover:ring-2 hover:ring-indigo-500/40 transition-all duration-200 cursor-pointer"
+        title="Account Menu"
       >
-        Sign Out
+        {user.image ? (
+          <img
+            src={user.image}
+            alt={user.name}
+            className="w-9 h-9 rounded-full object-cover border border-white/10 shadow-md"
+          />
+        ) : (
+          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-600 to-rose-600 flex items-center justify-center text-white font-bold text-xs shadow-md">
+            {user.name[0]?.toUpperCase() || "U"}
+          </div>
+        )}
       </button>
+
+      {/* User Dropdown Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="absolute right-0 mt-2 w-60 rounded-2xl bg-slate-900/95 backdrop-blur-xl border border-white/10 shadow-2xl p-2 z-50 text-slate-100 space-y-1"
+          >
+            {/* User Header */}
+            <div className="px-3 py-2.5 border-b border-white/5 mb-1">
+              <p className="text-xs font-bold text-white truncate">{user.name}</p>
+              <p className="text-[11px] text-slate-400 truncate">{user.email}</p>
+            </div>
+
+            {/* Menu Items */}
+            <Link
+              href="/account"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:bg-white/10 hover:text-white transition-colors"
+            >
+              <UserIcon className="w-4 h-4 text-indigo-400" />
+              <span>My Account</span>
+            </Link>
+
+            <Link
+              href={ROUTES.SETTINGS}
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:bg-white/10 hover:text-white transition-colors"
+            >
+              <Settings className="w-4 h-4 text-slate-400" />
+              <span>Settings</span>
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors cursor-pointer text-left"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Sign Out</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
