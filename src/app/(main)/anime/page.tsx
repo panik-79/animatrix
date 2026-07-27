@@ -180,26 +180,26 @@ function DiscoveryContent() {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-semibold tracking-wider uppercase backdrop-blur-md transition-all cursor-pointer",
+              "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold tracking-wider uppercase backdrop-blur-md transition-all cursor-pointer shadow-sm",
               showFilters
                 ? "bg-primary text-primary-foreground border-primary"
-                : "bg-card/40 border-white/[0.06] text-white/80 hover:bg-white/[0.04]"
+                : "bg-slate-100/90 dark:bg-slate-950/80 border-slate-300 dark:border-white/20 text-foreground hover:border-primary/60 hover:bg-slate-200/90 dark:hover:bg-slate-900/90"
             )}
           >
             <SlidersHorizontal className="w-4 h-4" />
             Filters
             {hasActiveFilters && (
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse ml-0.5" />
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse ml-0.5" />
             )}
           </button>
 
           {/* View Mode Grid/List toggle */}
-          <div className="flex items-center bg-card/40 border border-white/[0.06] p-1 rounded-xl">
+          <div className="flex items-center bg-slate-100/90 dark:bg-slate-950/80 border border-slate-300 dark:border-white/20 p-1 rounded-xl shadow-sm">
             <button
               onClick={() => setViewMode("grid")}
               className={cn(
                 "p-1.5 rounded-lg transition-colors cursor-pointer",
-                viewMode === "grid" ? "bg-white/10 text-white" : "text-muted-foreground hover:text-white"
+                viewMode === "grid" ? "bg-primary/20 text-primary font-bold" : "text-muted-foreground hover:text-foreground"
               )}
               title="Grid View"
             >
@@ -209,7 +209,7 @@ function DiscoveryContent() {
               onClick={() => setViewMode("list")}
               className={cn(
                 "p-1.5 rounded-lg transition-colors cursor-pointer",
-                viewMode === "list" ? "bg-white/10 text-white" : "text-muted-foreground hover:text-white"
+                viewMode === "list" ? "bg-primary/20 text-primary font-bold" : "text-muted-foreground hover:text-foreground"
               )}
               title="List View"
             >

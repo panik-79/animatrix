@@ -48,9 +48,9 @@ export function SearchInput({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className={cn(
-          "w-full bg-slate-950/80 border border-white/20 dark:border-white/25 border-slate-400",
-          "hover:border-primary/60 hover:bg-slate-950/90 hover:shadow-lg hover:shadow-primary/10",
-          "text-foreground placeholder:text-muted-foreground/70",
+          "w-full bg-slate-100/90 dark:bg-slate-950/80 border border-slate-300 dark:border-white/20",
+          "hover:border-primary/60 hover:bg-slate-200/90 dark:hover:bg-slate-900/90 hover:shadow-lg hover:shadow-primary/10",
+          "text-foreground placeholder:text-muted-foreground",
           "focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 backdrop-blur-md",
           "transition-all duration-300 ease-out shadow-sm",
           sizeStyles[variantSize],
@@ -63,7 +63,7 @@ export function SearchInput({
       <Search
         className={cn(
           "absolute top-1/2 -translate-y-1/2 z-10 pointer-events-none shrink-0",
-          "text-muted-foreground/70 group-hover:text-primary group-hover:scale-110",
+          "text-muted-foreground group-hover:text-primary group-hover:scale-110",
           "group-focus-within:text-primary group-focus-within:scale-110",
           "transition-all duration-300 ease-out",
           iconSizes[variantSize]
