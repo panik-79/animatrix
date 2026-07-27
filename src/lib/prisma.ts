@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 import path from "path";
 
@@ -11,19 +12,16 @@ function createPrismaClient() {
 
   // If using PostgreSQL (Neon / Supabase / Vercel Postgres)
   if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
-    return new PrismaClient();
+    const adapter = new PrismaPg({ connectionString: dbUrl });
+    return new PrismaClient({ adapter });
   }
 
-  // Otherwise fallback for local SQLite
-  try {
-    const dbPath = path.resolve(process.cwd(), "dev.db");
-    const adapter = new PrismaLibSql({
-      url: `file:${dbPath}`,
-    });
-    return new PrismaClient({ adapter });
-  } catch {
-    return new PrismaClient();
-  }
+  // Fallback for local SQLite
+  const dbPath = path.resolve(process.cwd(), "dev.db");
+  const adapter = new PrismaLibSql({
+    url: `file:${dbPath}`,
+  });
+  return new PrismaClient({ adapter });
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
