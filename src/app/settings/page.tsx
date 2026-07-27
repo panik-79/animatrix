@@ -2,12 +2,14 @@
 
 import { useSettingsStore } from "@/store/settings-store";
 import { THEME_PRESETS, ThemePresetId } from "@/config/theme.config";
+import Link from "next/link";
 import {
   Palette,
   Check,
   Moon,
   Sun,
   Monitor,
+  ArrowLeft,
 } from "lucide-react";
 import { toast } from "@/store/toast-store";
 import { cn } from "@/lib/utils";
@@ -23,14 +25,23 @@ export default function SettingsPage() {
   return (
     <main className="min-h-screen bg-background text-foreground p-4 sm:p-8 lg:p-12 pb-28 font-sans">
       <div className="max-w-4xl mx-auto space-y-10">
-        {/* Page Header */}
-        <div className="space-y-1">
-          <h1 className="text-3xl font-extrabold text-foreground tracking-tight font-heading">
-            Settings & Preferences
-          </h1>
-          <p className="text-sm text-muted-foreground font-normal">
-            Customize theme presets and color modes for your application experience.
-          </p>
+        {/* Page Header with Back Button */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="p-2 rounded-xl bg-card border border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            title="Back to Home"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Link>
+          <div className="space-y-0.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight font-heading">
+              Settings & Preferences
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground font-normal">
+              Customize theme presets and color modes for your application experience.
+            </p>
+          </div>
         </div>
 
         {/* Section 1: Appearance & Theme Presets */}
