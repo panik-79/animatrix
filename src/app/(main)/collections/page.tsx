@@ -179,7 +179,7 @@ export default function CollectionsPage() {
             placeholder="Filter collections..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-card/40 border border-white/[0.06] rounded-2xl text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 backdrop-blur-md transition-all shadow-md placeholder:text-muted-foreground/60 text-foreground"
+            className="w-full pl-11 pr-4 py-3 bg-card/60 dark:bg-slate-950/80 border border-white/20 dark:border-white/25 border-slate-400 hover:border-white/40 rounded-2xl text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 backdrop-blur-md transition-all shadow-md placeholder:text-muted-foreground text-foreground"
           />
           {searchQuery && (
             <button

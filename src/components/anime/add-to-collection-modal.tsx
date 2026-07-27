@@ -168,7 +168,7 @@ export function AddToCollectionModal({
                 placeholder="New collection name..."
                 value={newColName}
                 onChange={(e) => setNewColName(e.target.value)}
-                className="flex-1 px-3 py-2 rounded-xl bg-background border border-border text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="flex-1 px-3 py-2.5 rounded-xl bg-background border border-white/20 dark:border-white/25 border-slate-400 hover:border-white/40 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
               />
               <button
                 type="submit"

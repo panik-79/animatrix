@@ -358,7 +358,7 @@ export default function OnboardingPage() {
                     value={searchQuery}
                     onChange={(e) => handleSearchAnime(e.target.value)}
                     placeholder="Search anime e.g. Attack on Titan, Frieren, Jujutsu Kaisen..."
-                    className="w-full pl-10 pr-4 py-3 text-xs bg-slate-950/70 border border-slate-800 rounded-xl text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-all"
+                    className="w-full pl-10 pr-4 py-3 text-xs bg-slate-950/80 border border-slate-600 hover:border-slate-400 rounded-xl text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all shadow-md"
                   />
                   {isSearching && (
                     <Loader2 className="w-4 h-4 text-indigo-400 animate-spin absolute right-3.5 top-1/2 -translate-y-1/2" />

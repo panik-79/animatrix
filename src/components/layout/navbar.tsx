@@ -84,7 +84,7 @@ export function Navbar() {
         <div className="flex items-center gap-3 shrink-0 ml-auto">
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="flex items-center w-44 sm:w-60 md:w-72 lg:w-80 px-3.5 py-1.5 space-x-2 text-sm rounded-full dark:bg-white/[0.06] bg-slate-200/70 hover:bg-slate-300/80 dark:hover:bg-white/[0.12] text-foreground transition-all duration-200 border border-border/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
+            className="flex items-center w-44 sm:w-60 md:w-72 lg:w-80 px-3.5 py-2 space-x-2 text-sm rounded-full dark:bg-slate-950/80 bg-slate-200/80 hover:bg-slate-300/90 dark:hover:bg-slate-900/90 text-foreground transition-all duration-200 border border-white/20 dark:border-white/25 border-slate-400 hover:border-white/40 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
           >
             <Search className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
             <span className="font-medium text-xs text-muted-foreground truncate">Search anime, studios...</span>

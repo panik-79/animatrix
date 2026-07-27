@@ -57,7 +57,7 @@ export function CommandPalette() {
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="relative w-full max-w-2xl px-4"
           >
-            <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-900/90 backdrop-blur-xl shadow-2xl">
+            <div className="overflow-hidden rounded-2xl border border-white/25 dark:border-white/25 border-slate-500 bg-slate-950/95 backdrop-blur-xl shadow-2xl">
               <Command
                 className="w-full flex flex-col"
                 shouldFilter={false}

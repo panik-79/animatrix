@@ -129,8 +129,8 @@ export function MentionInput({
         disabled={disabled}
         rows={minRows}
         className={cn(
-          "w-full resize-none rounded-xl bg-white/[0.04] border border-white/[0.08] px-4 py-3 text-sm text-zinc-100",
-          "placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary/30",
+          "w-full resize-none rounded-xl bg-slate-950/80 border border-white/20 dark:border-white/25 border-slate-600 hover:border-white/40 px-4 py-3 text-sm text-zinc-100",
+          "placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/80",
           "transition-colors disabled:opacity-50 disabled:cursor-not-allowed leading-relaxed",
           className
         )}
