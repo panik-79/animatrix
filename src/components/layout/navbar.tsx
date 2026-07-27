@@ -48,10 +48,10 @@ export function Navbar() {
     >
       <div
         className={cn(
-          "mx-3 md:mx-6 rounded-2xl transition-all duration-300 flex items-center justify-between h-14 px-4 md:px-6",
+          "mx-3 md:mx-6 rounded-2xl transition-all duration-300 flex items-center justify-between h-14 px-4 md:px-6 shadow-sm",
           scrolled
-            ? "bg-background/85 dark:bg-slate-900/90 backdrop-blur-xl border border-border shadow-lg"
-            : "bg-background/60 dark:bg-slate-900/60 backdrop-blur-md border border-border/50"
+            ? "bg-background/90 backdrop-blur-xl border border-border/80 shadow-md"
+            : "bg-background/70 backdrop-blur-md border border-border/40"
         )}
       >
         {/* Left Side: Collapse Button + Active Page Title */}

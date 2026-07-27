@@ -8,7 +8,7 @@ import {
 } from "@/hooks/use-anime";
 import { HomeHero } from "@/components/home/home-hero";
 import { AnimeCarousel } from "@/components/anime/anime-carousel";
-import { ArrowRight, Sparkles, TrendingUp, Layers, MessageSquare } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { ROUTES, GENRES } from "@/lib/constants";
 import { motion, Variants } from "framer-motion";
@@ -42,51 +42,6 @@ export default function Home() {
     <div className="pb-20 overflow-x-hidden space-y-8">
       {/* ── HERO BANNER ── */}
       <HomeHero />
-
-      {/* ── LIVE PLATFORM HIGHLIGHTS STRIP ── */}
-      <div className="mx-3 md:mx-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 rounded-2xl md:rounded-3xl border border-white/[0.08] bg-gradient-to-r from-white/[0.03] via-white/[0.01] to-white/[0.03] backdrop-blur-xl shadow-xl">
-          <div className="flex items-center gap-3 p-2">
-            <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary shrink-0">
-              <TrendingUp className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-white">Daily Updates</p>
-              <p className="text-[11px] text-zinc-500">Latest Airing Anime</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 p-2">
-            <div className="p-2.5 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 shrink-0">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-white">Smart Discovery</p>
-              <p className="text-[11px] text-zinc-500">10,000+ Titles</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 p-2">
-            <div className="p-2.5 rounded-xl bg-indigo-400/10 border border-indigo-400/20 text-indigo-400 shrink-0">
-              <Layers className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-white">Custom Lists</p>
-              <p className="text-[11px] text-zinc-500">Personal Collections</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 p-2">
-            <div className="p-2.5 rounded-xl bg-rose-400/10 border border-rose-400/20 text-rose-400 shrink-0">
-              <MessageSquare className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-white">Community Reviews</p>
-              <p className="text-[11px] text-zinc-500">Ratings & Discussions</p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* ── CONTENT SECTIONS ── */}
       <motion.div
