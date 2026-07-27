@@ -15,10 +15,10 @@ export function CharacterCast({ characters, isLoading }: CharacterCastProps) {
   if (isLoading) {
     return (
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-white">Characters</h3>
+        <h3 className="text-sm font-semibold text-foreground">Characters</h3>
         <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={`skel-char-${i}`} className="min-w-[180px] sm:min-w-[200px] h-[260px] sm:h-[280px] rounded-xl bg-card/30 border border-white/10 overflow-hidden shrink-0">
+            <div key={`skel-char-${i}`} className="min-w-[180px] sm:min-w-[200px] h-[260px] sm:h-[280px] rounded-xl bg-card border border-border overflow-hidden shrink-0">
               <SkeletonLoader className="w-full h-full" />
             </div>
           ))}
@@ -34,11 +34,10 @@ export function CharacterCast({ characters, isLoading }: CharacterCastProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white">Characters</h3>
+        <h3 className="text-sm font-semibold text-foreground">Characters</h3>
         <span className="text-xs text-muted-foreground">{characters.length} Cast</span>
       </div>
 
-      {/* Horizontal Cast Strip with Elevated Hover & Gradient Mask */}
       <div className="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar">
         {characters.slice(0, 14).map((char) => {
           const japaneseVA = char.voiceActors.find(va => va.language === "Japanese") || char.voiceActors[0];
@@ -46,7 +45,7 @@ export function CharacterCast({ characters, isLoading }: CharacterCastProps) {
           return (
             <div
               key={char.id}
-              className="min-w-[180px] sm:min-w-[200px] w-[180px] sm:w-[200px] h-[260px] sm:h-[280px] rounded-xl overflow-hidden bg-card/40 border border-white/10 group flex flex-col justify-end p-3.5 relative shrink-0 isolate shadow-md hover:border-white/25 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/70 hover:scale-[1.02] transition-all duration-300 ease-out"
+              className="min-w-[180px] sm:min-w-[200px] w-[180px] sm:w-[200px] h-[260px] sm:h-[280px] rounded-xl overflow-hidden bg-card border border-border group flex flex-col justify-end p-3.5 relative shrink-0 isolate shadow-md hover:border-primary/40 hover:-translate-y-1 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 ease-out"
             >
               {/* Character Image */}
               <img
@@ -63,8 +62,8 @@ export function CharacterCast({ characters, isLoading }: CharacterCastProps) {
                 <span className={cn(
                   "inline-block px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider shadow-sm",
                   char.role === "Main"
-                    ? "bg-primary/30 text-primary border border-primary/40 backdrop-blur-sm"
-                    : "bg-black/70 text-white/80 border border-white/15 backdrop-blur-sm"
+                    ? "bg-primary/40 text-white border border-primary/50 backdrop-blur-sm"
+                    : "bg-black/70 text-white/90 border border-white/15 backdrop-blur-sm"
                 )}>
                   {char.role}
                 </span>
@@ -88,7 +87,7 @@ export function CharacterCast({ characters, isLoading }: CharacterCastProps) {
                       </div>
                     )}
 
-                    <span className="text-[11px] text-white/85 font-medium truncate">{japaneseVA.name}</span>
+                    <span className="text-[11px] text-white/90 font-medium truncate">{japaneseVA.name}</span>
                   </div>
                 )}
               </div>

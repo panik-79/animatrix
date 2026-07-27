@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Home, Compass, LayoutDashboard, Library, Layers, BarChart2, BookOpen, Settings } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
-import { ROUTES, APP_NAME } from "@/lib/constants";
+import { ROUTES } from "@/lib/constants";
 import { motion } from "framer-motion";
 import { Logo } from "@/components/shared/logo";
 
@@ -69,16 +69,16 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "fixed top-0 left-0 bottom-0 z-50 bg-background/50 backdrop-blur-xl border-r border-white/5 transition-all duration-300 hidden md:flex flex-col",
+        "fixed top-0 left-0 bottom-0 z-50 bg-background/90 backdrop-blur-xl border-r border-border transition-all duration-300 hidden md:flex flex-col shadow-sm",
         sidebarCollapsed ? "w-20" : "w-64"
       )}
     >
-      {/* Header with enlarged logo */}
+      {/* Header with bold prominent logo */}
       <div className={cn("h-24 flex items-center shrink-0", sidebarCollapsed ? "justify-center" : "px-6")}>
         {!sidebarCollapsed ? (
-          <Logo variant="full" height={60} linked />
+          <Logo variant="full" height={48} linked />
         ) : (
-          <Logo variant="icon" height={40} linked />
+          <Logo variant="icon" height={36} linked />
         )}
       </div>
 
@@ -93,7 +93,7 @@ export function Sidebar() {
           {renderLinks(USER_NAV)}
         </div>
         
-        <div className="mt-auto pt-4">
+        <div className="mt-auto pt-4 pb-2">
           {renderLinks(EXTRA_NAV)}
         </div>
       </div>

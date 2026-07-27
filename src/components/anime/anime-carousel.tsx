@@ -40,7 +40,6 @@ export function AnimeCarousel({
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
   }, []);
 
-  // Check scroll when items load or window resizes
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -79,7 +78,6 @@ export function AnimeCarousel({
     });
   }, [checkScroll]);
 
-  // Do not render anything if not loading and list is empty
   if (!isLoading && uniqueItems.length === 0) {
     return null;
   }
@@ -88,7 +86,7 @@ export function AnimeCarousel({
     <div className={cn("space-y-3", className)}>
       {/* Title */}
       <div className={disablePadding ? "" : "px-4 md:px-8"}>
-        <h2 className="text-sm font-semibold text-white">
+        <h2 className="text-sm font-semibold text-foreground">
           {title}
         </h2>
       </div>
@@ -115,7 +113,7 @@ export function AnimeCarousel({
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.8, x: -10 }}
                 onClick={() => scroll("left")}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-white/80 hover:bg-primary hover:text-primary-foreground shadow-lg opacity-0 group-hover/carousel:opacity-100 transition-all duration-200 cursor-pointer focus:outline-none"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full dark:bg-black/70 bg-white/90 backdrop-blur-md border border-border text-foreground hover:bg-primary hover:text-primary-foreground shadow-lg opacity-0 group-hover/carousel:opacity-100 transition-all duration-200 cursor-pointer focus:outline-none"
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -129,7 +127,7 @@ export function AnimeCarousel({
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.8, x: 10 }}
                 onClick={() => scroll("right")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-white/80 hover:bg-primary hover:text-primary-foreground shadow-lg opacity-0 group-hover/carousel:opacity-100 transition-all duration-200 cursor-pointer focus:outline-none"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full dark:bg-black/70 bg-white/90 backdrop-blur-md border border-border text-foreground hover:bg-primary hover:text-primary-foreground shadow-lg opacity-0 group-hover/carousel:opacity-100 transition-all duration-200 cursor-pointer focus:outline-none"
                 aria-label="Scroll right"
               >
                 <ChevronRight className="w-4 h-4" />

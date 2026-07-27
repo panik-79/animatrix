@@ -25,7 +25,7 @@ export function Navbar() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-40 transition-all duration-300 border-b border-transparent",
-        scrolled ? "bg-background/80 backdrop-blur-md border-white/10 shadow-lg" : "bg-transparent",
+        scrolled ? "bg-background/80 backdrop-blur-md border-border shadow-md" : "bg-transparent",
         sidebarCollapsed ? "md:pl-20" : "md:pl-64"
       )}
     >
@@ -37,17 +37,17 @@ export function Navbar() {
           >
             <Menu className="w-6 h-6" />
           </button>
-          <Logo variant="full" height={42} className="ml-3" linked />
+          <Logo variant="full" height={36} className="ml-3" linked />
         </div>
 
         <div className="flex-1 flex justify-center md:justify-start max-w-xl mx-auto md:ml-4">
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="flex items-center w-full max-w-sm px-4 py-2 space-x-2.5 text-sm rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-white/80 hover:text-white transition-all duration-200 border border-white/10 hover:border-white/20 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
+            className="flex items-center w-full max-w-sm px-4 py-2 space-x-2.5 text-sm rounded-full dark:bg-white/[0.06] bg-slate-200/70 hover:bg-slate-300/80 dark:hover:bg-white/[0.12] text-foreground transition-all duration-200 border border-border shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
           >
-            <Search className="w-4 h-4 text-white/50 group-hover:text-primary transition-colors" />
-            <span className="font-medium text-xs sm:text-sm">Search anime, studios, genres...</span>
-            <kbd className="hidden sm:inline-block px-2 py-0.5 ml-auto text-[10px] font-mono rounded-md bg-white/10 text-white/70 border border-white/10 group-hover:border-white/20 shadow-sm">
+            <Search className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="font-medium text-xs sm:text-sm text-muted-foreground">Search anime, studios, genres...</span>
+            <kbd className="hidden sm:inline-block px-2 py-0.5 ml-auto text-[10px] font-mono rounded-md dark:bg-white/10 bg-slate-300/80 text-foreground/70 border border-border shadow-sm">
               ⌘K
             </kbd>
           </button>
@@ -110,14 +110,14 @@ function AuthUserButton() {
       {/* Profile Avatar Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-0.5 rounded-full hover:ring-2 hover:ring-indigo-500/40 transition-all duration-200 cursor-pointer"
+        className="flex items-center gap-2 p-0.5 rounded-full hover:ring-2 hover:ring-primary/40 transition-all duration-200 cursor-pointer"
         title="Account Menu"
       >
         {user.image ? (
           <img
             src={user.image}
             alt={user.name}
-            className="w-9 h-9 rounded-full object-cover border border-white/10 shadow-md"
+            className="w-9 h-9 rounded-full object-cover border border-border shadow-md"
           />
         ) : (
           <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-600 to-rose-600 flex items-center justify-center text-white font-bold text-xs shadow-md">
@@ -134,36 +134,36 @@ function AuthUserButton() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.96 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute right-0 mt-2 w-60 rounded-2xl bg-slate-900/95 backdrop-blur-xl border border-white/10 shadow-2xl p-2 z-50 text-slate-100 space-y-1"
+            className="absolute right-0 mt-2 w-60 rounded-2xl bg-popover border border-border shadow-2xl p-2 z-50 text-popover-foreground space-y-1"
           >
             {/* User Header */}
-            <div className="px-3 py-2.5 border-b border-white/5 mb-1">
-              <p className="text-xs font-bold text-white truncate">{user.name}</p>
-              <p className="text-[11px] text-slate-400 truncate">{user.email}</p>
+            <div className="px-3 py-2.5 border-b border-border mb-1">
+              <p className="text-xs font-bold text-foreground truncate">{user.name}</p>
+              <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
             </div>
 
             {/* Menu Items */}
             <Link
               href="/account"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:bg-white/10 hover:text-white transition-colors"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-foreground hover:bg-accent transition-colors"
             >
-              <UserIcon className="w-4 h-4 text-indigo-400" />
+              <UserIcon className="w-4 h-4 text-primary" />
               <span>My Account</span>
             </Link>
 
             <Link
               href={ROUTES.SETTINGS}
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:bg-white/10 hover:text-white transition-colors"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-foreground hover:bg-accent transition-colors"
             >
-              <Settings className="w-4 h-4 text-slate-400" />
+              <Settings className="w-4 h-4 text-muted-foreground" />
               <span>Settings</span>
             </Link>
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors cursor-pointer text-left"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer text-left"
             >
               <LogOut className="w-4 h-4" />
               <span>Sign Out</span>

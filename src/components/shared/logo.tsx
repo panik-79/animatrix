@@ -1,5 +1,5 @@
 /**
- * Logo — canonical brand asset component with automatic Dark & Light mode optimization.
+ * Logo — canonical brand asset component with 100% guaranteed Light & Dark mode visibility.
  */
 
 import Image from "next/image";
@@ -7,9 +7,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
 
-import fullLogo from "@/assets/fulllogo_on_black_4k.png";
 import iconLogo from "@/assets/icon_transparent_blue_4k.png";
-import wordmarkBlackLogo from "@/assets/wordmark_solid_black_transparent_4k.png";
 
 interface LogoProps {
   /** "full" = icon + wordmark; "icon" = icon only */
@@ -24,57 +22,34 @@ interface LogoProps {
 
 export function Logo({
   variant = "full",
-  height = 36,
+  height = 42,
   className,
   linked = true,
 }: LogoProps) {
-  const content =
-    variant === "full" ? (
-      <div className={cn("inline-flex items-center select-none", className)}>
-        {/* Dark Mode Version (Screen blended on black) */}
-        <div className="hidden dark:block">
-          <Image
-            src={fullLogo}
-            alt="Animatrix"
-            height={height}
-            width={Math.round(height * (fullLogo.width / fullLogo.height))}
-            priority
-            draggable={false}
-            style={{ mixBlendMode: "screen" }}
-          />
-        </div>
-
-        {/* Light Mode Version (Transparent Torii Icon + Solid Black Wordmark) */}
-        <div className="flex dark:hidden items-center gap-2">
-          <Image
-            src={iconLogo}
-            alt="Animatrix icon"
-            height={height}
-            width={Math.round(height * (iconLogo.width / iconLogo.height))}
-            priority
-            draggable={false}
-          />
-          <Image
-            src={wordmarkBlackLogo}
-            alt="Animatrix"
-            height={Math.round(height * 0.48)}
-            width={Math.round((height * 0.48) * (wordmarkBlackLogo.width / wordmarkBlackLogo.height))}
-            priority
-            draggable={false}
-          />
-        </div>
-      </div>
-    ) : (
+  const content = (
+    <div className={cn("inline-flex items-center gap-3 select-none", className)}>
+      {/* High-Res Transparent Torii Gate Brand Icon */}
       <Image
         src={iconLogo}
-        alt="Animatrix icon"
+        alt="Animatrix Icon"
         height={height}
         width={Math.round(height * (iconLogo.width / iconLogo.height))}
         priority
         draggable={false}
-        className={cn("select-none", className)}
+        className="shrink-0"
       />
-    );
+
+      {/* Brand Wordmark (Theme-aware text-foreground, crystal clear in Light & Dark Mode) */}
+      {variant === "full" && (
+        <span
+          className="font-extrabold tracking-[0.2em] uppercase text-foreground font-heading text-xl sm:text-2xl leading-none"
+          style={{ fontSize: `${Math.max(16, Math.round(height * 0.42))}px` }}
+        >
+          ANIMATRIX
+        </span>
+      )}
+    </div>
+  );
 
   if (!linked) return content;
 
