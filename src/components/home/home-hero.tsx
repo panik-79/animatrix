@@ -101,8 +101,8 @@ export function HomeHero() {
         )}
       </div>
 
-      {/* ── CONTENT OVERLAY ── */}
-      <div className="relative z-20 h-full flex items-end p-6 sm:p-10 md:p-14">
+      {/* ── CONTENT OVERLAY (Vertically Centered & Lifted) ── */}
+      <div className="relative z-20 h-full flex items-center pt-16 sm:pt-20 pb-8 px-6 sm:px-10 md:px-14">
         <div className="max-w-2xl space-y-4">
 
           {/* Title */}
