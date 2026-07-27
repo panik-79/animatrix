@@ -2,11 +2,12 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Play, Heart, Share2, Plus, Minus, ChevronDown, Check, Tag, Clock, Calendar } from "lucide-react";
+import { Star, Play, Heart, Share2, Plus, Minus, ChevronDown, Check, Tag, Clock, Calendar, Layers } from "lucide-react";
 import Link from "next/link";
 import { Anime } from "@/core/models/anime";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
+import { AddToCollectionModal } from "../add-to-collection-modal";
 
 interface HeroSectionProps {
   anime: Anime;
@@ -41,6 +42,7 @@ export function HeroSection({
 }: HeroSectionProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSynopsisExpanded, setIsSynopsisExpanded] = useState(false);
+  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
 
   const title = anime.title.english || anime.title.romaji;
   const bannerSrc = anime.images.banner || anime.images.posterLarge || anime.images.poster;
@@ -250,6 +252,15 @@ export function HeroSection({
                 <span>{isFavorite ? "Favorited" : "Favorite"}</span>
               </button>
 
+              {/* Add to Collection Button */}
+              <button
+                onClick={() => setIsCollectionModalOpen(true)}
+                className="px-3.5 py-2 rounded-xl dark:bg-white/10 bg-slate-200/60 border border-border hover:bg-slate-200 dark:hover:bg-white/20 text-foreground text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+              >
+                <Layers className="w-3.5 h-3.5 text-primary" />
+                <span>Add to Collection</span>
+              </button>
+
               {/* TERTIARY CTA: Share Ghost Button */}
               <button
                 onClick={onShare}
@@ -292,6 +303,15 @@ export function HeroSection({
 
         </div>
       </div>
+
+      {/* Add to Collection Modal */}
+      <AddToCollectionModal
+        isOpen={isCollectionModalOpen}
+        onClose={() => setIsCollectionModalOpen(false)}
+        animeId={String(anime.id)}
+        title={title}
+        imageUrl={anime.images.posterLarge || anime.images.poster}
+      />
     </div>
   );
 }
