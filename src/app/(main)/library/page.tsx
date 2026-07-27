@@ -279,10 +279,16 @@ export default function UserLibraryPage() {
                     </Link>
 
                     <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/10 text-[11px]">
-                      <div className="flex items-center gap-1 text-amber-500 font-bold">
-                        <Star className="w-3 h-3 fill-current" />
-                        <span>{entry.score ? `${entry.score}` : "—"}</span>
-                      </div>
+                      {entry.score ? (
+                        <div className="flex items-center gap-1 text-amber-500 font-bold">
+                          <Star className="w-3 h-3 fill-amber-500" />
+                          <span>{entry.score}/10</span>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground/70 text-[10px] font-medium italic">
+                          Unrated
+                        </span>
+                      )}
 
                       <button
                         type="button"
