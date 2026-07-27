@@ -18,6 +18,7 @@ import { CharacterCast } from "@/components/anime/details/character-cast";
 import { FranchiseTimeline } from "@/components/anime/details/franchise-timeline";
 import { ProductionDetails } from "@/components/anime/details/production-details";
 import { TrailerModal } from "@/components/anime/details/trailer-modal";
+import { ReviewsSection } from "@/components/anime/reviews/reviews-section";
 
 import { AnimeCarousel } from "@/components/anime/anime-carousel";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
@@ -197,6 +198,9 @@ export default function AnimeDetailPage({ params }: PageProps) {
         <ProductionDetails
           anime={anime}
         />
+
+        {/* ── COMMUNITY REVIEWS ── */}
+        <ReviewsSection animeId={id} />
 
         {/* ── RECOMMENDATIONS ── */}
         <AnimeCarousel
