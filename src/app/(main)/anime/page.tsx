@@ -12,6 +12,40 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { SearchParams } from "@/core/providers/anime-provider";
 import { SearchInput } from "@/components/shared/search-input";
+import { CustomDropdown } from "@/components/shared/custom-dropdown";
+
+const FORMAT_OPTIONS = [
+  { label: "All Formats", value: "" },
+  { label: "TV Show", value: "TV" },
+  { label: "Movie", value: "Movie" },
+  { label: "OVA", value: "OVA" },
+  { label: "ONA", value: "ONA" },
+  { label: "Special", value: "Special" },
+  { label: "Music Video", value: "Music" },
+];
+
+const STATUS_OPTIONS = [
+  { label: "All Statuses", value: "" },
+  { label: "Airing Now", value: "airing" },
+  { label: "Finished", value: "complete" },
+  { label: "Upcoming", value: "upcoming" },
+];
+
+const RATING_OPTIONS = [
+  { label: "All Ratings", value: "" },
+  { label: "G - All Ages", value: "g" },
+  { label: "PG - Children", value: "pg" },
+  { label: "PG-13 - Teens", value: "pg13" },
+  { label: "R - 17+", value: "r17" },
+  { label: "R+ - Mild Nudity", value: "r" },
+];
+
+const SORT_OPTIONS = [
+  { label: "Popularity", value: "popularity" },
+  { label: "Rating Score", value: "score" },
+  { label: "Alphabetical", value: "title" },
+  { label: "Release Date", value: "start_date" },
+];
 
 // Static mapping for popular genres to Jikan IDs for instant offline lookup
 const GENRE_MAP: Record<string, number> = {
@@ -229,99 +263,78 @@ function DiscoveryContent() {
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="p-5 rounded-2xl bg-card/30 border border-white/[0.05] backdrop-blur-md space-y-5">
+            <div className="p-6 rounded-3xl bg-slate-100/90 dark:bg-slate-950/90 border border-slate-300 dark:border-white/20 backdrop-blur-2xl shadow-xl space-y-6">
               {/* Core filters rows */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {/* Format/Type */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Format</label>
-                  <select
-                    value={activeType}
-                    onChange={(e) => updateUrlParam({ type: e.target.value || null })}
-                    className="w-full bg-background/60 border border-white/[0.06] rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-primary/50 text-white/95"
-                  >
-                    <option value="">All Formats</option>
-                    <option value="TV">TV Show</option>
-                    <option value="Movie">Movie</option>
-                    <option value="OVA">OVA</option>
-                    <option value="ONA">ONA</option>
-                    <option value="Special">Special</option>
-                    <option value="Music">Music Video</option>
-                  </select>
-                </div>
+                <CustomDropdown
+                  label="Format"
+                  options={FORMAT_OPTIONS}
+                  value={activeType}
+                  onChange={(val) => updateUrlParam({ type: val || null })}
+                  placeholder="All Formats"
+                />
 
                 {/* Airing Status */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Status</label>
-                  <select
-                    value={activeStatus}
-                    onChange={(e) => updateUrlParam({ status: e.target.value || null })}
-                    className="w-full bg-background/60 border border-white/[0.06] rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-primary/50 text-white/95"
-                  >
-                    <option value="">All Statuses</option>
-                    <option value="airing">Airing Now</option>
-                    <option value="complete">Finished</option>
-                    <option value="upcoming">Upcoming</option>
-                  </select>
-                </div>
+                <CustomDropdown
+                  label="Status"
+                  options={STATUS_OPTIONS}
+                  value={activeStatus}
+                  onChange={(val) => updateUrlParam({ status: val || null })}
+                  placeholder="All Statuses"
+                />
 
                 {/* Rating */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Age Rating</label>
-                  <select
-                    value={activeRating}
-                    onChange={(e) => updateUrlParam({ rating: e.target.value || null })}
-                    className="w-full bg-background/60 border border-white/[0.06] rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-primary/50 text-white/95"
-                  >
-                    <option value="">All Ratings</option>
-                    <option value="g">G - All Ages</option>
-                    <option value="pg">PG - Children</option>
-                    <option value="pg13">PG-13 - Teens</option>
-                    <option value="r17">R - 17+</option>
-                    <option value="r">R+ - Mild Nudity</option>
-                  </select>
-                </div>
+                <CustomDropdown
+                  label="Age Rating"
+                  options={RATING_OPTIONS}
+                  value={activeRating}
+                  onChange={(val) => updateUrlParam({ rating: val || null })}
+                  placeholder="All Ratings"
+                />
 
                 {/* Sort Order */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Sort By</label>
-                  <div className="flex gap-2">
-                    <select
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                    Sort By
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <CustomDropdown
+                      options={SORT_OPTIONS}
                       value={activeOrderBy}
-                      onChange={(e) => updateUrlParam({ order_by: e.target.value || null })}
-                      className="w-full bg-background/60 border border-white/[0.06] rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-primary/50 text-white/95"
-                    >
-                      <option value="popularity">Popularity</option>
-                      <option value="score">Rating Score</option>
-                      <option value="title">Alphabetical</option>
-                      <option value="start_date">Release Date</option>
-                    </select>
+                      onChange={(val) => updateUrlParam({ order_by: val || null })}
+                      className="flex-1"
+                    />
                     <button
+                      type="button"
                       onClick={() => updateUrlParam({ sort: activeSort === "asc" ? "desc" : "asc" })}
-                      className="px-2.5 bg-background/60 border border-white/[0.06] rounded-xl text-white/70 hover:text-white hover:bg-white/[0.04] transition-colors"
+                      className="p-2.5 rounded-xl bg-slate-100/90 dark:bg-slate-950/80 border border-slate-300 dark:border-white/20 text-foreground hover:border-primary/60 hover:text-primary transition-all cursor-pointer shadow-sm shrink-0"
                       title={activeSort === "asc" ? "Sort Descending" : "Sort Ascending"}
                     >
-                      <ArrowUpDown className="w-3.5 h-3.5" />
+                      <ArrowUpDown className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
               </div>
 
               {/* Genre Chips */}
-              <div className="space-y-2">
-                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Genres</label>
-                <div className="flex flex-wrap gap-1.5">
+              <div className="space-y-2.5 pt-2 border-t border-slate-200 dark:border-white/10">
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                  Genres
+                </label>
+                <div className="flex flex-wrap gap-2">
                   {Object.keys(GENRE_MAP).map((genre) => {
                     const isSelected = activeGenres.includes(genre);
                     return (
                       <button
                         key={genre}
+                        type="button"
                         onClick={() => toggleGenre(genre)}
                         className={cn(
-                          "px-3 py-1 rounded-lg text-xs font-medium border transition-all cursor-pointer",
+                          "px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer shadow-sm",
                           isSelected
-                            ? "bg-primary/20 border-primary/50 text-primary"
-                            : "bg-background/40 border-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.02]"
+                            ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20"
+                            : "bg-slate-200/80 dark:bg-white/[0.05] border-slate-300 dark:border-white/10 text-foreground hover:border-primary/50 hover:bg-slate-300 dark:hover:bg-white/10"
                         )}
                       >
                         {genre}
