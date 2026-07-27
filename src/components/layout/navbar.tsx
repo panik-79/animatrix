@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, Settings, User as UserIcon, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Search, Settings, User as UserIcon, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
@@ -24,18 +24,24 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-40 transition-all duration-300 border-b border-transparent",
-        scrolled ? "bg-background/80 backdrop-blur-md border-border shadow-md" : "bg-transparent",
+        "fixed top-3 md:top-4 left-0 right-0 z-40 transition-all duration-300",
         sidebarCollapsed ? "md:pl-20" : "md:pl-64"
       )}
     >
-      <div className="flex items-center justify-between h-16 px-4 md:px-6">
+      <div
+        className={cn(
+          "mx-3 md:mx-6 rounded-2xl transition-all duration-300 flex items-center justify-between h-14 px-4 md:px-6",
+          scrolled
+            ? "bg-background/85 dark:bg-slate-900/90 backdrop-blur-xl border border-border shadow-lg"
+            : "bg-background/60 dark:bg-slate-900/60 backdrop-blur-md border border-border/50"
+        )}
+      >
         {/* Left Side: Collapse/Expand Sidebar Toggle + Mobile Logo */}
         <div className="flex items-center gap-2">
           {/* Desktop & Mobile Collapse Button */}
           <button 
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition-all cursor-pointer"
+            className="p-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition-all cursor-pointer"
             title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             aria-label={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
@@ -56,7 +62,7 @@ export function Navbar() {
         <div className="flex-1 flex justify-center md:justify-start max-w-xl mx-auto md:ml-4">
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="flex items-center w-full max-w-sm px-4 py-2 space-x-2.5 text-sm rounded-full dark:bg-white/[0.06] bg-slate-200/70 hover:bg-slate-300/80 dark:hover:bg-white/[0.12] text-foreground transition-all duration-200 border border-border shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
+            className="flex items-center w-full max-w-sm px-4 py-1.5 space-x-2.5 text-sm rounded-full dark:bg-white/[0.06] bg-slate-200/70 hover:bg-slate-300/80 dark:hover:bg-white/[0.12] text-foreground transition-all duration-200 border border-border/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
           >
             <Search className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
             <span className="font-medium text-xs sm:text-sm text-muted-foreground">Search anime, studios, genres...</span>
@@ -105,14 +111,14 @@ function AuthUserButton() {
   };
 
   if (loading) {
-    return <div className="w-9 h-9 rounded-full bg-slate-800 animate-pulse" />;
+    return <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse" />;
   }
 
   if (!user) {
     return (
       <Link
         href="/login"
-        className="px-4 py-2 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-sm transition-all"
+        className="px-4 py-1.5 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-sm transition-all"
       >
         Sign In
       </Link>
@@ -131,10 +137,10 @@ function AuthUserButton() {
           <img
             src={user.image}
             alt={user.name}
-            className="w-9 h-9 rounded-full object-cover border border-border shadow-md"
+            className="w-8 h-8 rounded-full object-cover border border-border shadow-md"
           />
         ) : (
-          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-600 to-rose-600 flex items-center justify-center text-white font-bold text-xs shadow-md">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-rose-600 flex items-center justify-center text-white font-bold text-xs shadow-md">
             {user.name[0]?.toUpperCase() || "U"}
           </div>
         )}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Compass, LayoutDashboard, Library, Layers, BarChart2, BookOpen, Settings, PanelLeftClose } from "lucide-react";
+import { Home, Compass, LayoutDashboard, Library, Layers, BarChart2, BookOpen, Settings } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
@@ -28,7 +28,7 @@ const EXTRA_NAV = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { sidebarCollapsed, setSidebarCollapsed } = useAppStore();
+  const { sidebarCollapsed } = useAppStore();
 
   const renderLinks = (links: typeof MAIN_NAV) => (
     <div className="space-y-1">
@@ -73,27 +73,12 @@ export function Sidebar() {
         sidebarCollapsed ? "w-20" : "w-64"
       )}
     >
-      {/* Header with bold prominent logo & toggle button */}
-      <div className={cn("h-24 flex items-center shrink-0 justify-between", sidebarCollapsed ? "justify-center" : "px-6")}>
+      {/* Header with bold prominent logo */}
+      <div className={cn("h-24 flex items-center shrink-0", sidebarCollapsed ? "justify-center" : "px-6")}>
         {!sidebarCollapsed ? (
-          <>
-            <Logo variant="full" height={36} linked />
-            <button
-              onClick={() => setSidebarCollapsed(true)}
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
-              title="Collapse Sidebar"
-            >
-              <PanelLeftClose className="w-4 h-4" />
-            </button>
-          </>
+          <Logo variant="full" height={36} linked />
         ) : (
-          <button
-            onClick={() => setSidebarCollapsed(false)}
-            title="Expand Sidebar"
-            className="cursor-pointer hover:scale-105 transition-transform"
-          >
-            <Logo variant="icon" height={36} linked={false} />
-          </button>
+          <Logo variant="icon" height={36} linked />
         )}
       </div>
 
