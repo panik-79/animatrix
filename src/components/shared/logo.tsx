@@ -21,12 +21,16 @@ interface LogoProps {
   linked?: boolean;
 }
 
+import { useAppStore } from "@/store/app-store";
+
 export function Logo({
   variant = "full",
   height = 42,
   className,
   linked = true,
 }: LogoProps) {
+  const { isSuperSaiyanMode } = useAppStore();
+
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -47,16 +51,24 @@ export function Logo({
         width={Math.round(height * (iconLogo.width / iconLogo.height))}
         priority
         draggable={false}
-        className="shrink-0 transition-transform active:scale-95"
+        className={cn(
+          "shrink-0 transition-transform active:scale-95",
+          isSuperSaiyanMode && "drop-shadow-[0_0_12px_rgba(245,158,11,0.95)] animate-pulse scale-105"
+        )}
       />
 
       {/* Brand Wordmark (Theme-aware text-foreground, crystal clear in Light & Dark Mode) */}
       {variant === "full" && (
         <span
-          className="font-extrabold tracking-[0.2em] uppercase text-foreground font-heading text-xl sm:text-2xl leading-none"
+          className={cn(
+            "font-extrabold tracking-[0.2em] uppercase font-heading text-xl sm:text-2xl leading-none transition-all duration-300",
+            isSuperSaiyanMode
+              ? "bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(245,158,11,0.7)]"
+              : "text-foreground"
+          )}
           style={{ fontSize: `${Math.max(16, Math.round(height * 0.42))}px` }}
         >
-          ANIMATRIX
+          {isSuperSaiyanMode ? "SUPER ANIMATRIX" : "ANIMATRIX"}
         </span>
       )}
     </div>

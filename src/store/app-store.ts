@@ -7,6 +7,8 @@ interface AppState {
   setSidebarCollapsed: (collapsed: boolean) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  isSuperSaiyanMode: boolean;
+  setSuperSaiyanMode: (active: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -16,4 +18,6 @@ export const useAppStore = create<AppState>((set) => ({
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
   searchQuery: '',
   setSearchQuery: (query) => set({ searchQuery: query }),
+  isSuperSaiyanMode: false,
+  setSuperSaiyanMode: (active) => set({ isSuperSaiyanMode: active }),
 }));

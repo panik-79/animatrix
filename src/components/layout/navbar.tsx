@@ -120,6 +120,8 @@ function AuthUserButton() {
     logout();
   };
 
+  const { isSuperSaiyanMode } = useAppStore();
+
   if (isLoading) {
     return <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse shrink-0" />;
   }
@@ -140,8 +142,13 @@ function AuthUserButton() {
       {/* Profile Avatar Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 rounded-full hover:ring-2 hover:ring-primary/40 transition-all duration-200 cursor-pointer shrink-0"
-        title="Account Menu"
+        className={cn(
+          "flex items-center gap-2 rounded-full transition-all duration-300 cursor-pointer shrink-0",
+          isSuperSaiyanMode
+            ? "ring-4 ring-amber-400 shadow-[0_0_18px_rgba(245,158,11,0.9)] animate-pulse scale-110"
+            : "hover:ring-2 hover:ring-primary/40"
+        )}
+        title={isSuperSaiyanMode ? "Super Saiyan User" : "Account Menu"}
       >
         {user.image ? (
           <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-border shadow-md">
