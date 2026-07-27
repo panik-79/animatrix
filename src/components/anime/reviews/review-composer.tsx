@@ -39,9 +39,9 @@ export function ReviewComposer({ animeId, existingReview, onCancel }: ReviewComp
   const displayScore = hoverScore ?? score;
 
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 space-y-4">
-      <p className="text-sm font-semibold text-white">
-        {isEditing ? "Edit your review" : "Write a review"}
+    <div className="rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl p-6 space-y-5 shadow-2xl">
+      <p className="text-sm font-bold text-white tracking-tight">
+        {isEditing ? "Edit Your Review" : "Write a Community Review"}
       </p>
 
       {/* Star Rating Picker */}

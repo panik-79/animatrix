@@ -22,20 +22,25 @@ function timeAgo(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-function StarRow({ score }: { score: number | null }) {
+function ScoreBadge({ score }: { score: number | null }) {
   if (!score) return null;
+
+  const isHigh = score >= 8;
+  const isMid = score >= 5 && score < 8;
+
   return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: 10 }, (_, i) => (
-        <Star
-          key={i}
-          className={cn(
-            "w-3.5 h-3.5",
-            i < Math.round(score) ? "fill-amber-400 text-amber-400" : "fill-transparent text-zinc-700"
-          )}
-        />
-      ))}
-      <span className="ml-1.5 text-xs font-semibold text-amber-400 tabular-nums">{score}/10</span>
+    <div
+      className={cn(
+        "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border shadow-sm shrink-0",
+        isHigh
+          ? "bg-amber-400/10 border-amber-400/30 text-amber-400"
+          : isMid
+          ? "bg-indigo-400/10 border-indigo-400/30 text-indigo-400"
+          : "bg-rose-500/10 border-rose-500/30 text-rose-400"
+      )}
+    >
+      <Star className={cn("w-3.5 h-3.5 fill-current")} />
+      <span className="tabular-nums">{score} / 10</span>
     </div>
   );
 }
@@ -46,7 +51,9 @@ function BodyWithMentions({ body }: { body: string }) {
     <span>
       {parts.map((part, i) =>
         part.startsWith("@") ? (
-          <span key={i} className="font-semibold text-primary/90">{part}</span>
+          <span key={i} className="font-semibold text-primary px-1 py-0.5 rounded bg-primary/10 border border-primary/20">
+            {part}
+          </span>
         ) : (
           <span key={i}>{part}</span>
         )
@@ -59,11 +66,20 @@ function BodyWithMentions({ body }: { body: string }) {
 
 function Avatar({ name, image }: { name: string; image: string | null }) {
   if (image) {
-    return <img src={image} alt={name} className="w-9 h-9 rounded-full object-cover shrink-0 border border-white/[0.08]" />;
+    return (
+      <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10 shadow-md">
+        <img
+          src={image}
+          alt={name}
+          referrerPolicy="no-referrer"
+          className="w-full h-full object-cover"
+        />
+      </div>
+    );
   }
   return (
-    <div className="w-9 h-9 rounded-full bg-zinc-800 border border-white/[0.06] flex items-center justify-center text-[13px] font-bold text-zinc-300 shrink-0">
-      {name[0]?.toUpperCase()}
+    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 border border-white/10 flex items-center justify-center text-xs font-bold text-white shadow-md shrink-0">
+      {name[0]?.toUpperCase() || "U"}
     </div>
   );
 }
@@ -108,99 +124,114 @@ export function ReviewCard({ review, animeId, currentUserId }: ReviewCardProps) 
   }
 
   return (
-    <div className="group rounded-2xl border border-white/[0.07] bg-white/[0.02] hover:bg-white/[0.03] transition-colors duration-200 overflow-hidden">
+    <div className="group rounded-3xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-white/[0.01] backdrop-blur-md hover:border-white/[0.15] hover:bg-white/[0.04] transition-all duration-300 shadow-xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-start gap-3 px-5 pt-5 pb-3">
-        <Avatar name={review.author.name} image={review.author.image} />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-sm font-semibold text-white">{review.author.name}</span>
-            <span className="text-[11px] text-zinc-600">{timeAgo(review.createdAt)}</span>
-            {review.createdAt !== review.updatedAt && (
-              <span className="text-[10px] text-zinc-700 italic">edited</span>
-            )}
-          </div>
-          <div className="mt-1">
-            <StarRow score={review.score} />
+      <div className="flex items-center justify-between gap-4 px-6 pt-6 pb-4 border-b border-white/[0.04]">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <Avatar name={review.author.name} image={review.author.image} />
+          <div className="space-y-0.5 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm font-bold text-white truncate">{review.author.name}</span>
+              {review.isOwnReview && (
+                <span className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-semibold uppercase tracking-wider">
+                  You
+                </span>
+              )}
+              <span className="text-[11px] text-zinc-500">{timeAgo(review.createdAt)}</span>
+              {review.createdAt !== review.updatedAt && (
+                <span className="text-[10px] text-zinc-600 italic">edited</span>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Owner actions */}
-        {review.isOwnReview && (
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-            <button
-              type="button"
-              onClick={() => setEditing(true)}
-              className="p-1.5 rounded-lg text-zinc-600 hover:text-zinc-300 hover:bg-white/[0.05] transition-colors cursor-pointer"
-              title="Edit review"
-            >
-              <Pencil className="w-3.5 h-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={deleteMutation.isPending}
-              className="p-1.5 rounded-lg text-zinc-600 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
-              title="Delete review"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        )}
+        {/* Score Badge + Actions */}
+        <div className="flex items-center gap-3 shrink-0">
+          <ScoreBadge score={review.score} />
+
+          {/* Owner Actions */}
+          {review.isOwnReview && (
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                type="button"
+                onClick={() => setEditing(true)}
+                className="p-2 rounded-xl text-zinc-500 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                title="Edit review"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleteMutation.isPending}
+                className="p-2 rounded-xl text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                title="Delete review"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Body */}
-      <div className="px-5 pb-3">
-        <p className="text-sm text-zinc-300 leading-relaxed">
+      <div className="px-6 py-4">
+        <p className="text-sm text-zinc-200 leading-relaxed font-normal whitespace-pre-wrap">
           <BodyWithMentions body={displayBody} />
         </p>
         {isLong && (
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="mt-1.5 text-[11px] text-primary hover:text-primary/80 transition-colors cursor-pointer"
+            className="mt-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer inline-flex items-center gap-1"
           >
-            {expanded ? "Show less" : "Read more"}
+            {expanded ? "Show less" : "Read full review"}
           </button>
         )}
       </div>
 
-      {/* Footer actions */}
-      <div className="flex items-center gap-4 px-5 pb-4 border-t border-white/[0.04] pt-3">
+      {/* Footer / Interaction Bar */}
+      <div className="flex items-center gap-4 px-6 py-3.5 border-t border-white/[0.04] bg-white/[0.01]">
         {/* Like */}
         <button
           type="button"
           onClick={() => currentUserId && likeMutation.mutate(review.id)}
           disabled={!currentUserId || likeMutation.isPending}
           className={cn(
-            "flex items-center gap-1.5 text-[12px] font-medium transition-colors cursor-pointer",
+            "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border",
             review.isLikedByMe
-              ? "text-rose-400"
-              : "text-zinc-600 hover:text-rose-400",
-            !currentUserId && "cursor-default"
+              ? "bg-rose-500/10 border-rose-500/30 text-rose-400"
+              : "bg-white/[0.03] border-white/[0.06] text-zinc-400 hover:text-white hover:bg-white/[0.07] hover:border-white/[0.1]",
+            !currentUserId && "cursor-default opacity-60"
           )}
         >
           <Heart
-            className={cn("w-4 h-4 transition-all", review.isLikedByMe && "fill-rose-400")}
+            className={cn("w-3.5 h-3.5 transition-all", review.isLikedByMe && "fill-rose-400")}
           />
           <span className="tabular-nums">{review.likesCount}</span>
         </button>
 
-        {/* Comments toggle */}
+        {/* Comments Toggle */}
         <button
           type="button"
           onClick={() => setShowComments((v) => !v)}
-          className="flex items-center gap-1.5 text-[12px] font-medium text-zinc-600 hover:text-zinc-300 transition-colors cursor-pointer"
+          className={cn(
+            "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border",
+            showComments
+              ? "bg-primary/10 border-primary/30 text-primary"
+              : "bg-white/[0.03] border-white/[0.06] text-zinc-400 hover:text-white hover:bg-white/[0.07] hover:border-white/[0.1]"
+          )}
         >
-          <MessageCircle className="w-4 h-4" />
+          <MessageCircle className="w-3.5 h-3.5" />
           <span className="tabular-nums">{review.commentsCount}</span>
-          {showComments ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          <span>{review.commentsCount === 1 ? "Comment" : "Comments"}</span>
+          {showComments ? <ChevronUp className="w-3 h-3 ml-0.5" /> : <ChevronDown className="w-3 h-3 ml-0.5" />}
         </button>
       </div>
 
-      {/* Comment thread (lazy) */}
+      {/* Threaded Comments */}
       {showComments && (
-        <div className="px-5 pb-5">
+        <div className="px-6 pb-6 pt-2 border-t border-white/[0.04]">
           <CommentThread
             reviewId={review.id}
             animeId={animeId}
