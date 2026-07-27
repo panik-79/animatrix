@@ -28,6 +28,8 @@ export function Logo({
   linked = true,
 }: LogoProps) {
   const handleDoubleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     useMatrixStore.getState().toggleMatrix();
   };
 

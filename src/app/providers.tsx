@@ -9,6 +9,7 @@ import { ToastContainer } from "@/components/shared/toast-container";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { KonamiCodeListener } from "@/components/shared/konami-code";
 import { MatrixRainOverlay } from "@/components/shared/matrix-rain";
+import { SuperSaiyanListener } from "@/components/shared/super-saiyan";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -33,6 +34,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <ConfirmDialog />
         <KonamiCodeListener />
         <MatrixRainOverlay />
+        <SuperSaiyanListener />
       </ThemeProvider>
     </QueryClientProvider>
   );
