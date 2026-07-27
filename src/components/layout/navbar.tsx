@@ -166,26 +166,26 @@ function AuthUserButton() {
             <Link
               href="/account"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-foreground hover:bg-accent transition-colors"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-foreground hover:bg-accent transition-colors group"
             >
-              <UserIcon className="w-4 h-4 text-primary" />
+              <UserIcon className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
               <span>My Account</span>
             </Link>
 
             <Link
               href={ROUTES.SETTINGS}
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-foreground hover:bg-accent transition-colors"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-foreground hover:bg-accent transition-colors group"
             >
-              <Settings className="w-4 h-4 text-muted-foreground" />
+              <Settings className="w-4 h-4 text-primary group-hover:rotate-45 group-hover:scale-110 transition-all duration-300" />
               <span>Settings</span>
             </Link>
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer text-left"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer text-left group"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
               <span>Sign Out</span>
             </button>
           </motion.div>
