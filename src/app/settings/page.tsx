@@ -14,6 +14,8 @@ import {
 import { toast } from "@/store/toast-store";
 import { cn } from "@/lib/utils";
 
+import { confirmDialog } from "@/store/confirm-store";
+
 export default function SettingsPage() {
   const {
     theme,
@@ -21,6 +23,29 @@ export default function SettingsPage() {
     themePreset,
     setThemePreset,
   } = useSettingsStore();
+
+  const handleModeClick = async (modeId: string) => {
+    if (modeId === "light") {
+      const confirmed = await confirmDialog({
+        title: "⚠️ FLASHBANG WARNING!",
+        message:
+          "Are you SURE you want to activate Light Mode? Proceeding is strictly at your own risk. Your retinas may request a refund! ☀️🕶️",
+        confirmText: "Blind Me Anyway 🕶️",
+        cancelText: "Stay Safe (Dark Mode) 🦇",
+        variant: "warning",
+      });
+
+      if (confirmed) {
+        setTheme("light");
+        toast.warn("☀️ LIGHT MODE ACTIVATED", "Don't say we didn't warn you!");
+      }
+    } else if (modeId === "dark") {
+      setTheme("dark");
+      toast.success("🦇 BACK TO THE DARK SIDE", "Welcome back to safety.");
+    } else {
+      setTheme("system");
+    }
+  };
 
   return (
     <main className="min-h-screen bg-background text-foreground p-4 sm:p-8 lg:p-12 pb-28 font-sans">
@@ -117,20 +142,7 @@ export default function SettingsPage() {
                   <button
                     key={mode.id}
                     type="button"
-                    onClick={() => {
-                      setTheme(mode.id as any);
-                      if (mode.id === "light") {
-                        toast.warn(
-                          "⚠️ FLASHBANG WARNING!",
-                          "Proceeding to Light Mode at your own risk! Your eyes might request a refund. ☀️🕶️"
-                        );
-                      } else if (mode.id === "dark") {
-                        toast.success(
-                          "🦇 BACK TO THE DARK SIDE",
-                          "Welcome back to safety. Your retinas thank you."
-                        );
-                      }
-                    }}
+                    onClick={() => handleModeClick(mode.id)}
                     className={cn(
                       "flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer shadow-sm",
                       isSelected
