@@ -27,6 +27,7 @@ import { toast } from "@/store/toast-store";
 import { normalizeAnimeId } from "@/lib/utils";
 import { WatchStatus } from "@prisma/client";
 import { useState } from "react";
+import { useTouchpadSnap } from "@/hooks/use-touchpad-snap";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -35,6 +36,17 @@ interface PageProps {
 export default function AnimeDetailPage({ params }: PageProps) {
   const { id: rawId } = use(params);
   const id = normalizeAnimeId(rawId);
+
+  // Enable Touchpad & Wheel Scroll Snapping
+  useTouchpadSnap({
+    sectionIds: [
+      "section-hero",
+      "section-cast",
+      "section-production",
+      "section-reviews",
+      "section-recommendations",
+    ],
+  });
 
   // Core API Queries
   const { data: anime, isLoading: isAnimeLoading, isError: isAnimeError, refetch } = useAnimeById(id);
@@ -183,7 +195,7 @@ export default function AnimeDetailPage({ params }: PageProps) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 md:space-y-24 mt-10 md:mt-14">
         
         {/* ── CHARACTERS & RELATIONS SNAP SECTION ── */}
-        <section className="snap-start snap-always pt-6 space-y-12">
+        <section id="section-cast" className="snap-start snap-always pt-6 space-y-12">
           <CharacterCast
             characters={characters}
             isLoading={isCharsLoading}
@@ -196,19 +208,19 @@ export default function AnimeDetailPage({ params }: PageProps) {
         </section>
 
         {/* ── PRODUCTION DETAILS SNAP SECTION ── */}
-        <section className="snap-start snap-always pt-6">
+        <section id="section-production" className="snap-start snap-always pt-6">
           <ProductionDetails
             anime={anime}
           />
         </section>
 
         {/* ── COMMUNITY REVIEWS SNAP SECTION ── */}
-        <section className="snap-start snap-always pt-6">
+        <section id="section-reviews" className="snap-start snap-always pt-6">
           <ReviewsSection animeId={id} />
         </section>
 
         {/* ── RECOMMENDATIONS SNAP SECTION ── */}
-        <section className="snap-start snap-always pt-6">
+        <section id="section-recommendations" className="snap-start snap-always pt-6">
           <AnimeCarousel
             title="Recommendations"
             items={recommendations}
