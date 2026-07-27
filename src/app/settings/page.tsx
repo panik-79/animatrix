@@ -4,12 +4,10 @@ import { useSettingsStore } from "@/store/settings-store";
 import { THEME_PRESETS, ThemePresetId } from "@/config/theme.config";
 import {
   Palette,
-  Database,
   Check,
   Moon,
   Sun,
   Monitor,
-  Trash2,
 } from "lucide-react";
 import { toast } from "@/store/toast-store";
 
@@ -19,14 +17,7 @@ export default function SettingsPage() {
     setTheme,
     themePreset,
     setThemePreset,
-    apiProvider,
-    setApiProvider,
   } = useSettingsStore();
-
-  const handleClearCache = () => {
-    localStorage.removeItem("animatrix-cache");
-    toast.success("Cache Cleared", "Local application data cache has been purged.");
-  };
 
   return (
     <main className="min-h-screen bg-background text-foreground p-4 sm:p-8 lg:p-12 pb-28 font-sans">
@@ -37,7 +28,7 @@ export default function SettingsPage() {
             Settings & Preferences
           </h1>
           <p className="text-sm text-muted-foreground font-normal">
-            Customize theme presets, color modes, and application data sources.
+            Customize theme presets and color modes for your application experience.
           </p>
         </div>
 
@@ -136,67 +127,6 @@ export default function SettingsPage() {
                   </button>
                 );
               })}
-            </div>
-          </div>
-        </section>
-
-        {/* Section 2: Data Source & System */}
-        <section className="bg-card backdrop-blur-xl border border-border rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-          <div className="flex items-center gap-3 border-b border-border pb-4">
-            <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
-              <Database className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-foreground tracking-tight">Data Source & System</h2>
-              <p className="text-xs text-muted-foreground">Choose primary anime information provider and manage cache.</p>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            {/* Primary API Provider */}
-            <div className="space-y-2">
-              <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Primary Information API
-              </label>
-              <div className="grid grid-cols-2 gap-3 max-w-md">
-                {[
-                  { id: "jikan", label: "Jikan (MyAnimeList)", desc: "Comprehensive MAL database" },
-                  { id: "anilist", label: "AniList API", desc: "GraphQL anime platform" },
-                ].map((prov) => (
-                  <button
-                    key={prov.id}
-                    type="button"
-                    onClick={() => {
-                      setApiProvider(prov.id as any);
-                      toast.info("Data Source Changed", `Switched primary API to ${prov.label}.`);
-                    }}
-                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
-                      apiProvider === prov.id
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "dark:bg-slate-950/50 bg-slate-100/70 border-border text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <p className="text-xs font-bold">{prov.label}</p>
-                    <p className="text-[10px] opacity-80 mt-0.5">{prov.desc}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Clear Cache CTA */}
-            <div className="pt-2 border-t border-border flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-foreground">Local Data Cache</p>
-                <p className="text-[11px] text-muted-foreground">Purge cached API responses to fetch fresh metadata.</p>
-              </div>
-              <button
-                type="button"
-                onClick={handleClearCache}
-                className="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 text-xs font-semibold rounded-xl transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <Trash2 className="w-4 h-4" />
-                <span>Clear Cache</span>
-              </button>
             </div>
           </div>
         </section>
