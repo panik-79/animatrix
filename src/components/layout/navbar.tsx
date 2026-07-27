@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { ROUTES, APP_NAME } from "@/lib/constants";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Logo } from "@/components/shared/logo";
 
 export function Navbar() {
   const { setCommandPaletteOpen, sidebarCollapsed, setSidebarCollapsed } = useAppStore();
@@ -37,9 +38,7 @@ export function Navbar() {
           >
             <Menu className="w-6 h-6" />
           </button>
-          <Link href={ROUTES.HOME} className="ml-4 font-heading text-xl font-bold text-gradient">
-            {APP_NAME}
-          </Link>
+          <Logo variant="full" height={42} className="ml-3" linked />
         </div>
 
         <div className="flex-1 flex justify-center md:justify-start max-w-xl mx-auto md:ml-4">

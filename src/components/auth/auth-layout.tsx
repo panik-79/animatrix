@@ -3,6 +3,7 @@
 import React from "react";
 import { AuthBackground } from "./auth-background";
 import { AuthLeftBranding } from "./auth-left-branding";
+import { Logo } from "@/components/shared/logo";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -21,14 +22,9 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           <AuthLeftBranding />
         </div>
 
-        {/* Mobile Header (Minimal mobile brand representation) */}
-        <div className="block lg:hidden text-center space-y-2 mb-2">
-          <span className="font-extrabold text-2xl tracking-widest text-white uppercase">
-            ANIMATRIX
-          </span>
-          <p className="text-xs text-slate-400 font-normal">
-            Find your next masterpiece.
-          </p>
+        {/* Mobile Header */}
+        <div className="block lg:hidden text-center mb-4 flex justify-center">
+          <Logo variant="full" height={52} linked />
         </div>
 
         {/* Right Side: Authentication Card sitting in the darker right-hand portion */}

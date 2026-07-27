@@ -2,17 +2,15 @@
 
 import React from "react";
 import Link from "next/link";
+import { Logo } from "@/components/shared/logo";
 
 export function AuthLeftBranding() {
   return (
     <div className="flex flex-col justify-between h-full py-8 lg:py-12 pr-0 lg:pr-16 text-left relative z-10">
       {/* Brand + Headline */}
       <div className="space-y-10">
-        <Link href="/" className="inline-block">
-          <span className="font-extrabold text-[2.6rem] sm:text-[3.2rem] tracking-[0.35em] text-white uppercase font-sans leading-none">
-            ANIMATRIX
-          </span>
-        </Link>
+        {/* Real brand asset — full logo (icon + wordmark) */}
+        <Logo variant="full" height={76} linked />
 
         <div className="space-y-6 max-w-md">
           <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-white tracking-tight leading-[1.1] font-sans">

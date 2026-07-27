@@ -7,6 +7,7 @@ import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 import { ROUTES, APP_NAME } from "@/lib/constants";
 import { motion } from "framer-motion";
+import { Logo } from "@/components/shared/logo";
 
 const MAIN_NAV = [
   { name: "Home", icon: Home, href: ROUTES.HOME },
@@ -72,19 +73,15 @@ export function Sidebar() {
         sidebarCollapsed ? "w-20" : "w-64"
       )}
     >
-      <div className={cn("h-16 flex items-center shrink-0", sidebarCollapsed ? "justify-center" : "px-6")}>
+      <div className={cn("h-20 flex items-center shrink-0", sidebarCollapsed ? "justify-center" : "px-6")}>
         {!sidebarCollapsed ? (
-          <Link href={ROUTES.HOME} className="font-heading text-2xl font-bold text-gradient">
-            {APP_NAME}
-          </Link>
+          <Logo variant="full" height={50} linked />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center font-bold text-white">
-            A
-          </div>
+          <Logo variant="icon" height={36} linked />
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto hide-scrollbar py-6 flex flex-col gap-8 px-3">
+      <div className="flex-1 overflow-y-auto hide-scrollbar py-4 flex flex-col gap-8 px-3">
         <div>
           {!sidebarCollapsed && <h4 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Discover</h4>}
           {renderLinks(MAIN_NAV)}
