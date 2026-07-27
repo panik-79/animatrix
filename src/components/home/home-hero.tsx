@@ -77,32 +77,33 @@ export function HomeHero() {
         </motion.div>
       </AnimatePresence>
 
+      {/* ── TOP LEFT BADGES ── */}
+      <div className="absolute top-6 left-6 sm:top-10 sm:left-10 z-30 flex flex-wrap items-center gap-2">
+        <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-[10px] font-extrabold uppercase tracking-widest shadow-lg shadow-primary/30 flex items-center gap-1">
+          <Flame className="w-3 h-3 fill-current" />
+          #{currentIndex + 1} Trending
+        </span>
+        {featured.score && (
+          <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-xl border border-white/15 text-amber-400 text-xs font-bold flex items-center gap-1 shadow-md">
+            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+            <span className="tabular-nums">{featured.score} / 10</span>
+          </span>
+        )}
+        {featured.type && (
+          <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-xl border border-white/15 text-white/90 text-xs font-semibold">
+            {featured.type}
+          </span>
+        )}
+        {featured.episodes && (
+          <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-xl border border-white/15 text-white/80 text-xs font-semibold">
+            {featured.episodes} Episodes
+          </span>
+        )}
+      </div>
+
       {/* ── CONTENT OVERLAY ── */}
       <div className="relative z-20 h-full flex items-end p-6 sm:p-10 md:p-14">
         <div className="max-w-2xl space-y-4">
-          {/* Badges */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-[10px] font-extrabold uppercase tracking-widest shadow-lg shadow-primary/30 flex items-center gap-1">
-              <Flame className="w-3 h-3 fill-current" />
-              #{currentIndex + 1} Trending
-            </span>
-            {featured.score && (
-              <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-xl border border-white/15 text-amber-400 text-xs font-bold flex items-center gap-1 shadow-md">
-                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                <span className="tabular-nums">{featured.score} / 10</span>
-              </span>
-            )}
-            {featured.type && (
-              <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-xl border border-white/15 text-white/90 text-xs font-semibold">
-                {featured.type}
-              </span>
-            )}
-            {featured.episodes && (
-              <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-xl border border-white/15 text-white/80 text-xs font-semibold">
-                {featured.episodes} Episodes
-              </span>
-            )}
-          </div>
 
           {/* Title */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.08] font-heading line-clamp-2 drop-shadow-lg">
