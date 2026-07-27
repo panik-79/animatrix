@@ -38,7 +38,7 @@ function LoginForm() {
         throw new Error(data.error || "Login failed");
       }
 
-      toast.success("Welcome Back", `Signed in as ${data.user.name}`);
+      toast.success("Signed In", `Signed in as ${data.user.name}`);
 
       if (!data.user.isOnboarded) {
         router.push("/onboarding");
@@ -61,8 +61,8 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-[420px] bg-[rgba(12,16,24,0.68)] backdrop-blur-[18px] backdrop-saturate-[140%] border border-white/[0.08] rounded-[28px] p-8 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.7)] relative overflow-hidden transition-all duration-300 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300 ease-out">
-      {/* Tab Switcher */}
+    <div className="w-full max-w-[420px] bg-[rgba(12,16,24,0.70)] backdrop-blur-[18px] backdrop-saturate-[140%] border border-white/[0.08] rounded-[28px] p-8 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.7)] relative overflow-hidden transition-all duration-300 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300 ease-out">
+      {/* Mode Switcher Tabs */}
       <div className="flex items-center p-1 bg-[rgba(6,9,17,0.6)] rounded-xl border border-white/[0.04] text-xs font-medium text-slate-400">
         <button
           type="button"
@@ -84,13 +84,13 @@ function LoginForm() {
           Sign In
         </h2>
         <p className="text-xs text-slate-400 font-normal leading-relaxed">
-          Access your library and continue watching.
+          Access your personal anime library, progress, and collections.
         </p>
       </div>
 
       {/* Login Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Email Field (Filled dark input, no left icon) */}
+        {/* Email Field (Filled dark input) */}
         <div className="space-y-1.5">
           <label htmlFor="email" className="block text-xs font-medium text-slate-300">
             Email address
@@ -107,7 +107,7 @@ function LoginForm() {
           />
         </div>
 
-        {/* Password Field (Filled dark input, right toggle button only) */}
+        {/* Password Field (Filled dark input with toggle) */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
             <label htmlFor="password" className="font-medium text-slate-300">
@@ -146,11 +146,11 @@ function LoginForm() {
           </div>
         </div>
 
-        {/* Single Primary CTA Button (Purple -> Indigo Gradient, No Glow, Fast Hover Translate) */}
+        {/* Primary CTA Button (Premium Indigo Gradient, Fast Hover Translate) */}
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full mt-2 py-3.5 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium text-xs rounded-xl shadow-md transition-all duration-200 hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.99] flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+          className="w-full mt-2 py-3.5 px-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-medium text-xs rounded-xl shadow-md transition-all duration-200 hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.99] flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
         >
           {isLoading ? (
             <Loader2 className="w-4 h-4 animate-spin text-white" />
@@ -160,7 +160,7 @@ function LoginForm() {
         </button>
       </form>
 
-      {/* Subtle Divider */}
+      {/* Divider */}
       <div className="relative flex items-center justify-center">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-white/[0.08]" />
@@ -170,7 +170,7 @@ function LoginForm() {
         </span>
       </div>
 
-      {/* Google Login Button (Minimal White Button, exact same dimensions) */}
+      {/* Google Login Button */}
       <button
         type="button"
         onClick={handleGoogleLogin}
@@ -218,7 +218,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <AuthLayout>
-      <Suspense fallback={<div className="w-full max-w-[420px] h-96 bg-[rgba(12,16,24,0.68)] backdrop-blur-[18px] animate-pulse rounded-[28px]" />}>
+      <Suspense fallback={<div className="w-full max-w-[420px] h-96 bg-[rgba(12,16,24,0.70)] backdrop-blur-[18px] animate-pulse rounded-[28px]" />}>
         <LoginForm />
       </Suspense>
     </AuthLayout>
