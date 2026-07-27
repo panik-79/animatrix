@@ -63,12 +63,12 @@ export function Logo({
           className={cn(
             "font-extrabold tracking-[0.2em] uppercase font-heading text-xl sm:text-2xl leading-none transition-all duration-300",
             isSuperSaiyanMode
-              ? "bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(245,158,11,0.7)]"
+              ? "bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(245,158,11,0.8)]"
               : "text-foreground"
           )}
           style={{ fontSize: `${Math.max(16, Math.round(height * 0.42))}px` }}
         >
-          {isSuperSaiyanMode ? "SUPER ANIMATRIX" : "ANIMATRIX"}
+          ANIMATRIX
         </span>
       )}
     </div>

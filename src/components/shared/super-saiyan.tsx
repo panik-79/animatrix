@@ -38,20 +38,6 @@ export function SuperSaiyanListener() {
         // Activate Super Saiyan mode in app store
         setSuperSaiyanMode(true);
 
-        // Update user profile avatar to Super Saiyan Goku
-        const SUPER_SAIYAN_AVATAR = "https://cdn.myanimelist.net/images/characters/16/186915.jpg";
-
-        try {
-          await fetch("/api/user/profile", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: SUPER_SAIYAN_AVATAR }),
-          });
-          queryClient.invalidateQueries({ queryKey: ["current-user"] });
-        } catch {
-          // Ignore if unauthenticated
-        }
-
         // Golden Super Saiyan Confetti Burst
         confetti({
           particleCount: 200,

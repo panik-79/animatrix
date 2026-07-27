@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Settings, User as UserIcon, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { Search, Settings, User as UserIcon, LogOut, PanelLeftClose, PanelLeftOpen, Flame } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
@@ -143,15 +143,15 @@ function AuthUserButton() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex items-center gap-2 rounded-full transition-all duration-300 cursor-pointer shrink-0",
+          "relative flex items-center gap-2 rounded-full transition-all duration-300 cursor-pointer shrink-0",
           isSuperSaiyanMode
-            ? "ring-4 ring-amber-400 shadow-[0_0_18px_rgba(245,158,11,0.9)] animate-pulse scale-110"
+            ? "ring-4 ring-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.95)] animate-pulse scale-105"
             : "hover:ring-2 hover:ring-primary/40"
         )}
-        title={isSuperSaiyanMode ? "Super Saiyan User" : "Account Menu"}
+        title={isSuperSaiyanMode ? "Super Saiyan Mode Active ⚡" : "Account Menu"}
       >
         {user.image ? (
-          <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-border shadow-md">
+          <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-border shadow-md bg-muted">
             <img
               src={user.image}
               alt={user.name}
@@ -160,8 +160,20 @@ function AuthUserButton() {
             />
           </div>
         ) : (
-          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-600 to-rose-600 flex items-center justify-center text-white font-bold text-xs shadow-md shrink-0">
+          <div className={cn(
+            "w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-md shrink-0",
+            isSuperSaiyanMode
+              ? "bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-slate-950 font-black"
+              : "bg-gradient-to-tr from-indigo-600 to-rose-600"
+          )}>
             {user.name[0]?.toUpperCase() || "U"}
+          </div>
+        )}
+
+        {/* Super Saiyan Flame Badge */}
+        {isSuperSaiyanMode && (
+          <div className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center shadow-lg border border-amber-200">
+            <Flame className="w-3 h-3 fill-current" />
           </div>
         )}
       </button>
