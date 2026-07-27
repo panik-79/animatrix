@@ -13,10 +13,12 @@ import {
   Save,
   ChevronDown,
   AlertCircle,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "@/store/toast-store";
 import { AvatarPickerModal } from "@/components/account/avatar-picker-modal";
 import { UnsavedChangesModal } from "@/components/account/unsaved-changes-modal";
+import { cn } from "@/lib/utils";
 
 export default function AccountPage() {
   const router = useRouter();
@@ -105,7 +107,6 @@ export default function AccountPage() {
   useEffect(() => {
     if (!isDirty) return;
 
-    // Push a dummy history state so hitting back button triggers popstate before actually leaving
     window.history.pushState({ unsavedProtection: true }, "", window.location.href);
 
     const handlePopState = (e: PopStateEvent) => {
@@ -150,7 +151,7 @@ export default function AccountPage() {
       if (u.createdAt) {
         setCreatedAt(
           new Date(u.createdAt).toLocaleDateString("en-US", {
-            month: "long",
+            month: "short",
             year: "numeric",
           })
         );
@@ -188,7 +189,6 @@ export default function AccountPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to update profile");
 
-      // Sync initial data with saved state to reset isDirty
       setInitialData({
         name,
         image,
@@ -212,7 +212,6 @@ export default function AccountPage() {
     e.preventDefault();
     const success = await saveProfileData();
     if (success) {
-      // User explicitly clicked "Save Changes" on the page -> redirect to Home!
       router.push("/");
     }
   };
@@ -260,202 +259,213 @@ export default function AccountPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6 text-foreground">
+      <div className="h-[calc(100vh-4rem)] flex items-center justify-center p-6 text-foreground bg-background">
         <div className="flex items-center gap-3 text-muted-foreground">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
-          <span className="text-sm font-medium">Loading My Account...</span>
+          <span className="text-sm font-medium">Loading Account...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground p-4 sm:p-8 lg:p-12 pb-24 font-sans">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Page Title & Unsaved Badge */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
+    <main className="h-[calc(100vh-5rem)] overflow-hidden bg-background text-foreground px-4 sm:px-6 lg:px-8 py-4 font-sans flex flex-col justify-between">
+      <div className="max-w-5xl mx-auto w-full h-full flex flex-col justify-between space-y-4">
+        
+        {/* Header Bar */}
+        <div className="flex items-center justify-between shrink-0">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-2xl font-extrabold text-foreground tracking-tight font-heading">
                 My Account
               </h1>
               {isDirty && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-semibold animate-pulse">
-                  <AlertCircle className="w-3.5 h-3.5" />
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 text-[11px] font-bold animate-pulse">
+                  <AlertCircle className="w-3 h-3" />
                   Unsaved Changes
                 </span>
               )}
             </div>
-            <p className="text-sm text-muted-foreground font-normal">
-              Manage your profile details, avatar, and personal preferences.
+            <p className="text-xs text-muted-foreground">
+              Manage your personal details, anime avatar, and preferences.
             </p>
           </div>
         </div>
 
-        {/* Profile Card Header */}
-        <div className="bg-card backdrop-blur-xl border border-border rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden flex flex-col sm:flex-row items-center gap-6">
-          {/* Avatar Area with Change Button */}
-          <div className="relative group shrink-0">
-            {image && !imageError ? (
-              <img
-                src={image}
-                alt={name}
-                referrerPolicy="no-referrer"
-                onError={() => setImageError(true)}
-                className="w-28 h-28 rounded-full object-cover border-2 border-primary/50 shadow-xl bg-card"
-              />
-            ) : (
-              <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-indigo-600 via-purple-600 to-rose-600 flex items-center justify-center text-white font-bold text-3xl shadow-xl border-2 border-primary/50">
-                {name[0]?.toUpperCase() || "U"}
-              </div>
-            )}
-            <button
-              type="button"
-              onClick={() => setIsAvatarModalOpen(true)}
-              className="absolute inset-0 bg-black/60 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 backdrop-blur-[2px] cursor-pointer"
-            >
-              <Camera className="w-6 h-6 mb-1 text-indigo-300" />
-              <span className="text-[10px] font-semibold">Change Avatar</span>
-            </button>
-          </div>
-
-          {/* User Summary info */}
-          <div className="space-y-2 text-center sm:text-left flex-1">
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">{name}</h2>
-              {isGoogleAccount && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-semibold">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  Google Verified
-                </span>
+        {/* 2-Column Main Card Layout (Fits Single Window) */}
+        <form onSubmit={handleExplicitSave} className="grid grid-cols-1 md:grid-cols-12 gap-5 flex-1 min-h-0">
+          
+          {/* Left Column: Avatar & Profile Card */}
+          <div className="md:col-span-5 bg-card backdrop-blur-xl border border-border rounded-3xl p-5 shadow-xl flex flex-col items-center justify-center text-center space-y-4 relative overflow-hidden">
+            {/* Avatar Circle with Hover Edit */}
+            <div className="relative group shrink-0">
+              {image && !imageError ? (
+                <img
+                  src={image}
+                  alt={name}
+                  referrerPolicy="no-referrer"
+                  onError={() => setImageError(true)}
+                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-primary/50 shadow-2xl bg-card"
+                />
+              ) : (
+                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-indigo-600 via-purple-600 to-rose-600 flex items-center justify-center text-white font-black text-4xl shadow-2xl border-2 border-primary/50">
+                  {name[0]?.toUpperCase() || "U"}
+                </div>
               )}
-            </div>
-            <p className="text-xs text-muted-foreground font-medium flex items-center justify-center sm:justify-start gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-muted-foreground" />
-              {email}
-            </p>
-            {createdAt && (
-              <p className="text-[11px] text-muted-foreground">
-                Member since {createdAt}
-              </p>
-            )}
-            <div className="pt-2">
               <button
                 type="button"
                 onClick={() => setIsAvatarModalOpen(true)}
-                className="px-4 py-2 text-xs font-semibold rounded-xl dark:bg-white/10 bg-slate-200/60 hover:bg-slate-200 text-foreground transition-all duration-200 cursor-pointer inline-flex items-center gap-2 border border-border"
+                className="absolute inset-0 bg-black/65 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 backdrop-blur-[2px] cursor-pointer"
+              >
+                <Camera className="w-6 h-6 mb-1 text-indigo-300" />
+                <span className="text-[10px] font-bold">Change Avatar</span>
+              </button>
+            </div>
+
+            {/* Profile Summary Info */}
+            <div className="space-y-1 w-full px-2">
+              <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                <h2 className="text-xl font-bold text-foreground tracking-tight truncate max-w-[200px] sm:max-w-[240px]">
+                  {name}
+                </h2>
+                {isGoogleAccount && (
+                  <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold">
+                    <ShieldCheck className="w-3 h-3" />
+                    Verified
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground font-medium flex items-center justify-center gap-1 truncate">
+                <Mail className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                <span className="truncate">{email}</span>
+              </p>
+              {createdAt && (
+                <p className="text-[10px] text-muted-foreground/80 font-medium">
+                  Member since {createdAt}
+                </p>
+              )}
+            </div>
+
+            {/* Change Avatar Button */}
+            <div className="w-full pt-1">
+              <button
+                type="button"
+                onClick={() => setIsAvatarModalOpen(true)}
+                className="w-full py-2.5 px-3 text-xs font-semibold rounded-xl bg-muted/60 hover:bg-muted text-foreground transition-all duration-200 cursor-pointer inline-flex items-center justify-center gap-2 border border-border shadow-sm"
               >
                 <UserIcon className="w-3.5 h-3.5 text-primary" />
                 <span>Choose Anime Avatar</span>
               </button>
             </div>
           </div>
-        </div>
 
-        {/* Profile Settings Form */}
-        <form onSubmit={handleExplicitSave} className="space-y-6">
-          <div className="bg-card backdrop-blur-xl border border-border rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-            <h3 className="text-lg font-bold text-foreground tracking-tight border-b border-border pb-4">
-              Personal Information
-            </h3>
+          {/* Right Column: Personal Info Form Card */}
+          <div className="md:col-span-7 bg-card backdrop-blur-xl border border-border rounded-3xl p-5 shadow-xl flex flex-col justify-between space-y-4">
+            
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-foreground tracking-tight border-b border-border pb-2 flex items-center gap-2 font-heading">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span>Personal Information</span>
+              </h3>
 
-            {/* Display Name */}
-            <div className="space-y-2">
-              <label htmlFor="name" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Full Name / Username
-              </label>
-              <input
-                id="name"
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your Name"
-                className="w-full px-4 py-3 text-xs dark:bg-slate-950/70 bg-slate-100/70 border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
-              />
-            </div>
-
-            {/* Gender Dropdown */}
-            <div className="space-y-2">
-              <label htmlFor="gender" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Gender
-              </label>
-              <div className="relative">
-                <select
-                  id="gender"
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  className="w-full appearance-none px-4 py-3 text-xs dark:bg-slate-950/70 bg-slate-100/70 border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all cursor-pointer pr-10"
-                >
-                  <option value="" className="bg-card text-muted-foreground">Select Gender</option>
-                  <option value="Male" className="bg-card text-foreground">Male</option>
-                  <option value="Female" className="bg-card text-foreground">Female</option>
-                  <option value="Non-Binary" className="bg-card text-foreground">Non-Binary</option>
-                  <option value="Prefer not to say" className="bg-card text-foreground">Prefer not to say</option>
-                </select>
-                <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Date of Birth Calendar */}
-            <div className="space-y-2">
-              <label htmlFor="dob" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Date of Birth
-              </label>
-              <div className="relative max-w-sm flex items-center">
-                <Calendar className="w-4 h-4 text-primary absolute left-3.5 pointer-events-none z-10" />
+              {/* Display Name */}
+              <div className="space-y-1">
+                <label htmlFor="name" className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                  Full Name / Username
+                </label>
                 <input
-                  id="dob"
-                  type="date"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 text-xs dark:bg-slate-950/70 bg-slate-100/70 border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all cursor-pointer"
+                  id="name"
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your Name"
+                  className="w-full px-3.5 py-2 text-xs bg-muted/40 border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
                 />
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Used to tailor personalized recommendations and anime release highlights.
-              </p>
+
+              {/* Gender & DOB (2-Column Row) */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* Gender Dropdown */}
+                <div className="space-y-1">
+                  <label htmlFor="gender" className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Gender
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="gender"
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="w-full appearance-none px-3.5 py-2 text-xs bg-muted/40 border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all cursor-pointer pr-8"
+                    >
+                      <option value="" className="bg-card text-muted-foreground">Select Gender</option>
+                      <option value="Male" className="bg-card text-foreground">Male</option>
+                      <option value="Female" className="bg-card text-foreground">Female</option>
+                      <option value="Non-Binary" className="bg-card text-foreground">Non-Binary</option>
+                      <option value="Prefer not to say" className="bg-card text-foreground">Prefer not to say</option>
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-muted-foreground absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Date of Birth Calendar */}
+                <div className="space-y-1">
+                  <label htmlFor="dob" className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Date of Birth
+                  </label>
+                  <div className="relative flex items-center">
+                    <Calendar className="w-3.5 h-3.5 text-primary absolute left-3 pointer-events-none z-10" />
+                    <input
+                      id="dob"
+                      type="date"
+                      value={dateOfBirth}
+                      onChange={(e) => setDateOfBirth(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 text-xs bg-muted/40 border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Bio / Anime Motto */}
+              <div className="space-y-1">
+                <label htmlFor="bio" className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                  Anime Bio / Motto
+                </label>
+                <textarea
+                  id="bio"
+                  rows={2}
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Share your favorite genres, anime quote, or watching goals..."
+                  className="w-full px-3.5 py-2 text-xs bg-muted/40 border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all resize-none"
+                />
+              </div>
             </div>
 
-            {/* Bio / Anime Motto */}
-            <div className="space-y-2">
-              <label htmlFor="bio" className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Anime Bio / Motto
-              </label>
-              <textarea
-                id="bio"
-                rows={3}
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="Share your favorite genres, anime quote, or watching goals..."
-                className="w-full px-4 py-3 text-xs dark:bg-slate-950/70 bg-slate-100/70 border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all resize-none"
-              />
+            {/* Submit Action Button */}
+            <div className="flex items-center justify-end pt-2 border-t border-border">
+              <button
+                type="submit"
+                disabled={saving}
+                className="px-6 py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-bold rounded-xl shadow-lg shadow-primary/25 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>Save Changes</span>
+                  </>
+                )}
+              </button>
             </div>
-          </div>
-
-          {/* Submit CTA */}
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-6 py-3.5 bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold rounded-xl shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 cursor-pointer disabled:opacity-50"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Saving...</span>
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  <span>Save Changes</span>
-                </>
-              )}
-            </button>
           </div>
         </form>
 
-        {/* Avatar Selection Modal */}
+        {/* Modals */}
         <AvatarPickerModal
           isOpen={isAvatarModalOpen}
           onClose={() => setIsAvatarModalOpen(false)}
@@ -464,7 +474,6 @@ export default function AccountPage() {
           onSelectAvatar={handleSelectAvatar}
         />
 
-        {/* Unsaved Changes Warning Modal */}
         <UnsavedChangesModal
           isOpen={showUnsavedModal}
           isSaving={saving}
