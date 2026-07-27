@@ -2,7 +2,24 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Play, Heart, Share2, Plus, Minus, ChevronDown, Check, Tag, Clock, Calendar, Layers } from "lucide-react";
+import {
+  Star,
+  Play,
+  Heart,
+  Share2,
+  Plus,
+  Minus,
+  ChevronDown,
+  Check,
+  Tag,
+  Layers,
+  Trophy,
+  Flame,
+  Users,
+  Building2,
+  Sparkles,
+  Award,
+} from "lucide-react";
 import Link from "next/link";
 import { Anime } from "@/core/models/anime";
 import { cn } from "@/lib/utils";
@@ -43,46 +60,52 @@ export function HeroSection({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSynopsisExpanded, setIsSynopsisExpanded] = useState(false);
   const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
+  const [isRightHovered, setIsRightHovered] = useState(false);
 
   const title = anime.title.english || anime.title.romaji;
   const bannerSrc = anime.images.banner || anime.images.posterLarge || anime.images.poster;
-  const studioName = anime.studios[0]?.name;
+  const studioName = anime.studios[0]?.name || "Original Production";
   const totalEpisodes = anime.episodes || 100;
   const progressPercent = Math.min(100, Math.round((episodesWatched / totalEpisodes) * 100));
 
   return (
-    <div className="relative w-full border-b border-border pb-8 pt-4">
+    <div className="relative w-full min-h-[calc(100vh-5rem)] flex items-center justify-center border-b border-border py-12 md:py-16 overflow-hidden">
       
-      {/* ── CLEAN AMBIENT BACKDROP ── */}
-      <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden opacity-10">
+      {/* ── FULL WINDOW BACKDROP COVERAGE ── */}
+      <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
         <img
           src={bannerSrc}
           alt={title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover filter brightness-[0.4] blur-sm scale-105 transition-transform duration-1000"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent w-full md:w-3/4" />
       </div>
 
       {/* ── HERO CONTAINER ── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-2">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-start">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* ── POSTER ON LEFT (3-4 Cols) ── */}
-          <div className="md:col-span-4 lg:col-span-3 flex flex-col items-center md:items-start">
-            <div className="relative w-[180px] sm:w-[220px] md:w-full aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-border bg-card group">
+          {/* ── POSTER ON LEFT ── */}
+          <div className="md:col-span-4 lg:col-span-4 flex flex-col items-center md:items-start">
+            <motion.div
+              whileHover={{ scale: 1.03, y: -4 }}
+              transition={{ type: "spring", stiffness: 350, damping: 25 }}
+              className="relative w-[210px] sm:w-[260px] md:w-full aspect-[2/3] rounded-3xl overflow-hidden shadow-2xl border border-white/20 dark:border-white/15 bg-card group gpu-layer"
+            >
               <img
                 src={anime.images.posterLarge || anime.images.poster}
                 alt={title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
 
-              {/* Status Badge */}
+              {/* Airing Status Badge */}
               {anime.status && (
                 <span className={cn(
-                  "absolute top-3 left-3 px-2.5 py-0.5 rounded-md text-[10px] font-semibold tracking-wide backdrop-blur-md border shadow-lg",
+                  "absolute top-3.5 left-3.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wide backdrop-blur-md border shadow-lg",
                   anime.status === "Airing"
-                    ? "bg-emerald-500/25 border-emerald-500/40 text-emerald-600 dark:text-emerald-300 font-bold"
-                    : "bg-black/70 border-white/15 text-white/90"
+                    ? "bg-emerald-500/25 border-emerald-500/40 text-emerald-400 font-bold"
+                    : "bg-black/70 border-white/20 text-white"
                 )}>
                   {anime.status}
                 </span>
@@ -94,43 +117,47 @@ export function HeroSection({
                   onClick={onOpenTrailer}
                   className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 cursor-pointer"
                 >
-                  <div className="w-13 h-13 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
-                    <Play className="w-5 h-5 fill-current ml-0.5" />
+                  <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
+                    <Play className="w-6 h-6 fill-current ml-0.5" />
                   </div>
                 </button>
               )}
-            </div>
+            </motion.div>
           </div>
 
-          {/* ── INFORMATION ON RIGHT (8-9 Cols) ── */}
-          <div className="md:col-span-8 lg:col-span-9 space-y-4 text-center md:text-left">
+          {/* ── INFORMATION ON RIGHT (WITH INTERACTIVE HOVER TOUCH) ── */}
+          <div
+            onMouseEnter={() => setIsRightHovered(true)}
+            onMouseLeave={() => setIsRightHovered(false)}
+            className="md:col-span-8 lg:col-span-8 space-y-5 text-center md:text-left transition-all duration-300"
+          >
             
             {/* Primary Title & Supporting Native Title */}
-            <div className="space-y-1">
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground font-heading leading-tight drop-shadow-sm">
+            <div className="space-y-1.5">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground font-heading leading-tight drop-shadow-sm">
                 {title}
               </h1>
 
               {anime.title.native && anime.title.native !== title && (
-                <p className="text-xs font-medium text-muted-foreground font-sans">
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground/80 font-sans">
                   {anime.title.native}
                 </p>
               )}
             </div>
 
             {/* Metadata Row */}
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1.5 text-xs text-muted-foreground font-medium">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3.5 gap-y-2 text-xs text-muted-foreground font-medium">
               {anime.score && (
-                <div className="flex items-center gap-1 text-foreground font-semibold">
-                  <Star className="w-3.5 h-3.5 text-amber-500 fill-current" />
+                <div className="flex items-center gap-1.5 text-foreground font-bold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+                  <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                   <span>{anime.score}</span>
                   {anime.scoredBy && (
-                    <span className="text-muted-foreground font-normal">({(anime.scoredBy / 1000).toFixed(0)}k)</span>
+                    <span className="text-muted-foreground font-normal text-[11px]">({(anime.scoredBy / 1000).toFixed(0)}k)</span>
                   )}
                 </div>
               )}
 
-              {anime.episodes && <span>• {anime.episodes} Ep</span>}
+              {anime.episodes && <span className="font-semibold">• {anime.episodes} Episodes</span>}
               {studioName && <span>• {studioName}</span>}
               {anime.season && anime.year && <span>• {anime.season} {anime.year}</span>}
               {anime.type && <span>• {anime.type}</span>}
@@ -139,14 +166,18 @@ export function HeroSection({
               )}
             </div>
 
-            {/* Refined Genre Chips with Subtle Icon */}
-            <div className="flex flex-wrap gap-1.5 justify-center md:justify-start">
+            {/* Genre Chips */}
+            <div className="flex flex-wrap gap-2 justify-center md:justify-start">
               {anime.genres.map((genre) => (
                 <Link key={genre.id} href={`${ROUTES.DISCOVERY}?genres=${genre.name}`}>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium dark:bg-white/[0.05] bg-slate-200/60 hover:bg-slate-200 dark:hover:bg-white/10 border border-border text-foreground transition-all hover:scale-105 cursor-pointer shadow-sm">
-                    <Tag className="w-3 h-3 text-muted-foreground" />
+                  <motion.span
+                    whileHover={{ scale: 1.06, y: -1 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-card hover:bg-accent border border-border text-foreground transition-colors cursor-pointer shadow-sm"
+                  >
+                    <Tag className="w-3 h-3 text-primary" />
                     <span>{genre.name}</span>
-                  </span>
+                  </motion.span>
                 </Link>
               ))}
             </div>
@@ -164,7 +195,7 @@ export function HeroSection({
                 {anime.synopsis.length > 220 && (
                   <button
                     onClick={() => setIsSynopsisExpanded(!isSynopsisExpanded)}
-                    className="text-xs text-primary font-semibold hover:underline cursor-pointer focus:outline-none"
+                    className="text-xs text-primary font-bold hover:underline cursor-pointer focus:outline-none"
                   >
                     {isSynopsisExpanded ? "Show Less" : "Read More"}
                   </button>
@@ -172,14 +203,71 @@ export function HeroSection({
               </div>
             )}
 
+            {/* ── RIGHT SIDE HOVER TOUCH: INTERACTIVE QUICK STATS WIDGET ── */}
+            <motion.div
+              animate={{
+                scale: isRightHovered ? 1.02 : 1,
+                borderColor: isRightHovered ? "var(--primary)" : "var(--border)",
+              }}
+              transition={{ type: "spring", stiffness: 350, damping: 25 }}
+              className="p-4 rounded-2xl bg-card/80 backdrop-blur-xl border border-border shadow-lg grid grid-cols-2 sm:grid-cols-4 gap-3 text-center md:text-left relative overflow-hidden group/widget"
+            >
+              {/* Shimmer line on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent -translate-x-full group-hover/widget:translate-x-full transition-transform duration-1000 pointer-events-none" />
+
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 shrink-0">
+                  <Trophy className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">Global Rank</span>
+                  <span className="text-xs font-black text-foreground">#{anime.rank || "N/A"}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 shrink-0">
+                  <Flame className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">Popularity</span>
+                  <span className="text-xs font-black text-foreground">#{anime.popularity || "N/A"}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 shrink-0">
+                  <Users className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">Members</span>
+                  <span className="text-xs font-black text-foreground">
+                    {anime.members ? `${(anime.members / 1000).toFixed(0)}k` : "N/A"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-500 shrink-0">
+                  <Building2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">Studio</span>
+                  <span className="text-xs font-black text-foreground truncate block max-w-[90px]" title={studioName}>
+                    {studioName}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+
             {/* ── ACTION TOOLBAR ── */}
-            <div className="pt-3 border-t border-border flex flex-wrap items-center justify-center md:justify-start gap-2.5">
+            <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
               
-              {/* PRIMARY CTA: Filled Accent Status Dropdown */}
+              {/* PRIMARY CTA: Status Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="px-4 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-xs flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-xs flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <span>{status || "Add to Library"}</span>
                   <ChevronDown className="w-3.5 h-3.5 opacity-80" />
@@ -216,21 +304,21 @@ export function HeroSection({
               </div>
 
               {/* Episode Step Tracker */}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl dark:bg-white/[0.05] bg-slate-200/60 border border-border text-xs text-foreground shadow-sm">
-                <span className="text-muted-foreground text-[11px]">Episode</span>
-                <span className="font-semibold">{episodesWatched} / {anime.episodes || "???"}</span>
+              <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-card border border-border text-xs text-foreground shadow-sm">
+                <span className="text-muted-foreground text-[11px] font-medium">Episode</span>
+                <span className="font-bold">{episodesWatched} / {anime.episodes || "???"}</span>
                 
                 <div className="flex items-center gap-1 border-l border-border pl-2">
                   <button
                     onClick={() => onEpisodesChange(Math.max(0, episodesWatched - 1))}
-                    className="w-5 h-5 rounded-md dark:bg-white/5 bg-slate-300/50 hover:bg-slate-300 flex items-center justify-center text-foreground transition-colors cursor-pointer"
+                    className="w-5.5 h-5.5 rounded-md bg-muted hover:bg-accent flex items-center justify-center text-foreground transition-colors cursor-pointer"
                     title="Decrement Episode"
                   >
                     <Minus className="w-3 h-3" />
                   </button>
                   <button
                     onClick={() => onEpisodesChange(Math.min(totalEpisodes, episodesWatched + 1))}
-                    className="w-5 h-5 rounded-md bg-primary/20 hover:bg-primary/30 text-primary flex items-center justify-center font-bold transition-colors cursor-pointer"
+                    className="w-5.5 h-5.5 rounded-md bg-primary/20 hover:bg-primary/30 text-primary flex items-center justify-center font-bold transition-colors cursor-pointer"
                     title="Increment Episode"
                   >
                     <Plus className="w-3 h-3" />
@@ -238,14 +326,14 @@ export function HeroSection({
                 </div>
               </div>
 
-              {/* SECONDARY CTA: Favorite Button */}
+              {/* Favorite Button */}
               <button
                 onClick={onFavoriteToggle}
                 className={cn(
-                  "px-3.5 py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm",
+                  "px-4 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm",
                   isFavorite
                     ? "bg-rose-600 border-rose-500 text-white shadow-lg shadow-rose-600/30 hover:bg-rose-500"
-                    : "dark:bg-white/10 bg-slate-200/60 border-border text-foreground hover:bg-slate-200"
+                    : "bg-card border-border text-foreground hover:bg-accent"
                 )}
               >
                 <Heart className={cn("w-3.5 h-3.5 transition-colors", isFavorite ? "fill-white text-white" : "text-foreground/80")} />
@@ -255,16 +343,16 @@ export function HeroSection({
               {/* Add to Collection Button */}
               <button
                 onClick={() => setIsCollectionModalOpen(true)}
-                className="px-3.5 py-2 rounded-xl dark:bg-white/10 bg-slate-200/60 border border-border hover:bg-slate-200 dark:hover:bg-white/20 text-foreground text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                className="px-4 py-2.5 rounded-xl bg-card border border-border hover:bg-accent text-foreground text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
               >
                 <Layers className="w-3.5 h-3.5 text-primary" />
                 <span>Add to Collection</span>
               </button>
 
-              {/* TERTIARY CTA: Share Ghost Button */}
+              {/* Share Button */}
               <button
                 onClick={onShare}
-                className="px-3 py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer"
+                className="px-3.5 py-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
               >
                 <Share2 className="w-3.5 h-3.5" />
                 <span>Share</span>
@@ -274,7 +362,7 @@ export function HeroSection({
               {anime.trailer?.id && (
                 <button
                   onClick={onOpenTrailer}
-                  className="px-3 py-2 rounded-xl dark:bg-white/5 bg-slate-200/60 hover:bg-slate-200 border border-border text-foreground text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-card hover:bg-accent border border-border text-foreground text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
                 >
                   <Play className="w-3.5 h-3.5 fill-current text-primary" />
                   <span>Trailer</span>
@@ -283,14 +371,14 @@ export function HeroSection({
 
             </div>
 
-            {/* SPOTIFY-STYLE SUBTLE WATCH PROGRESS BAR */}
+            {/* WATCH PROGRESS BAR */}
             {status && (
               <div className="pt-2 space-y-1">
-                <div className="flex items-center justify-between text-[11px] text-muted-foreground font-medium">
-                  <span>Progress</span>
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground font-semibold">
+                  <span>Watch Progress</span>
                   <span>{progressPercent}%</span>
                 </div>
-                <div className="w-full h-1 rounded-full bg-border overflow-hidden">
+                <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden border border-border">
                   <div
                     className="h-full rounded-full bg-primary transition-all duration-300"
                     style={{ width: `${progressPercent}%` }}

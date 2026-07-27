@@ -179,8 +179,8 @@ export default function AnimeDetailPage({ params }: PageProps) {
         onShare={handleShare}
       />
 
-      {/* ── CONTENT JOURNEY CONTAINER (Aligned max-w-6xl Grid) ── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 mt-6">
+      {/* ── CONTENT JOURNEY CONTAINER (100% Smooth Continuous Scroll Flow) ── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 md:space-y-16 mt-10 md:mt-14 scroll-smooth">
         
         {/* ── CHARACTERS ── */}
         <CharacterCast
