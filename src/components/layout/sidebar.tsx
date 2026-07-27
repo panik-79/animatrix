@@ -6,7 +6,7 @@ import { Home, Compass, Library, Layers, BarChart2, BookOpen, Settings } from "l
 import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "@/components/shared/logo";
 
 const MAIN_NAV = [
@@ -83,12 +83,33 @@ export function Sidebar() {
       )}
     >
       {/* Header with prominent logo */}
-      <div className={cn("h-20 flex items-center shrink-0 border-b border-white/[0.04]", sidebarCollapsed ? "justify-center" : "px-6")}>
-        {!sidebarCollapsed ? (
-          <Logo variant="full" height={34} linked />
-        ) : (
-          <Logo variant="icon" height={34} linked />
-        )}
+      <div className={cn("h-20 flex items-center shrink-0 border-b border-border/40 overflow-hidden transition-all duration-300", sidebarCollapsed ? "justify-center px-0" : "px-6")}>
+        <div className="overflow-hidden flex items-center whitespace-nowrap">
+          <AnimatePresence mode="wait" initial={false}>
+            {!sidebarCollapsed ? (
+              <motion.div
+                key="full-logo"
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -8 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="overflow-hidden whitespace-nowrap"
+              >
+                <Logo variant="full" height={34} linked />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="icon-logo"
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.85 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+              >
+                <Logo variant="icon" height={34} linked />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       <div className={cn("flex-1 overflow-y-auto hide-scrollbar py-4 flex flex-col px-3", sidebarCollapsed ? "gap-1.5" : "gap-6")}>
