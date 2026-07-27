@@ -38,41 +38,10 @@ export default function UserLibraryPage() {
   });
 
   return (
-    <div className="min-h-screen pb-16 pt-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-6">
-      
-      {/* ── LIBRARY HEADER & STATS BANNER ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground font-heading">
-            My Anime Library
-          </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Track your watching progress, ratings, and favorite series in your personal collection.
-          </p>
-        </div>
-
-        {/* Aggregate Stats Summary */}
-        <div className="flex items-center gap-3 sm:gap-4 dark:bg-white/[0.04] bg-slate-200/60 border border-border p-3 rounded-2xl shrink-0 text-xs">
-          <div className="text-center px-2">
-            <span className="text-muted-foreground text-[10px] uppercase font-semibold block">Total</span>
-            <span className="font-extrabold text-foreground text-base">{stats?.totalEntries || 0}</span>
-          </div>
-          <div className="h-7 w-[1px] bg-border" />
-          <div className="text-center px-2">
-            <span className="text-muted-foreground text-[10px] uppercase font-semibold block">Watched</span>
-            <span className="font-extrabold text-primary text-base">{stats?.totalEpisodesWatched || 0} Ep</span>
-          </div>
-          <div className="h-7 w-[1px] bg-border" />
-          <div className="text-center px-2">
-            <span className="text-muted-foreground text-[10px] uppercase font-semibold block">Mean Score</span>
-            <span className="font-extrabold text-amber-500 dark:text-amber-400 text-base">{stats?.meanScore ? `${stats.meanScore}` : "N/A"}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── STATUS TABS & SEARCH BAR ── */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        {/* Tabs Scrollable */}
+    <div className="w-full px-3 md:px-6 pb-20 pt-2 space-y-6">
+      {/* ── TOP CONTROLS & STATS BAR ── */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        {/* Status Tabs (Left) */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
           {STATUS_TABS.map((tab) => {
             const Icon = tab.icon;
@@ -81,12 +50,13 @@ export default function UserLibraryPage() {
             return (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0 border",
+                  "px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap shrink-0 border shadow-sm",
                   isActive
                     ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20"
-                    : "dark:bg-white/[0.04] bg-slate-200/50 text-muted-foreground hover:text-foreground border-border"
+                    : "bg-slate-100/90 dark:bg-slate-950/80 border-slate-300 dark:border-white/20 text-muted-foreground hover:text-foreground hover:border-primary/50"
                 )}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -96,14 +66,34 @@ export default function UserLibraryPage() {
           })}
         </div>
 
-        {/* Search Input */}
-        <div className="min-w-[200px] sm:w-64">
-          <SearchInput
-            placeholder="Search library..."
-            value={searchQuery}
-            onChange={setSearchQuery}
-            variantSize="sm"
-          />
+        {/* Right Side: Search Input & Aggregate Stats */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="w-full sm:w-64">
+            <SearchInput
+              placeholder="Search library..."
+              value={searchQuery}
+              onChange={setSearchQuery}
+              variantSize="md"
+            />
+          </div>
+
+          {/* Aggregate Stats Summary Pill */}
+          <div className="flex items-center justify-around sm:justify-start gap-3 bg-slate-100/90 dark:bg-slate-950/80 border border-slate-300 dark:border-white/20 px-3.5 py-2 rounded-2xl shrink-0 text-xs shadow-sm">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase">Total:</span>
+              <span className="font-extrabold text-foreground">{stats?.totalEntries || 0}</span>
+            </div>
+            <div className="h-3.5 w-[1px] bg-slate-300 dark:bg-white/20" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase">Watched:</span>
+              <span className="font-extrabold text-primary">{stats?.totalEpisodesWatched || 0} Ep</span>
+            </div>
+            <div className="h-3.5 w-[1px] bg-slate-300 dark:bg-white/20" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase">Score:</span>
+              <span className="font-extrabold text-amber-500 dark:text-amber-400">{stats?.meanScore ? `${stats.meanScore}` : "N/A"}</span>
+            </div>
+          </div>
         </div>
       </div>
 
