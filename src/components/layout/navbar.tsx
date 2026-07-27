@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Settings, User as UserIcon, LogOut, PanelLeftClose, PanelLeftOpen, Flame } from "lucide-react";
+import { Search, Settings, User as UserIcon, LogOut, PanelLeftClose, PanelLeftOpen, Flame, Menu } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
@@ -13,7 +13,13 @@ import { useAuth } from "@/hooks/use-auth";
 
 export function Navbar() {
   const pathname = usePathname();
-  const { setCommandPaletteOpen, sidebarCollapsed, setSidebarCollapsed } = useAppStore();
+  const {
+    setCommandPaletteOpen,
+    sidebarCollapsed,
+    setSidebarCollapsed,
+    mobileMenuOpen,
+    setMobileMenuOpen,
+  } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -42,23 +48,34 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-3 md:top-4 left-0 right-0 z-40 transition-all duration-300",
+        "fixed top-2 sm:top-3 md:top-4 left-0 right-0 z-40 transition-all duration-300",
         sidebarCollapsed ? "md:pl-20" : "md:pl-64"
       )}
     >
       <div
         className={cn(
-          "mx-3 md:mx-6 rounded-2xl transition-all duration-300 flex items-center justify-between h-14 px-4 md:px-6 shadow-sm",
+          "mx-2 sm:mx-4 md:mx-6 rounded-2xl transition-all duration-300 flex items-center justify-between h-14 px-3 sm:px-4 md:px-6 shadow-sm",
           scrolled
             ? "bg-background/90 backdrop-blur-xl border border-border/80 shadow-md"
             : "bg-background/70 backdrop-blur-md border border-border/40"
         )}
       >
-        {/* Left Side: Collapse Button + Active Page Title */}
-        <div className="flex items-center gap-3 shrink-0 overflow-hidden">
-          <button 
+        {/* Left Side: Mobile Hamburger / Desktop Collapse + Page Title */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 overflow-hidden">
+          {/* Mobile Hamburger Menu Toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-1.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all cursor-pointer md:hidden shrink-0"
+            title="Toggle Menu"
+            aria-label="Toggle Menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          {/* Desktop Collapse Sidebar Toggle */}
+          <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-1.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all cursor-pointer group shrink-0"
+            className="p-1.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all cursor-pointer group shrink-0 hidden md:inline-flex"
             title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             aria-label={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
@@ -70,24 +87,24 @@ export function Navbar() {
           </button>
 
           {/* Active Top Level Page Title */}
-          <h2 className="text-sm font-bold font-heading text-foreground hidden sm:block truncate">
+          <h2 className="text-xs sm:text-sm font-bold font-heading text-foreground hidden sm:block truncate">
             {pageTitle}
           </h2>
 
-          {/* Mobile Logo Only */}
+          {/* Mobile Brand Logo */}
           <div className="flex items-center md:hidden shrink-0">
-            <Logo variant="full" height={28} className="ml-1" linked />
+            <Logo variant="full" height={24} className="ml-1" linked />
           </div>
         </div>
 
-        {/* Right Side: Search Input Bar (Shifted to right, just left of account icon) + User Profile Button */}
-        <div className="flex items-center gap-3 shrink-0 ml-auto">
+        {/* Right Side: Search Input Bar + User Profile Button */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto">
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="flex items-center w-44 sm:w-60 md:w-72 lg:w-80 px-3.5 py-2 space-x-2 text-sm rounded-full bg-slate-100/90 dark:bg-slate-950/80 hover:bg-slate-200/90 dark:hover:bg-slate-900/90 text-foreground transition-all duration-300 ease-out border border-slate-300 dark:border-white/20 hover:border-primary/60 hover:shadow-lg hover:shadow-primary/10 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
+            className="flex items-center w-28 sm:w-48 md:w-64 lg:w-80 px-2.5 sm:px-3.5 py-1.5 sm:py-2 space-x-2 text-xs sm:text-sm rounded-full bg-slate-100/90 dark:bg-slate-950/80 hover:bg-slate-200/90 dark:hover:bg-slate-900/90 text-foreground transition-all duration-300 ease-out border border-slate-300 dark:border-white/20 hover:border-primary/60 hover:shadow-lg hover:shadow-primary/10 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 group cursor-pointer"
           >
-            <Search className="w-4 h-4 text-muted-foreground/70 group-hover:text-primary group-hover:scale-110 transition-all duration-300 ease-out shrink-0" />
-            <span className="font-medium text-xs text-muted-foreground truncate">Search anime, studios...</span>
+            <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground/70 group-hover:text-primary group-hover:scale-110 transition-all duration-300 ease-out shrink-0" />
+            <span className="font-medium text-xs text-muted-foreground truncate">Search...</span>
             <kbd className="hidden sm:inline-block px-1.5 py-0.5 ml-auto text-[10px] font-mono rounded-md dark:bg-white/10 bg-slate-300/80 text-muted-foreground group-hover:text-primary group-hover:bg-primary/15 group-hover:border-primary/40 border border-border shadow-sm transition-all duration-200 shrink-0">
               ⌘K
             </kbd>

@@ -9,6 +9,8 @@ interface AppState {
   setSearchQuery: (query: string) => void;
   isSuperSaiyanMode: boolean;
   setSuperSaiyanMode: (active: boolean) => void;
+  mobileMenuOpen: boolean;
+  setMobileMenuOpen: (open: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -20,4 +22,6 @@ export const useAppStore = create<AppState>((set) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   isSuperSaiyanMode: false,
   setSuperSaiyanMode: (active) => set({ isSuperSaiyanMode: active }),
+  mobileMenuOpen: false,
+  setMobileMenuOpen: (open) => set({ mobileMenuOpen: open }),
 }));

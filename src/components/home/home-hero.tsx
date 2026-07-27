@@ -50,7 +50,7 @@ export function HomeHero() {
 
   return (
     <div
-      className="relative h-[440px] md:h-[500px] lg:h-[540px] overflow-hidden rounded-3xl w-full group isolate shadow-2xl bg-slate-950 border border-white/15 transition-all duration-300 hover:border-primary/40"
+      className="relative h-[360px] sm:h-[440px] md:h-[500px] lg:h-[540px] overflow-hidden rounded-2xl sm:rounded-3xl w-full group isolate shadow-2xl bg-slate-950 border border-white/15 transition-all duration-300 hover:border-primary/40"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -62,12 +62,12 @@ export function HomeHero() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.98 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute inset-0 z-0 overflow-hidden rounded-3xl"
+          className="absolute inset-0 z-0 overflow-hidden rounded-2xl sm:rounded-3xl"
         >
           <img
             src={backdropSrc}
             alt={title}
-            className="w-full h-full object-cover object-center filter contrast-105 brightness-[0.8] rounded-3xl"
+            className="w-full h-full object-cover object-center filter contrast-105 brightness-[0.8] rounded-2xl sm:rounded-3xl"
           />
           
           {/* Multi-layer Cinematic Vignette Overlays */}
@@ -78,40 +78,40 @@ export function HomeHero() {
       </AnimatePresence>
 
       {/* ── TOP LEFT BADGES ── */}
-      <div className="absolute top-6 left-6 sm:top-10 sm:left-10 z-30 flex flex-wrap items-center gap-2">
-        <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-[10px] font-extrabold uppercase tracking-widest shadow-lg shadow-primary/30 flex items-center gap-1">
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-10 md:left-10 z-30 flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-primary text-primary-foreground text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest shadow-lg shadow-primary/30 flex items-center gap-1">
           <Flame className="w-3 h-3 fill-current" />
           #{currentIndex + 1} Trending
         </span>
         {featured.score && (
-          <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-xl border border-white/15 text-amber-400 text-xs font-bold flex items-center gap-1 shadow-md">
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+          <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-black/70 backdrop-blur-xl border border-white/15 text-amber-400 text-[10px] sm:text-xs font-bold flex items-center gap-1 shadow-md">
+            <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
             <span className="tabular-nums">{featured.score} / 10</span>
           </span>
         )}
         {featured.type && (
-          <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-xl border border-white/15 text-white/90 text-xs font-semibold">
+          <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-black/60 backdrop-blur-xl border border-white/15 text-white/90 text-[10px] sm:text-xs font-semibold">
             {featured.type}
           </span>
         )}
         {featured.episodes && (
-          <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-xl border border-white/15 text-white/80 text-xs font-semibold">
+          <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-white/10 backdrop-blur-xl border border-white/15 text-white/80 text-xs font-semibold">
             {featured.episodes} Episodes
           </span>
         )}
       </div>
 
       {/* ── CONTENT OVERLAY (Title & Expanded Synopsis) ── */}
-      <div className="relative z-20 h-full flex items-center pt-16 sm:pt-20 pb-20 px-6 sm:px-10 md:px-14">
-        <div className="max-w-2xl space-y-3">
+      <div className="relative z-20 h-full flex items-center pt-14 sm:pt-20 pb-16 sm:pb-20 px-4 sm:px-8 md:px-12 lg:px-14">
+        <div className="max-w-2xl space-y-2 sm:space-y-3">
           {/* Title */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.08] font-heading line-clamp-2 drop-shadow-lg">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] font-heading line-clamp-2 drop-shadow-lg">
             {title}
           </h1>
 
           {/* Synopsis snippet */}
           {featured.synopsis && (
-            <p className="text-xs sm:text-sm text-slate-300/90 line-clamp-3 sm:line-clamp-4 leading-relaxed max-w-xl font-normal drop-shadow">
+            <p className="text-xs sm:text-sm text-slate-300/90 line-clamp-2 sm:line-clamp-4 leading-relaxed max-w-xl font-normal drop-shadow">
               {featured.synopsis.replace(/\[Written by MAL Rewrite\]/g, "")}
             </p>
           )}

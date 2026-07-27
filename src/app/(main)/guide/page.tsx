@@ -195,7 +195,7 @@ export default function GuidePage() {
 
           <div className="space-y-3 pt-1">
             {KEYBOARD_SHORTCUTS.map((sc, i) => (
-              <div key={i} className="flex items-center justify-between gap-4 p-3 rounded-2xl bg-muted/40 border border-border">
+              <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 p-3 rounded-2xl bg-muted/40 border border-border">
                 <span className="text-xs font-medium text-foreground">{sc.description}</span>
                 <div className="flex items-center gap-1 shrink-0">
                   {sc.keys.map((k, kIdx) => (
