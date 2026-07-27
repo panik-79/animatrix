@@ -349,13 +349,14 @@ export function HeroSection({
                 <span>Add to Collection</span>
               </button>
 
-              {/* Share Button */}
+              {/* Share Icon-only Button */}
               <button
                 onClick={onShare}
-                className="px-3.5 py-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                className="p-2.5 rounded-xl bg-card border border-border hover:bg-accent text-foreground transition-all cursor-pointer shadow-sm hover:scale-105"
+                title="Share Link"
+                aria-label="Share Link"
               >
-                <Share2 className="w-3.5 h-3.5" />
-                <span>Share</span>
+                <Share2 className="w-4 h-4 text-muted-foreground hover:text-foreground" />
               </button>
 
               {/* Watch Trailer CTA */}
@@ -370,23 +371,6 @@ export function HeroSection({
               )}
 
             </div>
-
-            {/* WATCH PROGRESS BAR */}
-            {status && (
-              <div className="pt-2 space-y-1">
-                <div className="flex items-center justify-between text-[11px] text-muted-foreground font-semibold">
-                  <span>Watch Progress</span>
-                  <span>{progressPercent}%</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden border border-border">
-                  <div
-                    className="h-full rounded-full bg-primary transition-all duration-300"
-                    style={{ width: `${progressPercent}%` }}
-                  />
-                </div>
-              </div>
-            )}
-
           </div>
 
         </div>
