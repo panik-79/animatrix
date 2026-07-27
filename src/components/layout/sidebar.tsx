@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Compass, LayoutDashboard, Library, Layers, BarChart2, BookOpen, Settings } from "lucide-react";
+import { Home, Compass, Library, Layers, BarChart2, BookOpen, Settings } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
@@ -15,7 +15,6 @@ const MAIN_NAV = [
 ];
 
 const USER_NAV = [
-  { name: "Dashboard", icon: LayoutDashboard, href: ROUTES.DASHBOARD },
   { name: "Library", icon: Library, href: ROUTES.LIBRARY },
   { name: "Collections", icon: Layers, href: ROUTES.COLLECTIONS },
   { name: "Statistics", icon: BarChart2, href: ROUTES.STATS },
