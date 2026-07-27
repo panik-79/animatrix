@@ -20,7 +20,15 @@ import Link from "next/link";
 import { toast } from "@/store/toast-store";
 import { AvatarPickerModal } from "@/components/account/avatar-picker-modal";
 import { UnsavedChangesModal } from "@/components/account/unsaved-changes-modal";
+import { CustomDropdown } from "@/components/shared/custom-dropdown";
 import { cn } from "@/lib/utils";
+
+const GENDER_OPTIONS = [
+  { label: "Male", value: "Male" },
+  { label: "Female", value: "Female" },
+  { label: "Non-Binary", value: "Non-Binary" },
+  { label: "Prefer not to say", value: "Prefer not to say" },
+];
 
 export default function AccountPage() {
   const router = useRouter();
@@ -404,24 +412,16 @@ export default function AccountPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Gender Dropdown */}
                 <div className="space-y-1.5">
-                  <label htmlFor="gender" className="block text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     Gender
                   </label>
-                  <div className="relative">
-                    <select
-                      id="gender"
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                      className="w-full appearance-none px-4 py-3 text-xs bg-muted/30 border border-border rounded-2xl text-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer pr-10"
-                    >
-                      <option value="" className="bg-card text-muted-foreground">Select Gender</option>
-                      <option value="Male" className="bg-card text-foreground">Male</option>
-                      <option value="Female" className="bg-card text-foreground">Female</option>
-                      <option value="Non-Binary" className="bg-card text-foreground">Non-Binary</option>
-                      <option value="Prefer not to say" className="bg-card text-foreground">Prefer not to say</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
+                  <CustomDropdown
+                    options={GENDER_OPTIONS}
+                    value={gender}
+                    onChange={setGender}
+                    placeholder="Select Gender"
+                    size="lg"
+                  />
                 </div>
 
                 {/* Date of Birth Calendar */}
