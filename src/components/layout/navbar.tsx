@@ -41,14 +41,14 @@ export function Navbar() {
           {/* Desktop & Mobile Collapse Button */}
           <button 
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition-all cursor-pointer"
+            className="p-1.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all cursor-pointer group"
             title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             aria-label={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {sidebarCollapsed ? (
-              <PanelLeftOpen className="w-5 h-5" />
+              <PanelLeftOpen className="w-5 h-5 group-hover:text-primary transition-colors" />
             ) : (
-              <PanelLeftClose className="w-5 h-5" />
+              <PanelLeftClose className="w-5 h-5 group-hover:text-primary transition-colors" />
             )}
           </button>
 
