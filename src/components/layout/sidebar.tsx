@@ -73,15 +73,16 @@ export function Sidebar() {
         sidebarCollapsed ? "w-20" : "w-64"
       )}
     >
-      <div className={cn("h-20 flex items-center shrink-0", sidebarCollapsed ? "justify-center" : "px-6")}>
+      {/* Header with enlarged logo */}
+      <div className={cn("h-24 flex items-center shrink-0", sidebarCollapsed ? "justify-center" : "px-6")}>
         {!sidebarCollapsed ? (
-          <Logo variant="full" height={50} linked />
+          <Logo variant="full" height={60} linked />
         ) : (
-          <Logo variant="icon" height={36} linked />
+          <Logo variant="icon" height={40} linked />
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto hide-scrollbar py-4 flex flex-col gap-8 px-3">
+      <div className="flex-1 overflow-y-auto hide-scrollbar py-2 flex flex-col gap-8 px-3">
         <div>
           {!sidebarCollapsed && <h4 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Discover</h4>}
           {renderLinks(MAIN_NAV)}

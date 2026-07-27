@@ -1,17 +1,5 @@
 /**
- * Logo — canonical brand asset component.
- *
- * Variants:
- *  - "full"  : torii icon + "ANIMATRIX" wordmark side-by-side (default)
- *  - "icon"  : torii gate icon only (collapsed sidebar, favicon context)
- *
- * The full logo PNG ships with a black background.  Rendering it with
- * `mix-blend-mode: screen` on any dark surface makes the black regions
- * vanish, leaving only the white wordmark and blue icon visible — zero
- * cropping, zero preprocessing required.
- *
- * On the auth left-branding panel (large display) we use a generous
- * `height` so the image fills the brand mark area naturally.
+ * Logo — canonical brand asset component with automatic Dark & Light mode optimization.
  */
 
 import Image from "next/image";
@@ -21,6 +9,7 @@ import { ROUTES } from "@/lib/constants";
 
 import fullLogo from "@/assets/fulllogo_on_black_4k.png";
 import iconLogo from "@/assets/icon_transparent_blue_4k.png";
+import wordmarkBlackLogo from "@/assets/wordmark_solid_black_transparent_4k.png";
 
 interface LogoProps {
   /** "full" = icon + wordmark; "icon" = icon only */
@@ -41,17 +30,40 @@ export function Logo({
 }: LogoProps) {
   const content =
     variant === "full" ? (
-      <Image
-        src={fullLogo}
-        alt="Animatrix"
-        height={height}
-        width={Math.round(height * (fullLogo.width / fullLogo.height))}
-        priority
-        draggable={false}
-        // mix-blend-mode: screen → black bg becomes transparent on dark surfaces
-        style={{ mixBlendMode: "screen" }}
-        className={cn("select-none", className)}
-      />
+      <div className={cn("inline-flex items-center select-none", className)}>
+        {/* Dark Mode Version (Screen blended on black) */}
+        <div className="hidden dark:block">
+          <Image
+            src={fullLogo}
+            alt="Animatrix"
+            height={height}
+            width={Math.round(height * (fullLogo.width / fullLogo.height))}
+            priority
+            draggable={false}
+            style={{ mixBlendMode: "screen" }}
+          />
+        </div>
+
+        {/* Light Mode Version (Transparent Torii Icon + Solid Black Wordmark) */}
+        <div className="flex dark:hidden items-center gap-2">
+          <Image
+            src={iconLogo}
+            alt="Animatrix icon"
+            height={height}
+            width={Math.round(height * (iconLogo.width / iconLogo.height))}
+            priority
+            draggable={false}
+          />
+          <Image
+            src={wordmarkBlackLogo}
+            alt="Animatrix"
+            height={Math.round(height * 0.48)}
+            width={Math.round((height * 0.48) * (wordmarkBlackLogo.width / wordmarkBlackLogo.height))}
+            priority
+            draggable={false}
+          />
+        </div>
+      </div>
     ) : (
       <Image
         src={iconLogo}

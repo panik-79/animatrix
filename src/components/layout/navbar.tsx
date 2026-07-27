@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Menu, Settings, User as UserIcon, LogOut, Shield } from "lucide-react";
+import { Search, Menu, Settings, User as UserIcon, LogOut } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
-import { useSettingsStore } from "@/store/settings-store";
 import { cn } from "@/lib/utils";
-import { ROUTES, APP_NAME } from "@/lib/constants";
+import { ROUTES } from "@/lib/constants";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "@/components/shared/logo";
@@ -55,13 +54,6 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-3">
-          <Link 
-            href={ROUTES.SETTINGS}
-            className="p-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-secondary/80 transition-colors"
-            title="Settings"
-          >
-            <Settings className="w-5 h-5" />
-          </Link>
           <AuthUserButton />
         </div>
       </div>

@@ -49,16 +49,16 @@ export function HeroSection({
   const progressPercent = Math.min(100, Math.round((episodesWatched / totalEpisodes) * 100));
 
   return (
-    <div className="relative w-full border-b border-white/10 pb-6 pt-2 -mt-6">
+    <div className="relative w-full border-b border-border pb-6 pt-2 -mt-6">
       
       {/* ── KEY VISUAL AMBIENT BLUR BACKDROP ── */}
       <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
         <img
           src={bannerSrc}
           alt={title}
-          className="w-full h-full object-cover filter blur-3xl opacity-25 scale-105"
+          className="w-full h-full object-cover filter blur-3xl opacity-20 scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/70 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/80 to-background" />
       </div>
 
       {/* ── HERO CONTAINER ── */}
@@ -67,7 +67,7 @@ export function HeroSection({
           
           {/* ── POSTER ON LEFT (3-4 Cols) ── */}
           <div className="md:col-span-4 lg:col-span-3 flex flex-col items-center md:items-start">
-            <div className="relative w-[180px] sm:w-[220px] md:w-full aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl shadow-black/80 border border-white/15 bg-slate-950 group">
+            <div className="relative w-[180px] sm:w-[220px] md:w-full aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-border bg-card group">
               <img
                 src={anime.images.posterLarge || anime.images.poster}
                 alt={title}
@@ -79,7 +79,7 @@ export function HeroSection({
                 <span className={cn(
                   "absolute top-3 left-3 px-2.5 py-0.5 rounded-md text-[10px] font-semibold tracking-wide backdrop-blur-md border shadow-lg",
                   anime.status === "Airing"
-                    ? "bg-emerald-500/25 border-emerald-500/40 text-emerald-300"
+                    ? "bg-emerald-500/25 border-emerald-500/40 text-emerald-600 dark:text-emerald-300 font-bold"
                     : "bg-black/70 border-white/15 text-white/90"
                 )}>
                   {anime.status}
@@ -105,25 +105,25 @@ export function HeroSection({
             
             {/* Primary Title & Supporting Native Title */}
             <div className="space-y-1">
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white font-heading leading-tight drop-shadow-sm">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground font-heading leading-tight drop-shadow-sm">
                 {title}
               </h1>
 
               {anime.title.native && anime.title.native !== title && (
-                <p className="text-xs font-medium text-white/60 font-sans">
+                <p className="text-xs font-medium text-muted-foreground font-sans">
                   {anime.title.native}
                 </p>
               )}
             </div>
 
             {/* Metadata Row */}
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1.5 text-xs text-white/70 font-medium">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1.5 text-xs text-muted-foreground font-medium">
               {anime.score && (
-                <div className="flex items-center gap-1 text-white font-semibold">
-                  <Star className="w-3.5 h-3.5 text-amber-400 fill-current" />
+                <div className="flex items-center gap-1 text-foreground font-semibold">
+                  <Star className="w-3.5 h-3.5 text-amber-500 fill-current" />
                   <span>{anime.score}</span>
                   {anime.scoredBy && (
-                    <span className="text-white/50 font-normal">({(anime.scoredBy / 1000).toFixed(0)}k)</span>
+                    <span className="text-muted-foreground font-normal">({(anime.scoredBy / 1000).toFixed(0)}k)</span>
                   )}
                 </div>
               )}
@@ -133,7 +133,7 @@ export function HeroSection({
               {anime.season && anime.year && <span>• {anime.season} {anime.year}</span>}
               {anime.type && <span>• {anime.type}</span>}
               {anime.broadcast?.string && (
-                <span className="hidden sm:inline text-primary/90 font-semibold">• {anime.broadcast.string}</span>
+                <span className="hidden sm:inline text-primary font-semibold">• {anime.broadcast.string}</span>
               )}
             </div>
 
@@ -141,19 +141,19 @@ export function HeroSection({
             <div className="flex flex-wrap gap-1.5 justify-center md:justify-start">
               {anime.genres.map((genre) => (
                 <Link key={genre.id} href={`${ROUTES.DISCOVERY}?genres=${genre.name}`}>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-white/[0.05] hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/80 hover:text-white transition-all hover:scale-105 cursor-pointer shadow-sm">
-                    <Tag className="w-3 h-3 text-white/40" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium dark:bg-white/[0.05] bg-slate-200/60 hover:bg-slate-200 dark:hover:bg-white/10 border border-border text-foreground transition-all hover:scale-105 cursor-pointer shadow-sm">
+                    <Tag className="w-3 h-3 text-muted-foreground" />
                     <span>{genre.name}</span>
                   </span>
                 </Link>
               ))}
             </div>
 
-            {/* 3-5 Line Synopsis Directly Inside the Hero */}
+            {/* Synopsis */}
             {anime.synopsis && (
               <div className="space-y-1.5 pt-1">
                 <p className={cn(
-                  "text-xs sm:text-sm text-white/80 leading-relaxed font-sans",
+                  "text-xs sm:text-sm text-foreground/90 leading-relaxed font-sans",
                   !isSynopsisExpanded && "line-clamp-4"
                 )}>
                   {anime.synopsis}
@@ -170,8 +170,8 @@ export function HeroSection({
               </div>
             )}
 
-            {/* ── ACTION TOOLBAR (Clear Visual Hierarchy) ── */}
-            <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-center md:justify-start gap-2.5">
+            {/* ── ACTION TOOLBAR ── */}
+            <div className="pt-3 border-t border-border flex flex-wrap items-center justify-center md:justify-start gap-2.5">
               
               {/* PRIMARY CTA: Filled Accent Status Dropdown */}
               <div className="relative">
@@ -190,7 +190,7 @@ export function HeroSection({
                       initial={{ opacity: 0, y: 4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
-                      className="absolute left-0 mt-1.5 w-44 rounded-xl bg-slate-900 border border-white/15 shadow-2xl z-30 py-1 overflow-hidden"
+                      className="absolute left-0 mt-1.5 w-44 rounded-xl bg-popover border border-border shadow-2xl z-30 py-1 overflow-hidden"
                     >
                       {STATUS_OPTIONS.map((opt) => (
                         <button
@@ -200,8 +200,8 @@ export function HeroSection({
                             setIsDropdownOpen(false);
                           }}
                           className={cn(
-                            "w-full px-3.5 py-2 text-left text-xs font-medium flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer",
-                            status === opt.id ? "text-primary bg-primary/10 font-semibold" : "text-white/80"
+                            "w-full px-3.5 py-2 text-left text-xs font-medium flex items-center justify-between hover:bg-accent transition-colors cursor-pointer",
+                            status === opt.id ? "text-primary bg-primary/10 font-semibold" : "text-popover-foreground"
                           )}
                         >
                           <span>{opt.label}</span>
@@ -214,14 +214,14 @@ export function HeroSection({
               </div>
 
               {/* Episode Step Tracker */}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.05] border border-white/10 text-xs text-white shadow-sm">
-                <span className="text-white/60 text-[11px]">Episode</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl dark:bg-white/[0.05] bg-slate-200/60 border border-border text-xs text-foreground shadow-sm">
+                <span className="text-muted-foreground text-[11px]">Episode</span>
                 <span className="font-semibold">{episodesWatched} / {anime.episodes || "???"}</span>
                 
-                <div className="flex items-center gap-1 border-l border-white/10 pl-2">
+                <div className="flex items-center gap-1 border-l border-border pl-2">
                   <button
                     onClick={() => onEpisodesChange(Math.max(0, episodesWatched - 1))}
-                    className="w-5 h-5 rounded-md bg-white/5 hover:bg-white/15 flex items-center justify-center text-white/80 transition-colors cursor-pointer"
+                    className="w-5 h-5 rounded-md dark:bg-white/5 bg-slate-300/50 hover:bg-slate-300 flex items-center justify-center text-foreground transition-colors cursor-pointer"
                     title="Decrement Episode"
                   >
                     <Minus className="w-3 h-3" />
@@ -243,17 +243,17 @@ export function HeroSection({
                   "px-3.5 py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm",
                   isFavorite
                     ? "bg-rose-600 border-rose-500 text-white shadow-lg shadow-rose-600/30 hover:bg-rose-500"
-                    : "bg-white/10 border-white/15 text-white hover:bg-white/15 hover:border-white/25"
+                    : "dark:bg-white/10 bg-slate-200/60 border-border text-foreground hover:bg-slate-200"
                 )}
               >
-                <Heart className={cn("w-3.5 h-3.5 transition-colors", isFavorite ? "fill-white text-white" : "text-white/80")} />
+                <Heart className={cn("w-3.5 h-3.5 transition-colors", isFavorite ? "fill-white text-white" : "text-foreground/80")} />
                 <span>{isFavorite ? "Favorited" : "Favorite"}</span>
               </button>
 
               {/* TERTIARY CTA: Share Ghost Button */}
               <button
                 onClick={onShare}
-                className="px-3 py-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer"
+                className="px-3 py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer"
               >
                 <Share2 className="w-3.5 h-3.5" />
                 <span>Share</span>
@@ -263,7 +263,7 @@ export function HeroSection({
               {anime.trailer?.id && (
                 <button
                   onClick={onOpenTrailer}
-                  className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="px-3 py-2 rounded-xl dark:bg-white/5 bg-slate-200/60 hover:bg-slate-200 border border-border text-foreground text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Play className="w-3.5 h-3.5 fill-current text-primary" />
                   <span>Trailer</span>
@@ -275,11 +275,11 @@ export function HeroSection({
             {/* SPOTIFY-STYLE SUBTLE WATCH PROGRESS BAR */}
             {status && (
               <div className="pt-2 space-y-1">
-                <div className="flex items-center justify-between text-[11px] text-white/60 font-medium">
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground font-medium">
                   <span>Progress</span>
                   <span>{progressPercent}%</span>
                 </div>
-                <div className="w-full h-1 rounded-full bg-white/10 overflow-hidden">
+                <div className="w-full h-1 rounded-full bg-border overflow-hidden">
                   <div
                     className="h-full rounded-full bg-primary transition-all duration-300"
                     style={{ width: `${progressPercent}%` }}

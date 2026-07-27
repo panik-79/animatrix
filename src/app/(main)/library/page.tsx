@@ -40,9 +40,9 @@ export default function UserLibraryPage() {
     <div className="min-h-screen pb-16 pt-6 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-6">
       
       {/* ── LIBRARY HEADER & STATS BANNER ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-heading">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground font-heading">
             My Anime Library
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -51,20 +51,20 @@ export default function UserLibraryPage() {
         </div>
 
         {/* Aggregate Stats Summary */}
-        <div className="flex items-center gap-3 sm:gap-4 bg-white/[0.04] border border-white/10 p-3 rounded-2xl shrink-0 text-xs">
+        <div className="flex items-center gap-3 sm:gap-4 dark:bg-white/[0.04] bg-slate-200/60 border border-border p-3 rounded-2xl shrink-0 text-xs">
           <div className="text-center px-2">
-            <span className="text-white/60 text-[10px] uppercase font-semibold block">Total</span>
-            <span className="font-extrabold text-white text-base">{stats?.totalEntries || 0}</span>
+            <span className="text-muted-foreground text-[10px] uppercase font-semibold block">Total</span>
+            <span className="font-extrabold text-foreground text-base">{stats?.totalEntries || 0}</span>
           </div>
-          <div className="h-7 w-[1px] bg-white/10" />
+          <div className="h-7 w-[1px] bg-border" />
           <div className="text-center px-2">
-            <span className="text-white/60 text-[10px] uppercase font-semibold block">Watched</span>
+            <span className="text-muted-foreground text-[10px] uppercase font-semibold block">Watched</span>
             <span className="font-extrabold text-primary text-base">{stats?.totalEpisodesWatched || 0} Ep</span>
           </div>
-          <div className="h-7 w-[1px] bg-white/10" />
+          <div className="h-7 w-[1px] bg-border" />
           <div className="text-center px-2">
-            <span className="text-white/60 text-[10px] uppercase font-semibold block">Mean Score</span>
-            <span className="font-extrabold text-amber-400 text-base">{stats?.meanScore ? `${stats.meanScore}` : "N/A"}</span>
+            <span className="text-muted-foreground text-[10px] uppercase font-semibold block">Mean Score</span>
+            <span className="font-extrabold text-amber-500 dark:text-amber-400 text-base">{stats?.meanScore ? `${stats.meanScore}` : "N/A"}</span>
           </div>
         </div>
       </div>
@@ -82,10 +82,10 @@ export default function UserLibraryPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0",
+                  "px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shrink-0 border",
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                    : "bg-white/[0.04] text-white/70 hover:text-white hover:bg-white/10 border border-white/10"
+                    ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20"
+                    : "dark:bg-white/[0.04] bg-slate-200/50 text-muted-foreground hover:text-foreground border-border"
                 )}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -97,13 +97,13 @@ export default function UserLibraryPage() {
 
         {/* Search Input */}
         <div className="relative min-w-[200px] sm:w-64">
-          <Search className="w-4 h-4 text-white/40 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search library..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-white/[0.06] border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl dark:bg-white/[0.06] bg-slate-200/60 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
           />
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function UserLibraryPage() {
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div key={`skel-lib-${i}`} className="h-64 rounded-xl overflow-hidden bg-card/30">
+            <div key={`skel-lib-${i}`} className="h-64 rounded-xl overflow-hidden bg-card border border-border">
               <SkeletonLoader className="w-full h-full" />
             </div>
           ))}
@@ -138,10 +138,10 @@ export default function UserLibraryPage() {
           {filteredEntries.map((entry: any) => (
             <div
               key={entry.id}
-              className="rounded-2xl overflow-hidden bg-card/40 border border-white/10 hover:border-white/25 transition-all group flex flex-col justify-between shadow-lg relative isolate"
+              className="rounded-2xl overflow-hidden bg-card border border-border hover:border-primary/50 transition-all group flex flex-col justify-between shadow-md relative isolate"
             >
               {/* Anime Image Banner */}
-              <div className="relative aspect-[2/3] w-full overflow-hidden bg-slate-950">
+              <div className="relative aspect-[2/3] w-full overflow-hidden bg-muted">
                 <Link href={ROUTES.ANIME_DETAIL(entry.animeId)}>
                   <img
                     src={entry.imageUrl || "/placeholder.png"}
@@ -175,7 +175,7 @@ export default function UserLibraryPage() {
                 {/* Bottom Episode Increment Overlay Bar */}
                 <div className="absolute bottom-0 inset-x-0 p-2.5 bg-gradient-to-t from-black/95 via-black/70 to-transparent flex items-center justify-between text-xs text-white">
                   <div className="space-y-0.5">
-                    <span className="text-[10px] text-white/60 block">Progress</span>
+                    <span className="text-[10px] text-white/70 block">Progress</span>
                     <span className="font-bold">
                       {entry.progress} / {entry.totalEpisodes || "???"}
                     </span>
@@ -190,7 +190,7 @@ export default function UserLibraryPage() {
                           progress: Math.max(0, entry.progress - 1),
                         })
                       }
-                      className="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+                      className="w-6 h-6 rounded-md bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors cursor-pointer"
                       title="Minus episode"
                     >
                       <Minus className="w-3 h-3" />
@@ -215,20 +215,20 @@ export default function UserLibraryPage() {
               {/* Title & Actions Bottom Footer */}
               <div className="p-3 space-y-2">
                 <Link href={ROUTES.ANIME_DETAIL(entry.animeId)}>
-                  <h3 className="text-xs font-bold text-white leading-snug line-clamp-1 hover:text-primary transition-colors">
+                  <h3 className="text-xs font-bold text-foreground leading-snug line-clamp-1 hover:text-primary transition-colors">
                     {entry.title}
                   </h3>
                 </Link>
 
-                <div className="flex items-center justify-between pt-1 border-t border-white/10 text-[11px] text-white/70">
-                  <div className="flex items-center gap-1 text-amber-400 font-semibold">
+                <div className="flex items-center justify-between pt-1 border-t border-border text-[11px] text-muted-foreground">
+                  <div className="flex items-center gap-1 text-amber-500 font-semibold">
                     <Star className="w-3 h-3 fill-current" />
                     <span>{entry.score ? `${entry.score}` : "—"}</span>
                   </div>
 
                   <button
                     onClick={() => removeMutation.mutate(entry.animeId)}
-                    className="text-white/40 hover:text-rose-400 transition-colors p-1 rounded cursor-pointer"
+                    className="text-muted-foreground hover:text-rose-500 transition-colors p-1 rounded cursor-pointer"
                     title="Remove from library"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
