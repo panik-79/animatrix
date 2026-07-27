@@ -12,9 +12,11 @@ import {
   ShieldCheck,
   Save,
   ChevronDown,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "@/store/toast-store";
 import { AvatarPickerModal } from "@/components/account/avatar-picker-modal";
+import { UnsavedChangesModal } from "@/components/account/unsaved-changes-modal";
 
 export default function AccountPage() {
   const router = useRouter();
@@ -35,9 +37,81 @@ export default function AccountPage() {
   const [isGoogleAccount, setIsGoogleAccount] = useState(false);
   const [createdAt, setCreatedAt] = useState<string>("");
 
+  // Baseline Initial Data (for tracking unsaved changes)
+  const [initialData, setInitialData] = useState<{
+    name: string;
+    image: string | null;
+    gender: string;
+    dateOfBirth: string;
+    bio: string;
+  } | null>(null);
+
+  // Navigation Interception State
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+  const [showUnsavedModal, setShowUnsavedModal] = useState(false);
+
+  // Computed isDirty
+  const isDirty =
+    initialData !== null &&
+    (name !== initialData.name ||
+      image !== initialData.image ||
+      gender !== initialData.gender ||
+      dateOfBirth !== initialData.dateOfBirth ||
+      bio !== initialData.bio);
+
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  // Protect against browser tab close / reload if form is dirty
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  // Intercept internal link navigation if form is dirty
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (!isDirty) return;
+      const target = (e.target as HTMLElement).closest("a");
+      if (target && target.href && !target.href.startsWith("javascript:")) {
+        try {
+          const targetUrl = new URL(target.href, window.location.origin);
+          if (targetUrl.pathname !== window.location.pathname) {
+            e.preventDefault();
+            e.stopPropagation();
+            setPendingNavigation(targetUrl.pathname + targetUrl.search + targetUrl.hash);
+            setShowUnsavedModal(true);
+          }
+        } catch {
+          // Ignore invalid URLs
+        }
+      }
+    };
+
+    document.addEventListener("click", handleClick, true);
+    return () => document.removeEventListener("click", handleClick, true);
+  }, [isDirty]);
+
+  // Intercept browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      if (isDirty) {
+        window.history.pushState(null, "", window.location.href);
+        setPendingNavigation("BACK");
+        setShowUnsavedModal(true);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [isDirty]);
 
   const fetchProfile = async () => {
     try {
@@ -50,22 +124,39 @@ export default function AccountPage() {
       if (!res.ok) throw new Error(data.error || "Failed to load account profile");
 
       const u = data.user;
-      setName(u.name || "");
+      const loadedName = u.name || "";
+      const loadedImage = u.image || null;
+      const loadedGender = u.gender || "";
+      const loadedDob = u.dateOfBirth || "";
+      const loadedBio = u.bio || "";
+
+      setName(loadedName);
       setEmail(u.email || "");
-      setImage(u.image || null);
+      setImage(loadedImage);
       if (u.isGoogleAccount && u.image) {
         setGoogleImage(u.image);
       }
-      setGender(u.gender || "");
-      setDateOfBirth(u.dateOfBirth || "");
-      setBio(u.bio || "");
+      setGender(loadedGender);
+      setDateOfBirth(loadedDob);
+      setBio(loadedBio);
       setIsGoogleAccount(Boolean(u.isGoogleAccount));
+
       if (u.createdAt) {
-        setCreatedAt(new Date(u.createdAt).toLocaleDateString("en-US", {
-          month: "long",
-          year: "numeric",
-        }));
+        setCreatedAt(
+          new Date(u.createdAt).toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+          })
+        );
       }
+
+      setInitialData({
+        name: loadedName,
+        image: loadedImage,
+        gender: loadedGender,
+        dateOfBirth: loadedDob,
+        bio: loadedBio,
+      });
     } catch (err: any) {
       toast.error("Error", err.message || "Failed to load profile details.");
     } finally {
@@ -73,8 +164,7 @@ export default function AccountPage() {
     }
   };
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const saveProfileData = async (): Promise<boolean> => {
     setSaving(true);
     try {
       const res = await fetch("/api/user/profile", {
@@ -92,12 +182,67 @@ export default function AccountPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to update profile");
 
+      // Sync initial data with saved state to reset isDirty
+      setInitialData({
+        name,
+        image,
+        gender: gender || "",
+        dateOfBirth: dateOfBirth || "",
+        bio: bio || "",
+      });
+
       queryClient.invalidateQueries({ queryKey: ["current-user"] });
       toast.success("Account Updated", "Your profile details have been saved.");
+      return true;
     } catch (err: any) {
       toast.error("Save Error", err.message || "Failed to save profile.");
+      return false;
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleExplicitSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const success = await saveProfileData();
+    if (success) {
+      // User explicitly clicked "Save Changes" on the page -> redirect to Home!
+      router.push("/");
+    }
+  };
+
+  const handleSaveAndLeave = async () => {
+    const success = await saveProfileData();
+    if (success) {
+      setShowUnsavedModal(false);
+      executeNavigation();
+    }
+  };
+
+  const handleDiscardAndLeave = () => {
+    if (initialData) {
+      setName(initialData.name);
+      setImage(initialData.image);
+      setGender(initialData.gender);
+      setDateOfBirth(initialData.dateOfBirth);
+      setBio(initialData.bio);
+    }
+    setShowUnsavedModal(false);
+    executeNavigation();
+  };
+
+  const handleKeepEditing = () => {
+    setShowUnsavedModal(false);
+    setPendingNavigation(null);
+  };
+
+  const executeNavigation = () => {
+    const nav = pendingNavigation;
+    setPendingNavigation(null);
+    if (!nav || nav === "BACK") {
+      router.back();
+    } else {
+      router.push(nav);
     }
   };
 
@@ -121,14 +266,24 @@ export default function AccountPage() {
   return (
     <main className="min-h-screen bg-background text-foreground p-4 sm:p-8 lg:p-12 pb-24 font-sans">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Page Title */}
-        <div className="space-y-1">
-          <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
-            My Account
-          </h1>
-          <p className="text-sm text-muted-foreground font-normal">
-            Manage your profile details, avatar, and personal preferences.
-          </p>
+        {/* Page Title & Unsaved Badge */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
+                My Account
+              </h1>
+              {isDirty && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-semibold animate-pulse">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  Unsaved Changes
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground font-normal">
+              Manage your profile details, avatar, and personal preferences.
+            </p>
+          </div>
         </div>
 
         {/* Profile Card Header */}
@@ -192,7 +347,7 @@ export default function AccountPage() {
         </div>
 
         {/* Profile Settings Form */}
-        <form onSubmit={handleSave} className="space-y-6">
+        <form onSubmit={handleExplicitSave} className="space-y-6">
           <div className="bg-card backdrop-blur-xl border border-border rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
             <h3 className="text-lg font-bold text-foreground tracking-tight border-b border-border pb-4">
               Personal Information
@@ -273,7 +428,7 @@ export default function AccountPage() {
           </div>
 
           {/* Submit CTA */}
-          <div className="flex justify-end pt-2">
+          <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="submit"
               disabled={saving}
@@ -301,6 +456,15 @@ export default function AccountPage() {
           currentImage={image}
           googleImage={googleImage}
           onSelectAvatar={handleSelectAvatar}
+        />
+
+        {/* Unsaved Changes Warning Modal */}
+        <UnsavedChangesModal
+          isOpen={showUnsavedModal}
+          isSaving={saving}
+          onSaveAndLeave={handleSaveAndLeave}
+          onDiscardAndLeave={handleDiscardAndLeave}
+          onKeepEditing={handleKeepEditing}
         />
       </div>
     </main>
