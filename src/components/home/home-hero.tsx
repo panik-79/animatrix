@@ -53,7 +53,7 @@ export function HomeHero() {
 
   if (isLoading || !trendingItems.length || !featured) {
     return (
-      <div className="relative h-[400px] md:h-[460px] lg:h-[500px] bg-slate-900/50 overflow-hidden rounded-2xl md:rounded-3xl mx-3 md:mx-6 mt-3">
+      <div className="relative h-[400px] md:h-[460px] lg:h-[500px] bg-slate-950 overflow-hidden rounded-2xl md:rounded-3xl mx-3 md:mx-6 mt-3">
         <SkeletonLoader className="absolute inset-0 w-full h-full" />
       </div>
     );
@@ -62,11 +62,10 @@ export function HomeHero() {
   const title = featured.title.english || featured.title.romaji;
   const posterSrc = featured.images.posterLarge || featured.images.poster;
   const backdropSrc = featured.images.banner || posterSrc;
-  const hasBanner = !!featured.images.banner;
 
   return (
-    <div className="relative h-[400px] md:h-[460px] lg:h-[500px] overflow-hidden rounded-2xl md:rounded-3xl mx-3 md:mx-6 mt-3 group isolate shadow-2xl">
-      {/* ── BACKDROP IMAGE ── */}
+    <div className="relative h-[400px] md:h-[460px] lg:h-[500px] overflow-hidden rounded-2xl md:rounded-3xl mx-3 md:mx-6 mt-3 group isolate shadow-2xl bg-slate-950 border border-black/10">
+      {/* ── BACKDROP IMAGE (Strictly constrained inside rounded hero card) ── */}
       <AnimatePresence initial={false}>
         <motion.div
           key={`bg-${featured.id}`}
@@ -74,25 +73,22 @@ export function HomeHero() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8 }}
-          className="absolute inset-0 z-0"
+          className="absolute inset-0 z-0 overflow-hidden"
         >
           <img
             src={backdropSrc}
             alt=""
             aria-hidden
-            className={cn(
-              "absolute inset-0 w-full h-full object-cover",
-              !hasBanner && "blur-xl scale-110 opacity-80"
-            )}
+            className="absolute inset-0 w-full h-full object-cover"
           />
         </motion.div>
       </AnimatePresence>
 
-      {/* ── CINEMATIC DARK VIGNETTE GRADIENTS ── */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-slate-950 via-slate-950/60 to-black/20" />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-slate-950/90 via-slate-950/40 to-transparent w-full md:w-3/4" />
+      {/* ── CINEMATIC DARK VIGNETTE GRADIENTS (Contained within hero card) ── */}
+      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-slate-950 via-slate-950/65 to-black/30" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-slate-950/95 via-slate-950/50 to-transparent w-full md:w-3/4" />
 
-      {/* ── COMBINED CONTENT (TEXT + POSTER) ── */}
+      {/* ── HERO CONTENT ── */}
       <AnimatePresence mode="wait">
         <motion.div
           key={`content-${featured.id}`}
@@ -111,17 +107,17 @@ export function HomeHero() {
             >
               {/* Badges */}
               <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="px-2.5 py-1 bg-primary/30 text-white border border-primary/40 rounded-md text-[11px] font-bold tracking-wider uppercase backdrop-blur-sm">
+                <span className="px-2.5 py-1 bg-rose-600/90 text-white border border-rose-500/40 rounded-md text-[11px] font-bold tracking-wider uppercase backdrop-blur-sm">
                   #{currentIndex + 1} Trending
                 </span>
                 {featured.score && (
-                  <span className="flex items-center gap-1 text-amber-400 font-semibold bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-md text-[11px] border border-white/10">
+                  <span className="flex items-center gap-1 text-amber-400 font-semibold bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md text-[11px] border border-white/10">
                     <Star className="w-3 h-3 fill-current" />
                     {featured.score}
                   </span>
                 )}
                 {featured.type && (
-                  <span className="text-[11px] font-medium text-white/80 bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10">
+                  <span className="text-[11px] font-medium text-white/80 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10">
                     {featured.type}
                   </span>
                 )}
@@ -142,7 +138,7 @@ export function HomeHero() {
               {/* CTA */}
               <Link
                 href={ROUTES.ANIME_DETAIL(featured.id)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-semibold text-sm shadow-lg shadow-primary/20 transition-all hover:shadow-primary/35 hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-semibold text-sm shadow-lg shadow-rose-600/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Play className="w-4 h-4 fill-current" />
                 View Details
@@ -161,10 +157,8 @@ export function HomeHero() {
               <img
                 src={posterSrc}
                 alt={title}
-                className="h-[250px] lg:h-[300px] xl:h-[340px] w-auto object-cover rounded-xl shadow-2xl shadow-black/80 border border-white/20 transition-transform duration-500 group-hover:scale-[1.02]"
+                className="h-[250px] lg:h-[300px] xl:h-[340px] w-auto object-cover rounded-xl shadow-2xl shadow-black/90 border border-white/20 transition-transform duration-500 group-hover:scale-[1.02]"
               />
-              {/* Glow behind poster */}
-              <div className="absolute -inset-3 bg-primary/20 rounded-2xl blur-2xl -z-10" />
             </motion.div>
           </div>
         </motion.div>
@@ -173,14 +167,14 @@ export function HomeHero() {
       {/* ── NAV ARROWS ── */}
       <button
         onClick={goPrev}
-        className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 z-[5] p-2.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-black/70 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer focus:outline-none"
+        className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 z-[5] p-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-black/80 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer focus:outline-none"
         aria-label="Previous slide"
       >
         <ChevronLeft className="w-5 h-5" />
       </button>
       <button
         onClick={goNext}
-        className="absolute right-3 md:left-auto md:right-4 top-1/2 -translate-y-1/2 z-[5] p-2.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-black/70 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer focus:outline-none"
+        className="absolute right-3 md:left-auto md:right-4 top-1/2 -translate-y-1/2 z-[5] p-2.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-black/80 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer focus:outline-none"
         aria-label="Next slide"
       >
         <ChevronRight className="w-5 h-5" />

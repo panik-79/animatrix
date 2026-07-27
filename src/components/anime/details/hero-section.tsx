@@ -51,14 +51,14 @@ export function HeroSection({
   return (
     <div className="relative w-full border-b border-border pb-6 pt-2 -mt-6">
       
-      {/* ── KEY VISUAL AMBIENT BLUR BACKDROP ── */}
-      <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
+      {/* ── CLEAN AMBIENT BACKDROP (Strictly constrained with zero color bleed) ── */}
+      <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden opacity-10">
         <img
           src={bannerSrc}
           alt={title}
-          className="w-full h-full object-cover filter blur-3xl opacity-20 scale-105"
+          className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/80 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
       </div>
 
       {/* ── HERO CONTAINER ── */}
