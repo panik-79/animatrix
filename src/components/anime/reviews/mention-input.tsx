@@ -15,10 +15,10 @@ interface MentionInputProps {
   onSubmit?: () => void;
 }
 
-// Extracts the @-query at the current cursor position, returns null if not inside a mention
+// Extracts the @-query at current cursor position (supports spaces in queries up to 25 chars)
 function getMentionQuery(text: string, cursorPos: number): string | null {
   const before = text.slice(0, cursorPos);
-  const match = before.match(/@([\w]*)$/);
+  const match = before.match(/@([\w\s]{0,25})$/);
   return match ? match[1] ?? null : null;
 }
 
@@ -39,7 +39,7 @@ export function MentionInput({
 
   const { data: mentionUsers = [] } = useMentionSearch(mentionQuery ?? "");
 
-  // Auto-resize
+  // Auto-resize textarea
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
@@ -66,12 +66,16 @@ export function MentionInput({
       const cursor = el.selectionStart ?? value.length;
       const before = value.slice(0, cursor);
       const after = value.slice(cursor);
-      // Replace the @query with @name
-      const replaced = before.replace(/@([\w]*)$/, `@${user.name} `);
+      
+      // If name contains spaces, format as @[Name] for precise multi-word parsing
+      const nameTag = user.name.includes(" ") ? `@[${user.name}] ` : `@${user.name} `;
+      const replaced = before.replace(/@([\w\s]{0,25})$/, nameTag);
+
       onChange(replaced + after);
       setDropdownOpen(false);
       setMentionQuery(null);
-      // Restore focus
+
+      // Restore cursor focus
       setTimeout(() => {
         el.focus();
         const pos = replaced.length;
@@ -112,7 +116,6 @@ export function MentionInput({
     }
   };
 
-  // Highlight @mentions in display (the textarea just shows raw text; the hint text is separate)
   const hasMentionDropdown = dropdownOpen && mentionUsers.length > 0;
 
   return (
@@ -134,9 +137,9 @@ export function MentionInput({
         style={{ overflow: "hidden" }}
       />
 
-      {/* @mention dropdown */}
+      {/* @mention autocomplete dropdown */}
       {hasMentionDropdown && (
-        <div className="absolute z-50 left-0 mt-1 w-64 rounded-xl border border-white/[0.1] bg-zinc-900 shadow-2xl overflow-hidden">
+        <div className="absolute z-50 left-0 mt-1 w-64 rounded-2xl border border-white/[0.12] bg-zinc-900/95 backdrop-blur-xl shadow-2xl overflow-hidden p-1">
           {mentionUsers.map((user, idx) => (
             <button
               key={user.id}
@@ -146,18 +149,25 @@ export function MentionInput({
                 insertMention(user);
               }}
               className={cn(
-                "flex items-center gap-2.5 w-full px-3 py-2.5 text-left transition-colors text-sm",
-                idx === activeIndex ? "bg-primary/20 text-white" : "hover:bg-white/[0.05] text-zinc-300"
+                "flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-left transition-colors text-xs font-medium cursor-pointer",
+                idx === activeIndex
+                  ? "bg-primary text-primary-foreground font-semibold"
+                  : "hover:bg-white/[0.08] text-zinc-300"
               )}
             >
               {user.image ? (
-                <img src={user.image} alt={user.name} className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/10" />
+                <img
+                  src={user.image}
+                  alt={user.name}
+                  referrerPolicy="no-referrer"
+                  className="w-6 h-6 rounded-full object-cover shrink-0 border border-white/10"
+                />
               ) : (
-                <div className="w-7 h-7 rounded-full bg-zinc-700 shrink-0 flex items-center justify-center text-[11px] font-bold text-zinc-300">
+                <div className="w-6 h-6 rounded-full bg-zinc-700 shrink-0 flex items-center justify-center text-[10px] font-bold text-zinc-200">
                   {user.name[0]?.toUpperCase()}
                 </div>
               )}
-              <span className="font-medium truncate">@{user.name}</span>
+              <span className="truncate">@{user.name}</span>
             </button>
           ))}
         </div>

@@ -28,18 +28,34 @@ function timeAgo(dateStr: string): string {
 
 /** Renders @mentions as bold inline highlights */
 function BodyWithMentions({ body }: { body: string }) {
-  const parts = body.split(/(@\w+)/g);
+  // Matches: 1. @[Name With Spaces] 2. @Name With Spaces before punctuation 3. @SingleWord
+  const regex = /(@\[[^\]]+\]|@[A-Za-z0-9_]+(?:\s+[A-Za-z0-9_]+)*(?=\s*[\.,!?;\:]|\s*$)|@\w+)/g;
+  const parts = body.split(regex);
+
   return (
     <span>
-      {parts.map((part, i) =>
-        part.startsWith("@") ? (
-          <span key={i} className="font-semibold text-primary/90">
-            {part}
-          </span>
-        ) : (
-          <span key={i}>{part}</span>
-        )
-      )}
+      {parts.map((part, i) => {
+        if (!part) return null;
+        const isBracketed = part.startsWith("@[");
+        const isMention = part.startsWith("@");
+
+        if (isMention) {
+          const cleanName = isBracketed
+            ? part.replace(/^@\[(.*)\]$/, "@$1")
+            : part;
+
+          return (
+            <span
+              key={i}
+              className="inline-flex items-center px-1.5 py-0.5 mx-0.5 rounded-md bg-primary/15 border border-primary/30 text-primary font-semibold text-xs shadow-sm"
+            >
+              {cleanName}
+            </span>
+          );
+        }
+
+        return <span key={i}>{part}</span>;
+      })}
     </span>
   );
 }
