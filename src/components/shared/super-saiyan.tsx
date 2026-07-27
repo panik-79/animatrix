@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
 import { toast } from "@/store/toast-store";
 import { useAppStore } from "@/store/app-store";
+import { useSettingsStore } from "@/store/settings-store";
 import { useQueryClient } from "@tanstack/react-query";
 
 const SAIYAN_KEYS = ["s", "a", "i", "y", "a", "n"];
@@ -11,6 +12,7 @@ const SAIYAN_KEYS = ["s", "a", "i", "y", "a", "n"];
 export function SuperSaiyanListener() {
   const inputBuffer = useRef<string[]>([]);
   const { setSuperSaiyanMode } = useAppStore();
+  const { setThemePreset } = useSettingsStore();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -35,8 +37,9 @@ export function SuperSaiyanListener() {
       ) {
         inputBuffer.current = [];
 
-        // Activate Super Saiyan mode in app store
+        // Activate Super Saiyan mode in app store & shift theme preset to fiery orange (sunset)
         setSuperSaiyanMode(true);
+        setThemePreset("sunset");
 
         // Golden Super Saiyan Confetti Burst
         confetti({
