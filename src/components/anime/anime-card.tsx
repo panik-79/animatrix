@@ -101,17 +101,6 @@ export function AnimeCard({ anime, className }: AnimeCardProps) {
           </h4>
 
           <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-auto">
-            {score ? (
-              <span className="flex items-center gap-0.5">
-                <Star
-                  className={cn(
-                    "w-3 h-3 fill-current",
-                    score >= 8 ? "text-amber-400" : score >= 6 ? "text-amber-400/60" : "text-muted-foreground"
-                  )}
-                />
-                <span className="font-semibold text-foreground/80">{score}</span>
-              </span>
-            ) : null}
             {anime.type && (
               <span className="text-muted-foreground/70">{anime.type}</span>
             )}
