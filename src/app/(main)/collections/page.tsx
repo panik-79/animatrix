@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, FolderPlus, Pin, Trash2, Edit3, Search, Layers, ChevronRight, Sparkles, X, Check } from "lucide-react";
+import { Plus, FolderPlus, Pin, Trash2, Edit3, Search, Layers, ChevronRight, Sparkles, X, Check, Grid, List } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -33,6 +33,7 @@ export default function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
   const [newCollectionDesc, setNewCollectionDesc] = useState("");
@@ -168,7 +169,7 @@ export default function CollectionsPage() {
 
   return (
     <div className="w-full px-4 md:px-6 pb-20 pt-2 space-y-6">
-      {/* ── TOP CONTROLS: SEARCH FILTER & CREATE BUTTON ── */}
+      {/* ── TOP CONTROLS: SEARCH FILTER, VIEW TOGGLE & CREATE BUTTON ── */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         {/* Filter collections search bar (top left) */}
         <div className="relative w-full md:max-w-md group">
@@ -195,6 +196,31 @@ export default function CollectionsPage() {
           <span className="text-xs text-muted-foreground font-semibold">
             {filteredCollections.length} {filteredCollections.length === 1 ? "Collection" : "Collections"}
           </span>
+
+          {/* View Mode Grid/List toggle */}
+          <div className="flex items-center bg-card/40 border border-white/[0.06] p-1 rounded-xl">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={cn(
+                "p-1.5 rounded-lg transition-colors cursor-pointer",
+                viewMode === "grid" ? "bg-white/10 text-white" : "text-muted-foreground hover:text-white"
+              )}
+              title="Grid View"
+            >
+              <Grid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "p-1.5 rounded-lg transition-colors cursor-pointer",
+                viewMode === "list" ? "bg-white/10 text-white" : "text-muted-foreground hover:text-white"
+              )}
+              title="List View"
+            >
+              <List className="w-4 h-4" />
+            </button>
+          </div>
+
           <button
             onClick={() => setIsCreateModalOpen(true)}
             className="px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold flex items-center gap-2 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] cursor-pointer"
@@ -205,12 +231,12 @@ export default function CollectionsPage() {
         </div>
       </div>
 
-      {/* ── CONTENT GRID ── */}
+      {/* ── CONTENT RENDER ── */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-64 rounded-2xl bg-card border border-border p-4 space-y-4">
-              <SkeletonLoader className="h-32 w-full rounded-xl" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-60 rounded-2xl bg-card border border-border p-4 space-y-4">
+              <SkeletonLoader className="h-28 w-full rounded-xl" />
               <SkeletonLoader className="h-5 w-3/4" />
               <SkeletonLoader className="h-4 w-1/2" />
             </div>
@@ -245,8 +271,9 @@ export default function CollectionsPage() {
             </div>
           )}
         </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      ) : viewMode === "grid" ? (
+        /* ── 4-COLUMN GRID VIEW ── */
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-5">
           {filteredCollections.map((col) => {
             const itemCount = col.items.length;
             const posters = col.items.slice(0, 3).map((item) => item.imageUrl).filter(Boolean);
@@ -255,7 +282,7 @@ export default function CollectionsPage() {
               <Link
                 key={col.id}
                 href={`/collections/${col.id}`}
-                className="group relative rounded-2xl bg-card hover:bg-accent/40 border border-border hover:border-primary/40 p-4 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
+                className="group relative rounded-2xl bg-card/40 hover:bg-card/70 border border-white/[0.06] hover:border-primary/40 p-4 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
               >
                 {/* Pinned Badge & Actions Header */}
                 <div className="flex items-center justify-between z-10 mb-3">
@@ -291,7 +318,7 @@ export default function CollectionsPage() {
                 </div>
 
                 {/* Poster Collage Preview */}
-                <div className="relative h-36 rounded-xl overflow-hidden bg-slate-900/50 border border-border mb-4 flex items-center justify-center">
+                <div className="relative h-28 rounded-xl overflow-hidden bg-slate-900/50 border border-border mb-3.5 flex items-center justify-center">
                   {posters.length > 0 ? (
                     <div className="flex w-full h-full">
                       {posters.map((url, idx) => (
@@ -306,7 +333,7 @@ export default function CollectionsPage() {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-1 text-muted-foreground/60">
-                      <Layers className="w-8 h-8 stroke-1" />
+                      <Layers className="w-7 h-7 stroke-1" />
                       <span className="text-[11px]">Empty Collection</span>
                     </div>
                   )}
@@ -315,7 +342,7 @@ export default function CollectionsPage() {
                 {/* Title & Description Footer */}
                 <div>
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors truncate font-heading">
+                    <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate font-heading">
                       {col.name}
                     </h3>
                     <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
@@ -325,6 +352,93 @@ export default function CollectionsPage() {
                       {col.description}
                     </p>
                   )}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      ) : (
+        /* ── HORIZONTAL LIST VIEW ── */
+        <div className="space-y-3.5">
+          {filteredCollections.map((col) => {
+            const itemCount = col.items.length;
+            const posters = col.items.slice(0, 4).map((item) => item.imageUrl).filter(Boolean);
+
+            return (
+              <Link
+                key={col.id}
+                href={`/collections/${col.id}`}
+                className="group flex flex-col sm:flex-row items-stretch gap-4 p-3.5 rounded-2xl bg-card/40 hover:bg-card/70 border border-white/[0.06] hover:border-primary/40 transition-all duration-300 shadow-sm hover:shadow-xl"
+              >
+                {/* Poster Preview Thumbnail (Left) */}
+                <div className="relative w-full sm:w-48 h-28 rounded-xl overflow-hidden shrink-0 bg-slate-900 border border-white/10 flex items-center justify-center">
+                  {posters.length > 0 ? (
+                    <div className="flex w-full h-full">
+                      {posters.map((url, idx) => (
+                        <div key={idx} className="flex-1 h-full overflow-hidden border-r border-background/20 last:border-0 relative">
+                          <img
+                            src={url!}
+                            alt=""
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-muted-foreground/60 text-xs font-medium">
+                      <Layers className="w-5 h-5 stroke-1" />
+                      <span>Empty</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content Info (Right) */}
+                <div className="flex-1 flex flex-col justify-between py-1 space-y-2">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors font-heading line-clamp-1">
+                          {col.name}
+                        </h3>
+                        {col.isPinned && (
+                          <span className="px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-500 text-[10px] font-bold flex items-center gap-1 shrink-0">
+                            <Pin className="w-3 h-3 fill-amber-500" />
+                            Pinned
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={(e) => handleTogglePin(e, col.id, col.isPinned)}
+                          className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                          title={col.isPinned ? "Unpin Collection" : "Pin Collection"}
+                        >
+                          <Pin className={cn("w-3.5 h-3.5", col.isPinned && "fill-primary text-primary")} />
+                        </button>
+                        <button
+                          onClick={(e) => handleDeleteCollection(e, col.id, col.name)}
+                          className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                          title="Delete Collection"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all ml-1" />
+                      </div>
+                    </div>
+
+                    {col.description && (
+                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                        {col.description}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-medium text-muted-foreground bg-secondary/80 px-2.5 py-0.5 rounded-md border border-border">
+                      {itemCount} {itemCount === 1 ? "Anime item" : "Anime items"}
+                    </span>
+                  </div>
                 </div>
               </Link>
             );
