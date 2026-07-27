@@ -77,8 +77,9 @@ export default function AccountPage() {
 
   // Intercept internal link navigation if form is dirty
   useEffect(() => {
+    if (!isDirty) return;
+
     const handleClick = (e: MouseEvent) => {
-      if (!isDirty) return;
       const target = (e.target as HTMLElement).closest("a");
       if (target && target.href && !target.href.startsWith("javascript:")) {
         try {
@@ -86,6 +87,7 @@ export default function AccountPage() {
           if (targetUrl.pathname !== window.location.pathname) {
             e.preventDefault();
             e.stopPropagation();
+            e.stopImmediatePropagation();
             setPendingNavigation(targetUrl.pathname + targetUrl.search + targetUrl.hash);
             setShowUnsavedModal(true);
           }
@@ -95,18 +97,22 @@ export default function AccountPage() {
       }
     };
 
-    document.addEventListener("click", handleClick, true);
-    return () => document.removeEventListener("click", handleClick, true);
+    window.addEventListener("click", handleClick, { capture: true });
+    return () => window.removeEventListener("click", handleClick, { capture: true });
   }, [isDirty]);
 
   // Intercept browser back/forward buttons
   useEffect(() => {
-    const handlePopState = () => {
-      if (isDirty) {
-        window.history.pushState(null, "", window.location.href);
-        setPendingNavigation("BACK");
-        setShowUnsavedModal(true);
-      }
+    if (!isDirty) return;
+
+    // Push a dummy history state so hitting back button triggers popstate before actually leaving
+    window.history.pushState({ unsavedProtection: true }, "", window.location.href);
+
+    const handlePopState = (e: PopStateEvent) => {
+      e.preventDefault();
+      window.history.pushState({ unsavedProtection: true }, "", window.location.href);
+      setPendingNavigation("BACK");
+      setShowUnsavedModal(true);
     };
 
     window.addEventListener("popstate", handlePopState);
