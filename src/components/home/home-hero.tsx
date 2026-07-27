@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, ChevronLeft, ChevronRight, Play, Info, Flame } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, Play, Flame } from "lucide-react";
 import { useTrendingAnime } from "@/hooks/use-anime";
 import { ROUTES } from "@/lib/constants";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
@@ -38,7 +38,7 @@ export function HomeHero() {
 
   if (isLoading || !trendingItems.length || !featured) {
     return (
-      <div className="relative h-[440px] md:h-[500px] lg:h-[540px] bg-slate-950 overflow-hidden rounded-3xl mx-3 md:mx-6 mt-3 border border-white/[0.08] shadow-2xl">
+      <div className="relative h-[440px] md:h-[500px] lg:h-[540px] bg-slate-950 overflow-hidden rounded-3xl w-full border border-white/10 shadow-2xl">
         <SkeletonLoader className="absolute inset-0 w-full h-full" />
       </div>
     );
@@ -50,11 +50,11 @@ export function HomeHero() {
 
   return (
     <div
-      className="relative h-[440px] md:h-[500px] lg:h-[540px] overflow-hidden rounded-3xl mx-3 md:mx-6 mt-3 group isolate shadow-xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-slate-950 border border-white/20 transition-all duration-300 hover:border-primary/50"
+      className="relative h-[440px] md:h-[500px] lg:h-[540px] overflow-hidden rounded-3xl w-full group isolate shadow-2xl bg-slate-950 border border-white/15 transition-all duration-300 hover:border-primary/40"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* ── BACKDROP IMAGE (Constrained inside rounded hero card) ── */}
+      {/* ── BACKDROP IMAGE ── */}
       <AnimatePresence initial={false}>
         <motion.div
           key={featured.id}
@@ -67,13 +67,13 @@ export function HomeHero() {
           <img
             src={backdropSrc}
             alt={title}
-            className="w-full h-full object-cover object-center filter contrast-105 brightness-[0.82] rounded-3xl"
+            className="w-full h-full object-cover object-center filter contrast-105 brightness-[0.8] rounded-3xl"
           />
           
           {/* Multi-layer Cinematic Vignette Overlays */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent z-10" />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/75 to-transparent z-10 w-full md:w-3/4" />
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-slate-950/60 to-transparent z-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-slate-950/50 to-transparent z-10 pointer-events-none" />
         </motion.div>
       </AnimatePresence>
 
@@ -150,7 +150,7 @@ export function HomeHero() {
 
       {/* ── ARROWS & PAGINATION INDICATORS ── */}
       <div className="absolute bottom-5 right-6 sm:right-10 z-30 flex items-center gap-4">
-        {/* Arrow Buttons (Desktop Hover) */}
+        {/* Arrow Buttons */}
         <div className="hidden sm:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={() => goTo(currentIndex - 1)}

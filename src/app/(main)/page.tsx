@@ -9,7 +9,7 @@ import {
 import { useRecommendations } from "@/hooks/use-recommendations";
 import { HomeHero } from "@/components/home/home-hero";
 import { AnimeCarousel } from "@/components/anime/anime-carousel";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Compass } from "lucide-react";
 import Link from "next/link";
 import { ROUTES, GENRES } from "@/lib/constants";
 import { motion, Variants } from "framer-motion";
@@ -18,12 +18,12 @@ const stagger: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.12 },
+    transition: { staggerChildren: 0.1 },
   },
 };
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
     y: 0,
@@ -43,51 +43,50 @@ export default function Home() {
   const recommendedAnimeList = recommendationsData?.recommendations.map((r) => r.anime) ?? [];
 
   return (
-    <div className="pb-20 overflow-x-hidden space-y-8">
+    <div className="min-h-screen pb-20 pt-4 space-y-10 md:space-y-14 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* ── HERO BANNER ── */}
       <HomeHero />
 
-      {/* ── CONTENT SECTIONS ── */}
+      {/* ── CONTENT SECTIONS (UNIFORM DESIGN SYSTEM) ── */}
       <motion.div
         variants={stagger}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, margin: "-80px" }}
-        className="space-y-10 md:space-y-14"
+        viewport={{ once: true, margin: "-60px" }}
+        className="space-y-12 md:space-y-16"
       >
         {/* Genre Quick Access Chips */}
-        <motion.section variants={fadeUp} className="px-4 md:px-8">
-          <div className="flex items-center justify-between gap-4 mb-3">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-4.5 rounded-full bg-primary shadow-[0_0_12px_rgba(139,92,246,0.8)]" />
-              <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-bold">
+        <motion.section variants={fadeUp} className="space-y-4">
+          {/* Section Header (Consistent Design System) */}
+          <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
+                <Compass className="w-4 h-4" />
+              </div>
+              <h2 className="text-lg font-bold text-foreground tracking-tight font-heading">
                 Browse by Genre
-              </h3>
+              </h2>
             </div>
+            <Link href={ROUTES.DISCOVERY}>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors cursor-pointer">
+                <span>All Genres</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </span>
+            </Link>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 pt-1">
             {CURATED_GENRES.map((genre) => (
               <Link key={genre} href={`${ROUTES.DISCOVERY}?genres=${genre}`}>
                 <motion.span
                   whileHover={{ scale: 1.05, y: -1 }}
                   whileTap={{ scale: 0.97 }}
-                  className="inline-block px-4 py-2 bg-slate-100/90 dark:bg-slate-950/80 border border-slate-300 dark:border-white/20 hover:border-primary/60 hover:bg-slate-200/90 dark:hover:bg-slate-900/90 rounded-xl text-xs font-bold text-foreground hover:text-primary transition-all duration-200 shadow-sm cursor-pointer"
+                  className="inline-block px-4 py-2 bg-card hover:bg-accent border border-border hover:border-primary/50 rounded-xl text-xs font-semibold text-foreground transition-all duration-200 shadow-sm cursor-pointer"
                 >
                   {genre}
                 </motion.span>
               </Link>
             ))}
-            <Link href={ROUTES.DISCOVERY}>
-              <motion.span
-                whileHover={{ scale: 1.05, y: -1 }}
-                whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl text-xs font-semibold text-primary hover:bg-primary/20 transition-all duration-200 shadow-sm cursor-pointer"
-              >
-                <span>All Genres</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </motion.span>
-            </Link>
           </div>
         </motion.section>
 
@@ -98,6 +97,7 @@ export default function Home() {
               title="Recommended For You"
               items={recommendedAnimeList}
               isLoading={recLoading}
+              disablePadding={true}
             />
           </motion.section>
         )}
@@ -107,6 +107,7 @@ export default function Home() {
             title="Trending Now"
             items={trending?.data.slice(1, 20)}
             isLoading={trendingLoading}
+            disablePadding={true}
           />
         </motion.section>
 
@@ -115,6 +116,7 @@ export default function Home() {
             title="Popular This Season"
             items={currentSeason?.pages[0]?.data}
             isLoading={currentLoading}
+            disablePadding={true}
           />
         </motion.section>
 
@@ -123,6 +125,7 @@ export default function Home() {
             title="Highly Anticipated"
             items={upcoming?.pages[0]?.data}
             isLoading={upcomingLoading}
+            disablePadding={true}
           />
         </motion.section>
 
@@ -131,6 +134,7 @@ export default function Home() {
             title="All-Time Classics"
             items={topRated?.pages[0]?.data}
             isLoading={topLoading}
+            disablePadding={true}
           />
         </motion.section>
       </motion.div>
