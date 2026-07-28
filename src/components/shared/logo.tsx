@@ -49,6 +49,7 @@ export function Logo({
         alt="Animatrix Icon"
         height={height}
         width={Math.round(height * (iconLogo.width / iconLogo.height))}
+        style={{ width: "auto", height: `${height}px` }}
         priority
         draggable={false}
         className={cn(
