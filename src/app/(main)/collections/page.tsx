@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, FolderPlus, Pin, Trash2, Edit3, Search, Layers, ChevronRight, Sparkles, X, Check, Grid, List } from "lucide-react";
+import { Plus, FolderPlus, Pin, Trash2, Edit3, Search, Layers, ChevronRight, X, Check, Grid, List } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";

@@ -6,7 +6,7 @@ import {
   Calendar as CalendarIcon,
   Clock,
   Globe,
-  Sparkles,
+  Compass,
   BookmarkCheck,
   Bookmark,
   ArrowRight,
@@ -34,7 +34,7 @@ const DAYS_MAP = [
 const SCOPE_MODES: { id: ScheduleMode; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: "weekly", label: "Weekly Timetable", icon: CalendarIcon },
   { id: "next_season", label: "Next Season", icon: Flame },
-  { id: "year_outlook", label: "Year Outlook", icon: Sparkles },
+  { id: "year_outlook", label: "Year Outlook", icon: Compass },
 ];
 
 export default function SchedulePage() {

@@ -8,7 +8,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Search,
-  Sparkles,
+  SlidersHorizontal,
   Flame,
   Clock,
   Calendar,
@@ -236,7 +236,7 @@ export default function OnboardingPage() {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="p-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20">
-                      <Sparkles className="w-4 h-4" />
+                      <SlidersHorizontal className="w-4 h-4" />
                     </span>
                     <h2 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
                       What genres & vibes do you love?

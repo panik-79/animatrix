@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Command } from "cmdk";
-import { Search, Flame, Navigation } from "lucide-react";
+import { Search, Flame, Navigation, Zap } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
+import { useEasterEggModal } from "@/components/shared/anime-easter-eggs";
 import { ROUTES } from "@/lib/constants";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -122,6 +123,16 @@ export function CommandPalette() {
                         >
                           <Navigation className="w-4 h-4 mr-2.5 text-primary" />
                           <span>Browse Anime</span>
+                        </Command.Item>
+                        <Command.Item
+                          onSelect={() => {
+                            setCommandPaletteOpen(false);
+                            useEasterEggModal.getState().openModal();
+                          }}
+                          className="flex items-center px-3 py-2.5 text-sm font-medium rounded-xl cursor-pointer text-foreground hover:bg-accent hover:text-accent-foreground transition-colors mt-1"
+                        >
+                          <Zap className="w-4 h-4 mr-2.5 text-amber-500 fill-amber-500/20" />
+                          <span>Secret Anime Power Realms ⚡</span>
                         </Command.Item>
                       </Command.Group>
                       

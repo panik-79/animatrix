@@ -9,8 +9,8 @@ import { ToastContainer } from "@/components/shared/toast-container";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { KonamiCodeListener } from "@/components/shared/konami-code";
 import { MatrixRainOverlay } from "@/components/shared/matrix-rain";
-import { SuperSaiyanListener } from "@/components/shared/super-saiyan";
 import { NarutoEasterEgg } from "@/components/shared/naruto-easter-egg";
+import { AnimeEasterEggs } from "@/components/shared/anime-easter-eggs";
 import { ScrollToTop } from "@/components/shared/scroll-to-top";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -37,8 +37,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <ScrollToTop />
         <KonamiCodeListener />
         <MatrixRainOverlay />
-        <SuperSaiyanListener />
         <NarutoEasterEgg />
+        <AnimeEasterEggs />
       </ThemeProvider>
     </QueryClientProvider>
   );

@@ -22,6 +22,7 @@ interface LogoProps {
 }
 
 import { useAppStore } from "@/store/app-store";
+import { useEasterEggModal } from "@/components/shared/anime-easter-eggs";
 
 export function Logo({
   variant = "full",
@@ -37,10 +38,16 @@ export function Logo({
     useMatrixStore.getState().toggleMatrix();
   };
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    useEasterEggModal.getState().openModal();
+  };
+
   const content = (
     <div
       onDoubleClick={handleDoubleClick}
-      title="Double-click to toggle Matrix Mode 🕶️"
+      onContextMenu={handleContextMenu}
+      title="Double-click for Matrix Mode • Right-click / Long-press for Secret Power Realms ⚡"
       className={cn("inline-flex items-center gap-3 select-none cursor-pointer", className)}
     >
       {/* High-Res Transparent Torii Gate Brand Icon */}

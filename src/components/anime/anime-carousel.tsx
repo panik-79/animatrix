@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import { Anime } from "@/core/models/anime";
 import { AnimeCard, AnimeCardSkeleton } from "./anime-card";
 import { cn } from "@/lib/utils";
@@ -28,55 +28,46 @@ export function AnimeCarousel({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  const uniqueItems = items.filter(
-    (item, idx, self) => idx === self.findIndex((t) => t.id === item.id)
-  );
-
   const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const { scrollLeft, scrollWidth, clientWidth } = el;
+    if (!scrollRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
     setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
   }, []);
 
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
     checkScroll();
-    const timer1 = setTimeout(checkScroll, 100);
-    const timer2 = setTimeout(checkScroll, 500);
-
     window.addEventListener("resize", checkScroll);
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      window.removeEventListener("resize", checkScroll);
-    };
-  }, [checkScroll, items, isLoading]);
+    return () => window.removeEventListener("resize", checkScroll);
+  }, [checkScroll, items]);
 
-  const scroll = useCallback((direction: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const amount = el.clientWidth * 0.75;
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    const targetScroll = Math.max(
-      0,
-      Math.min(maxScroll, direction === "left" ? el.scrollLeft - amount : el.scrollLeft + amount)
-    );
+  const scroll = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const clientWidth = scrollRef.current.clientWidth;
+    const currentScroll = scrollRef.current.scrollLeft;
+    // Scroll ~75% of container width for smooth pagination
+    const scrollAmount = direction === "left" ? -clientWidth * 0.75 : clientWidth * 0.75;
+    const targetScroll = currentScroll + scrollAmount;
 
-    animate(el.scrollLeft, targetScroll, {
+    animate(currentScroll, targetScroll, {
       type: "spring",
-      stiffness: 220,
-      damping: 24,
-      mass: 0.5,
+      stiffness: 300,
+      damping: 30,
       onUpdate: (latest) => {
-        if (el) el.scrollLeft = latest;
+        if (scrollRef.current) {
+          scrollRef.current.scrollLeft = latest;
+        }
       },
-      onComplete: checkScroll,
+      onComplete: () => {
+        checkScroll();
+      },
     });
-  }, [checkScroll]);
+  };
+
+  // Filter out any invalid items
+  const uniqueItems = items.filter((item, index, self) => 
+    item && item.id && self.findIndex(t => t && t.id === item.id) === index
+  );
 
   if (!isLoading && uniqueItems.length === 0) {
     return null;
@@ -88,7 +79,7 @@ export function AnimeCarousel({
       <div className={cn("flex items-center justify-between gap-4 border-b border-border pb-4", disablePadding ? "" : "px-4 md:px-8")}>
         <div className="flex items-center gap-2.5">
           <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
-            <Sparkles className="w-4 h-4" />
+            <TrendingUp className="w-4 h-4" />
           </div>
           <h2 className="text-lg font-bold text-foreground tracking-tight font-heading">
             {title}

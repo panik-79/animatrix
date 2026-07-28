@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   Compass,
   Library,
-  Sparkles,
   Layers,
   MessageSquare,
   BookOpen,
@@ -41,8 +40,8 @@ const GUIDE_STEPS = [
   },
   {
     step: "03",
-    title: "AI Taste Recommendations",
-    icon: Sparkles,
+    title: "Personalized Recommendations",
+    icon: Zap,
     color: "text-amber-500 bg-amber-500/10 border-amber-500/20",
     description: "Our recommendation engine learns your exact genre preferences and watch history to suggest hidden gems tuned to your taste.",
     highlights: ["Dynamic Taste Vector computation", "Cold start quick recommendations", "No duplicate recommendations"],

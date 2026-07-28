@@ -13,7 +13,6 @@ import {
   Save,
   ChevronDown,
   AlertCircle,
-  Sparkles,
   ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
@@ -386,7 +385,7 @@ export default function AccountPage() {
             {/* Form Fields Section */}
             <div className="space-y-5">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
+                <UserIcon className="w-4 h-4 text-primary" />
                 <h3 className="text-sm font-bold text-foreground tracking-tight font-heading">
                   Personal Information
                 </h3>
