@@ -34,6 +34,7 @@ export function Navbar() {
   const getPageTitle = (path: string) => {
     if (path === "/") return "Home";
     if (path === "/anime" || path.startsWith("/discovery")) return "Discover";
+    if (path.startsWith("/schedule")) return "Airing Schedule";
     if (path.startsWith("/anime/")) return "Anime Details";
     if (path.startsWith("/library")) return "Library";
     if (path.startsWith("/collections")) return "Collections";

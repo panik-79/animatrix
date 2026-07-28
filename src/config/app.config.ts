@@ -12,6 +12,7 @@ export const APP_CONFIG = {
     ANIME_DETAIL: (id: string) => `/anime/${encodeURIComponent(normalizeAnimeId(id))}`,
     DASHBOARD: "/dashboard",
     LIBRARY: "/library",
+    SCHEDULE: "/schedule",
     COLLECTIONS: "/collections",
     COLLECTION_DETAIL: (id: string) => `/collections/${id}`,
     STATS: "/stats",
