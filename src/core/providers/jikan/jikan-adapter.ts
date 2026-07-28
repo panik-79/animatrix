@@ -278,7 +278,7 @@ export class JikanAdapter implements AnimeProvider {
         `${this.baseUrl}/anime/${malId}/relations`,
         { provider: this.id }
       );
-      return (res.data || []).map(r => ({
+      const list = (res.data || []).map(r => ({
         relation: r.relation,
         entry: r.entry.map(e => ({
           malId: e.mal_id,
@@ -287,8 +287,94 @@ export class JikanAdapter implements AnimeProvider {
           url: e.url,
         }))
       }));
+
+      if (list.length > 0) return list;
     } catch (error) {
-      console.warn(`Jikan getAnimeRelations (${malId}) failed. Returning empty relations list.`, error);
+      console.warn(`Jikan getAnimeRelations (${malId}) failed. Falling back to AniList.`, error);
+    }
+
+    return this.getAniListRelations(id);
+  }
+
+  private async getAniListRelations(id: string): Promise<AnimeRelation[]> {
+    try {
+      const cleanId = id.replace(/^(jikan|anilist|kitsu):/i, "");
+      const isMalId = id.startsWith("jikan:") || (!id.startsWith("anilist:") && !id.startsWith("kitsu:"));
+
+      const filter = isMalId ? `idMal: ${cleanId}` : `id: ${cleanId}`;
+      const query = `
+        query {
+          Media(${filter}, type: ANIME) {
+            relations {
+              edges {
+                relationType
+                node {
+                  id
+                  idMal
+                  title {
+                    english
+                    romaji
+                  }
+                  type
+                  format
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      const res = await fetch("https://graphql.anilist.co", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+        next: { revalidate: 3600 },
+      });
+
+      if (!res.ok) return [];
+      const data = await res.json();
+      const edges = data.data?.Media?.relations?.edges || [];
+
+      const mapRelationType = (type: string): string => {
+        switch (type) {
+          case "PREQUEL": return "Prequel";
+          case "SEQUEL": return "Sequel";
+          case "ADAPTATION": return "Adaptation";
+          case "SIDE_STORY": return "Side story";
+          case "SPIN_OFF": return "Spin-off";
+          case "ALTERNATIVE": return "Alternative version";
+          default: return type.charAt(0) + type.slice(1).toLowerCase();
+        }
+      };
+
+      const groupedMap = new Map<string, Array<{ malId: number; type: string; name: string; url: string }>>();
+
+      for (const edge of edges) {
+        const relName = mapRelationType(edge.relationType);
+        const node = edge.node;
+        const malId = node.idMal || node.id;
+        const name = node.title?.english || node.title?.romaji || "Unknown Title";
+
+        if (!groupedMap.has(relName)) {
+          groupedMap.set(relName, []);
+        }
+
+        groupedMap.get(relName)!.push({
+          malId,
+          type: node.type ? node.type.toLowerCase() : "anime",
+          name,
+          url: `https://myanimelist.net/anime/${malId}`,
+        });
+      }
+
+      const result: AnimeRelation[] = [];
+      groupedMap.forEach((entry, relation) => {
+        result.push({ relation, entry });
+      });
+
+      return result;
+    } catch (err) {
+      console.error("AniList relations fallback error:", err);
       return [];
     }
   }
