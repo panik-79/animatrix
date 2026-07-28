@@ -48,6 +48,11 @@ export async function GET(request: NextRequest) {
 
     // 4. Determine redirect path
     let destination = savedFrom;
+    if (destination === "/login" || destination === "/register" || destination === "/onboarding") {
+      destination = "/";
+    }
+
+    // Only redirect to /onboarding if user is new or explicitly has not completed onboarding
     if (!user.isOnboarded || isNewUser) {
       destination = "/onboarding";
     }

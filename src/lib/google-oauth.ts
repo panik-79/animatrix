@@ -102,7 +102,7 @@ export async function handleGoogleUserAuth(googleUser: GoogleUserInfo, tokens: G
   });
 
   if (existingAccount) {
-    // Update access token & user image if available
+    // Update access token
     await prisma.account.update({
       where: { id: existingAccount.id },
       data: {
@@ -113,8 +113,8 @@ export async function handleGoogleUserAuth(googleUser: GoogleUserInfo, tokens: G
       },
     });
 
-    // Always sync Google picture so it stays current across logins
-    const updatedUser = googleUser.picture
+    // Only set Google picture if user doesn't already have an avatar image set
+    const updatedUser = (!existingAccount.user.image && googleUser.picture)
       ? await prisma.user.update({
           where: { id: existingAccount.user.id },
           data: { image: googleUser.picture },
@@ -148,8 +148,8 @@ export async function handleGoogleUserAuth(googleUser: GoogleUserInfo, tokens: G
       },
     });
 
-    // Always sync Google picture so it stays current
-    const updatedLinkedUser = googleUser.picture
+    // Only set Google picture if user doesn't already have an avatar image set
+    const updatedLinkedUser = (!existingUserByEmail.image && googleUser.picture)
       ? await prisma.user.update({
           where: { id: existingUserByEmail.id },
           data: { image: googleUser.picture },
