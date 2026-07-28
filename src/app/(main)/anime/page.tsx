@@ -351,35 +351,35 @@ function DiscoveryContent() {
       {/* ── ACTIVE FILTER PILLS / CLEAR ROW ── */}
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-muted-foreground font-semibold">Active filters:</span>
+          <span className="text-xs text-muted-foreground font-bold">Active filters:</span>
           {searchQuery && (
-            <span className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] border border-white/[0.06] rounded-lg text-xs text-white/80">
+            <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100/90 dark:bg-slate-900/90 border border-slate-300 dark:border-white/20 rounded-xl text-xs font-semibold text-foreground shadow-sm">
               Query: &quot;{searchQuery}&quot;
-              <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => { setSearchQuery(""); updateUrlParam({ q: null }); }} />
+              <X className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground transition-colors" onClick={() => { setSearchQuery(""); updateUrlParam({ q: null }); }} />
             </span>
           )}
           {activeType && (
-            <span className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] border border-white/[0.06] rounded-lg text-xs text-white/80">
+            <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100/90 dark:bg-slate-900/90 border border-slate-300 dark:border-white/20 rounded-xl text-xs font-semibold text-foreground shadow-sm">
               Format: {activeType}
-              <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => updateUrlParam({ type: null })} />
+              <X className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground transition-colors" onClick={() => updateUrlParam({ type: null })} />
             </span>
           )}
           {activeStatus && (
-            <span className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] border border-white/[0.06] rounded-lg text-xs text-white/80">
+            <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100/90 dark:bg-slate-900/90 border border-slate-300 dark:border-white/20 rounded-xl text-xs font-semibold text-foreground shadow-sm">
               Status: {activeStatus}
-              <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => updateUrlParam({ status: null })} />
+              <X className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground transition-colors" onClick={() => updateUrlParam({ status: null })} />
             </span>
           )}
           {activeRating && (
-            <span className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] border border-white/[0.06] rounded-lg text-xs text-white/80">
+            <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100/90 dark:bg-slate-900/90 border border-slate-300 dark:border-white/20 rounded-xl text-xs font-semibold text-foreground shadow-sm">
               Rating: {activeRating}
-              <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => updateUrlParam({ rating: null })} />
+              <X className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground transition-colors" onClick={() => updateUrlParam({ rating: null })} />
             </span>
           )}
           {activeGenres.map((genre) => (
-            <span key={genre} className="flex items-center gap-1 px-2.5 py-1 bg-white/[0.04] border border-white/[0.06] rounded-lg text-xs text-white/80">
+            <span key={genre} className="flex items-center gap-1.5 px-3 py-1 bg-slate-100/90 dark:bg-slate-900/90 border border-slate-300 dark:border-white/20 rounded-xl text-xs font-semibold text-foreground shadow-sm">
               {genre}
-              <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => toggleGenre(genre)} />
+              <X className="w-3.5 h-3.5 cursor-pointer text-muted-foreground hover:text-foreground transition-colors" onClick={() => toggleGenre(genre)} />
             </span>
           ))}
           <button
