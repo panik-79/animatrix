@@ -1,14 +1,26 @@
 "use client";
 
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, Suspense } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
-export function ScrollToTop() {
+function ScrollToTopContent() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [pathname]);
+    // Force immediate scroll reset to top (0, 0) on all page navigations & search updates
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [pathname, searchParams]);
 
   return null;
+}
+
+export function ScrollToTop() {
+  return (
+    <Suspense fallback={null}>
+      <ScrollToTopContent />
+    </Suspense>
+  );
 }
