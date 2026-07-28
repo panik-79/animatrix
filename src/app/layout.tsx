@@ -7,8 +7,19 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-heading" });
 
 export const metadata: Metadata = {
-  title: "Animatrix - Premium Anime Discovery",
-  description: "The ultimate anime tracker and discovery platform",
+  title: {
+    default: "Animatrix - Premium Anime Discovery",
+    template: "%s | Animatrix",
+  },
+  description: "The ultimate anime tracker, custom collections, and discovery platform",
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
   manifest: "/manifest.json",
 };
 
