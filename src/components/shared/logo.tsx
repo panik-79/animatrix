@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
 import { useMatrixStore } from "@/components/shared/matrix-rain";
 
-import iconLogo from "@/assets/icon_on_black_4k.png";
+import iconLogo from "@/assets/icon_transparent_blue_4k.png";
 
 interface LogoProps {
   /** "full" = icon + wordmark; "icon" = icon only */
