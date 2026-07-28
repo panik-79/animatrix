@@ -57,23 +57,23 @@ export function Footer() {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ y: 60, opacity: 0, scale: 0.95 }}
+          initial={{ y: 50, opacity: 0, scale: 0.95 }}
           animate={{ y: 0, opacity: 1, scale: 1 }}
-          exit={{ y: 60, opacity: 0, scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 350, damping: 28 }}
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 px-6 py-3 rounded-full bg-background/80 dark:bg-slate-900/85 backdrop-blur-xl border border-border shadow-2xl shadow-black/30 text-center flex flex-col sm:flex-row items-center gap-1.5 sm:gap-4 pointer-events-auto cursor-default select-none"
+          exit={{ y: 50, opacity: 0, scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="fixed bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-40 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-popover/90 dark:bg-slate-900/90 backdrop-blur-xl border border-border/80 shadow-lg shadow-black/20 flex items-center gap-2 pointer-events-auto cursor-default select-none whitespace-nowrap text-[11px] sm:text-xs"
         >
-          <p className="text-xs font-semibold text-foreground tracking-tight">
+          <span className="font-semibold text-foreground tracking-tight">
             © {new Date().getFullYear()} Animatrix
-          </p>
+          </span>
 
-          <span className="hidden sm:inline text-muted-foreground/40">•</span>
+          <span className="text-muted-foreground/40 font-bold">•</span>
 
-          <p className="text-xs text-muted-foreground flex items-center gap-1 font-medium">
+          <span className="text-muted-foreground flex items-center gap-1 font-medium">
             <span>Made with</span>
-            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
+            <Heart className="w-3 h-3 text-rose-500 fill-rose-500 animate-pulse" />
             <span>by Pujan</span>
-          </p>
+          </span>
         </motion.div>
       )}
     </AnimatePresence>
