@@ -26,7 +26,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { toast } from "@/store/toast-store";
 import { normalizeAnimeId } from "@/lib/utils";
 import { WatchStatus } from "@prisma/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -35,6 +35,10 @@ interface PageProps {
 export default function AnimeDetailPage({ params }: PageProps) {
   const { id: rawId } = use(params);
   const id = normalizeAnimeId(rawId);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [id]);
 
   // Core API Queries
   const { data: anime, isLoading: isAnimeLoading, isError: isAnimeError, refetch } = useAnimeById(id);

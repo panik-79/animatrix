@@ -11,6 +11,7 @@ import { KonamiCodeListener } from "@/components/shared/konami-code";
 import { MatrixRainOverlay } from "@/components/shared/matrix-rain";
 import { SuperSaiyanListener } from "@/components/shared/super-saiyan";
 import { NarutoEasterEgg } from "@/components/shared/naruto-easter-egg";
+import { ScrollToTop } from "@/components/shared/scroll-to-top";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -33,6 +34,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         </AnimatePresence>
         <ToastContainer />
         <ConfirmDialog />
+        <ScrollToTop />
         <KonamiCodeListener />
         <MatrixRainOverlay />
         <SuperSaiyanListener />
