@@ -15,6 +15,7 @@ export interface AiringAnimeItem {
   genres: string[];
   synopsis?: string;
   type?: string;
+  airingMinutes?: number;
 }
 
 export class ScheduleRepository {
@@ -64,6 +65,7 @@ export class ScheduleRepository {
           : [];
 
         const broadcast = item.broadcast?.string || undefined;
+        const airingMinutes = this.extractAiringMinutes(item);
 
         items.push({
           id: animeId,
@@ -80,8 +82,12 @@ export class ScheduleRepository {
           genres,
           synopsis: item.synopsis || undefined,
           type: item.type || "TV",
+          airingMinutes,
         });
       }
+
+      // Sort ascending by broadcast airing time (00:00 -> 23:59)
+      items.sort((a, b) => (a.airingMinutes ?? 9999) - (b.airingMinutes ?? 9999));
 
       const result = { items, day: targetDay };
       appCache.set(cacheKey, result, this.CACHE_TTL);
@@ -127,6 +133,7 @@ export class ScheduleRepository {
           genres: Array.isArray(item.genres) ? item.genres.map((g: any) => g.name) : [],
           synopsis: item.synopsis || undefined,
           type: item.type || "TV",
+          airingMinutes: 9999,
         });
       }
 
@@ -174,6 +181,7 @@ export class ScheduleRepository {
           genres: Array.isArray(item.genres) ? item.genres.map((g: any) => g.name) : [],
           synopsis: item.synopsis || undefined,
           type: item.type || "TV",
+          airingMinutes: 9999,
         });
       }
 
@@ -184,6 +192,24 @@ export class ScheduleRepository {
       console.error("Year outlook error:", err);
       return { items: [] };
     }
+  }
+
+  private static extractAiringMinutes(item: any): number {
+    if (item.broadcast?.time) {
+      const parts = item.broadcast.time.split(":");
+      const h = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      if (!isNaN(h) && !isNaN(m)) return h * 60 + m;
+    }
+    if (item.broadcast?.string) {
+      const match = item.broadcast.string.match(/(\d{1,2}):(\d{2})/);
+      if (match) {
+        const h = parseInt(match[1], 10);
+        const m = parseInt(match[2], 10);
+        return h * 60 + m;
+      }
+    }
+    return 9999;
   }
 
   static getCurrentDayName(): string {

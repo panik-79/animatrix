@@ -8,7 +8,7 @@ import {
   Globe,
   Sparkles,
   BookmarkCheck,
-  Plus,
+  Bookmark,
   ArrowRight,
   Flame,
 } from "lucide-react";
@@ -239,22 +239,24 @@ export default function SchedulePage() {
                     </span>
                   )}
 
-                  {/* In Library Badge / Quick Add (Top Right) */}
-                  {anime.isInUserLibrary ? (
-                    <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-primary text-primary-foreground shadow-lg shadow-primary/40 flex items-center gap-1 border border-primary-foreground/20">
-                      <BookmarkCheck className="w-3 h-3" />
-                      <span>In Library</span>
-                    </span>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => handleQuickAdd(anime)}
-                      className="absolute top-3 right-3 p-2 rounded-full bg-black/60 hover:bg-primary text-white transition-all cursor-pointer opacity-0 group-hover:opacity-100 shadow-md"
-                      title="Add to Watching Library"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  {/* Sleek Bookmark Button / Badge (Top Right - No Text) */}
+                  <button
+                    type="button"
+                    onClick={() => !anime.isInUserLibrary && handleQuickAdd(anime)}
+                    className={cn(
+                      "absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all duration-300 shadow-md cursor-pointer",
+                      anime.isInUserLibrary
+                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-105 cursor-default"
+                        : "bg-black/60 text-white/80 hover:text-white hover:bg-primary opacity-0 group-hover:opacity-100"
+                    )}
+                    title={anime.isInUserLibrary ? "In Library" : "Add to Watching Library"}
+                  >
+                    {anime.isInUserLibrary ? (
+                      <BookmarkCheck className="w-3.5 h-3.5 fill-primary-foreground" />
+                    ) : (
+                      <Bookmark className="w-3.5 h-3.5" />
+                    )}
+                  </button>
 
                   {/* Title & Type Badge on Poster Base */}
                   <div className="absolute bottom-3 inset-x-3 space-y-1">
