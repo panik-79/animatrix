@@ -79,7 +79,7 @@ export class LibraryRepository {
 
     return prisma.libraryEntry.findMany({
       where,
-      orderBy: { updatedAt: "desc" },
+      orderBy: { createdAt: "desc" },
     });
   }
 

@@ -19,7 +19,6 @@ import {
   Bookmark,
   Clock,
   XCircle,
-  Ticket,
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -125,7 +124,7 @@ export default function UserLibraryPage() {
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
-            <SkeletonLoader key={i} className="h-76 rounded-3xl" />
+            <SkeletonLoader key={i} className="h-72 rounded-3xl" />
           ))}
         </div>
       ) : !filteredEntries || filteredEntries.length === 0 ? (
@@ -275,8 +274,8 @@ export default function UserLibraryPage() {
                     )}
                   </div>
 
-                  {/* Card Base Container (Title + Sleek Ticket Button) */}
-                  <div className="p-3.5 space-y-3 bg-card/90">
+                  {/* Card Base Container (Title Only) */}
+                  <div className="p-3 bg-card/90">
                     <Link href={ROUTES.ANIME_DETAIL(entry.animeId)}>
                       <h3
                         className="text-xs font-extrabold text-foreground leading-snug line-clamp-1 group-hover:text-primary transition-colors font-heading"
@@ -284,17 +283,6 @@ export default function UserLibraryPage() {
                       >
                         {entry.title}
                       </h3>
-                    </Link>
-
-                    {/* Sleek Ticket Action Button */}
-                    <Link href={ROUTES.ANIME_DETAIL(entry.animeId)} className="block w-full">
-                      <button
-                        type="button"
-                        className="w-full py-2 px-3 rounded-xl bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground border border-primary/20 hover:border-primary text-xs font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-sm group-hover:shadow-lg group-hover:shadow-primary/25 cursor-pointer active:scale-95"
-                      >
-                        <Ticket className="w-3.5 h-3.5 transition-transform duration-300 group-hover:rotate-12" />
-                        <span>View Ticket</span>
-                      </button>
                     </Link>
                   </div>
                 </motion.div>
