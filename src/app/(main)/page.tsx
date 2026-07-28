@@ -14,16 +14,8 @@ import Link from "next/link";
 import { ROUTES, GENRES } from "@/lib/constants";
 import { motion, Variants } from "framer-motion";
 
-const stagger: Variants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 16 },
   show: {
     opacity: 1,
     y: 0,
@@ -47,17 +39,17 @@ export default function Home() {
       {/* ── HERO BANNER ── */}
       <HomeHero />
 
-      {/* ── CONTENT SECTIONS (UNIFORM DESIGN SYSTEM) ── */}
-      <motion.div
-        variants={stagger}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-60px" }}
-        className="space-y-12 md:space-y-16"
-      >
+      {/* ── CONTENT SECTIONS ── */}
+      <div className="space-y-10 md:space-y-14">
         {/* Genre Quick Access Chips */}
-        <motion.section variants={fadeUp} className="space-y-4">
-          {/* Section Header (Consistent Design System) */}
+        <motion.section
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-40px" }}
+          variants={fadeUp}
+          className="space-y-4"
+        >
+          {/* Section Header */}
           <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded-xl bg-primary/10 border border-primary/20 text-primary">
@@ -90,9 +82,14 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* Anime Carousels */}
+        {/* Recommended Anime Section */}
         {(recLoading || recommendedAnimeList.length > 0) && (
-          <motion.section variants={fadeUp}>
+          <motion.section
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-40px" }}
+            variants={fadeUp}
+          >
             <AnimeCarousel
               title="Recommended For You"
               items={recommendedAnimeList}
@@ -102,7 +99,13 @@ export default function Home() {
           </motion.section>
         )}
 
-        <motion.section variants={fadeUp}>
+        {/* Trending Now */}
+        <motion.section
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-40px" }}
+          variants={fadeUp}
+        >
           <AnimeCarousel
             title="Trending Now"
             items={trending?.data.slice(1, 20)}
@@ -111,7 +114,13 @@ export default function Home() {
           />
         </motion.section>
 
-        <motion.section variants={fadeUp}>
+        {/* Popular This Season */}
+        <motion.section
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-40px" }}
+          variants={fadeUp}
+        >
           <AnimeCarousel
             title="Popular This Season"
             items={currentSeason?.pages[0]?.data}
@@ -120,7 +129,13 @@ export default function Home() {
           />
         </motion.section>
 
-        <motion.section variants={fadeUp}>
+        {/* Highly Anticipated */}
+        <motion.section
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-40px" }}
+          variants={fadeUp}
+        >
           <AnimeCarousel
             title="Highly Anticipated"
             items={upcoming?.pages[0]?.data}
@@ -129,7 +144,13 @@ export default function Home() {
           />
         </motion.section>
 
-        <motion.section variants={fadeUp}>
+        {/* All-Time Classics */}
+        <motion.section
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-40px" }}
+          variants={fadeUp}
+        >
           <AnimeCarousel
             title="All-Time Classics"
             items={topRated?.pages[0]?.data}
@@ -137,7 +158,7 @@ export default function Home() {
             disablePadding={true}
           />
         </motion.section>
-      </motion.div>
+      </div>
     </div>
   );
 }

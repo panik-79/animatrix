@@ -7,8 +7,7 @@
  *   debug        — "true" to include per-signal score breakdown in each result
  *   refresh      — "true" to bypass result cache and recompute
  *
- * Authentication: requires a valid session cookie.
- * Returns 401 if unauthenticated, 200 with RecommendationResult on success.
+ * Authentication: Optional. Returns personalized recs for logged-in users, or curated recommendations for guests.
  */
 
 import { NextResponse } from "next/server";
@@ -19,9 +18,7 @@ import { LIMITS } from "@/core/services/recommendation/config";
 export async function GET(request: Request) {
   try {
     const user = await getSessionUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const userId = user?.id || "guest";
 
     const { searchParams } = new URL(request.url);
 
@@ -32,7 +29,7 @@ export async function GET(request: Request) {
     const debug = searchParams.get("debug") === "true";
     const forceRefresh = searchParams.get("refresh") === "true";
 
-    const result = await getRecommendations(user.id, {
+    const result = await getRecommendations(userId, {
       limit,
       sessionMood,
       debug,
