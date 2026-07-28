@@ -37,26 +37,26 @@ export function AvatarPickerModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          className="w-full max-w-2xl bg-slate-900 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative max-h-[90vh] flex flex-col"
+          className="w-full max-w-2xl bg-popover border border-border text-popover-foreground rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative max-h-[90vh] flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/10 pb-4 shrink-0">
+          <div className="flex items-center justify-between border-b border-border pb-4 shrink-0">
             <div>
-              <h2 className="text-xl font-bold text-white tracking-tight">
+              <h2 className="text-xl font-bold text-foreground tracking-tight font-heading">
                 Choose Profile Avatar
               </h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Select from famous anime character avatars or your Google profile photo.
               </p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+              className="p-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-accent transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -67,17 +67,17 @@ export function AvatarPickerModal({
             {/* Google Profile Photo Option if available */}
             {googleImage && (
               <div className="space-y-2">
-                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Social Profile Photo
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => handleApply(googleImage)}
-                    className={`flex items-center gap-4 p-3 rounded-2xl border transition-all text-left group ${
+                    className={`flex items-center gap-4 p-3 rounded-2xl border transition-all text-left group cursor-pointer ${
                       selectedUrl === googleImage
-                        ? "bg-indigo-600/20 border-indigo-500 ring-2 ring-indigo-500/30"
-                        : "bg-slate-950/50 border-white/5 hover:border-white/20 hover:bg-slate-800/50"
+                        ? "bg-primary/10 border-primary ring-2 ring-primary/30"
+                        : "bg-background border-border hover:border-primary/50 hover:bg-accent"
                     }`}
                   >
                     <div className="relative shrink-0">
@@ -87,10 +87,10 @@ export function AvatarPickerModal({
                           alt="Google Account"
                           referrerPolicy="no-referrer"
                           onError={() => handleImageError("google")}
-                          className="w-14 h-14 rounded-full object-cover border border-white/10"
+                          className="w-14 h-14 rounded-full object-cover border border-border"
                         />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md border border-white/10">
+                        <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md border border-border">
                           G
                         </div>
                       )}
@@ -116,8 +116,8 @@ export function AvatarPickerModal({
                       </div>
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-white">Google Profile Photo</p>
-                      <p className="text-[11px] text-slate-400">Use default Google account picture</p>
+                      <p className="text-xs font-bold text-foreground">Google Profile Photo</p>
+                      <p className="text-[11px] text-muted-foreground">Use default Google account picture</p>
                     </div>
                   </button>
                 </div>
@@ -126,7 +126,7 @@ export function AvatarPickerModal({
 
             {/* Anime Character Avatars */}
             <div className="space-y-3">
-              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Anime Character Presets
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
@@ -139,19 +139,19 @@ export function AvatarPickerModal({
                       key={avatar.id}
                       type="button"
                       onClick={() => handleApply(avatar.url)}
-                      className={`group relative flex flex-col items-center p-3 rounded-2xl border transition-all text-center ${
+                      className={`group relative flex flex-col items-center p-3 rounded-2xl border transition-all text-center cursor-pointer ${
                         isSelected
-                          ? "bg-indigo-600/25 border-indigo-500 ring-2 ring-indigo-500/40"
-                          : "bg-slate-950/40 border-white/5 hover:border-white/20 hover:bg-slate-800/40"
+                          ? "bg-primary/10 border-primary ring-2 ring-primary/40"
+                          : "bg-background border-border hover:border-primary/50 hover:bg-accent"
                       }`}
                     >
-                      <div className="relative w-16 h-16 rounded-full overflow-hidden mb-2 border border-white/10 group-hover:scale-105 transition-transform duration-200">
+                      <div className="relative w-16 h-16 rounded-full overflow-hidden mb-2 border border-border group-hover:scale-105 transition-transform duration-200">
                         {!isFailed ? (
                           <img
                             src={avatar.url}
                             alt={avatar.name}
                             onError={() => handleImageError(avatar.id)}
-                            className="w-full h-full object-cover bg-slate-900"
+                            className="w-full h-full object-cover bg-muted"
                           />
                         ) : (
                           <div className={`w-full h-full bg-gradient-to-tr ${avatar.fallbackColor} flex items-center justify-center text-white font-bold text-lg shadow-md`}>
@@ -159,15 +159,15 @@ export function AvatarPickerModal({
                           </div>
                         )}
                         {isSelected && (
-                          <div className="absolute inset-0 bg-indigo-600/40 flex items-center justify-center backdrop-blur-[1px]">
-                            <Check className="w-6 h-6 text-white stroke-[3]" />
+                          <div className="absolute inset-0 bg-primary/40 flex items-center justify-center backdrop-blur-[1px]">
+                            <Check className="w-6 h-6 text-primary-foreground stroke-[3]" />
                           </div>
                         )}
                       </div>
-                      <p className="text-xs font-bold text-white truncate w-full group-hover:text-indigo-300 transition-colors">
+                      <p className="text-xs font-bold text-foreground truncate w-full group-hover:text-primary transition-colors">
                         {avatar.name}
                       </p>
-                      <p className="text-[10px] text-slate-500 truncate w-full">
+                      <p className="text-[10px] text-muted-foreground truncate w-full">
                         {avatar.anime}
                       </p>
                     </button>

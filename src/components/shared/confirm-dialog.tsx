@@ -48,7 +48,7 @@ export function ConfirmDialog() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleCancel}
-          className="absolute inset-0 bg-black/70 backdrop-blur-md"
+          className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
         />
 
         {/* Dialog Card */}
@@ -57,7 +57,7 @@ export function ConfirmDialog() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 12 }}
           transition={{ type: "spring", stiffness: 350, damping: 28 }}
-          className="relative w-full max-w-sm bg-slate-950/95 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] p-6 z-10 text-card-foreground space-y-4"
+          className="relative w-full max-w-sm bg-popover text-popover-foreground backdrop-blur-2xl border border-border rounded-3xl shadow-2xl p-6 z-10 space-y-4"
         >
           {/* Header Icon & Title */}
           <div className="flex items-start gap-3.5">
@@ -66,7 +66,7 @@ export function ConfirmDialog() {
             </div>
 
             <div className="flex-1 space-y-1">
-              <h3 className="text-base font-bold font-heading text-foreground">
+              <h3 className="text-base font-bold font-heading text-popover-foreground">
                 {title}
               </h3>
               <p className="text-xs text-muted-foreground leading-relaxed">

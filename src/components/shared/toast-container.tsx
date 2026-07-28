@@ -9,26 +9,26 @@ import { cn } from "@/lib/utils";
 const TOAST_THEMES = {
   success: {
     icon: CheckCircle2,
-    badgeBg: "bg-emerald-500/15 border-emerald-500/30 text-emerald-400",
-    iconColor: "text-emerald-400",
+    badgeBg: "bg-emerald-500/15 border-emerald-500/30 text-emerald-500 dark:text-emerald-400",
+    iconColor: "text-emerald-500 dark:text-emerald-400",
     glowBorder: "border-emerald-500/30 shadow-emerald-500/10",
   },
   error: {
     icon: AlertCircle,
-    badgeBg: "bg-rose-500/15 border-rose-500/30 text-rose-400",
-    iconColor: "text-rose-400",
+    badgeBg: "bg-rose-500/15 border-rose-500/30 text-rose-500 dark:text-rose-400",
+    iconColor: "text-rose-500 dark:text-rose-400",
     glowBorder: "border-rose-500/30 shadow-rose-500/10",
   },
   warn: {
     icon: AlertTriangle,
-    badgeBg: "bg-amber-500/15 border-amber-500/30 text-amber-400",
-    iconColor: "text-amber-400",
+    badgeBg: "bg-amber-500/15 border-amber-500/30 text-amber-500 dark:text-amber-400",
+    iconColor: "text-amber-500 dark:text-amber-400",
     glowBorder: "border-amber-500/30 shadow-amber-500/10",
   },
   info: {
     icon: Info,
-    badgeBg: "bg-sky-500/15 border-sky-500/30 text-sky-400",
-    iconColor: "text-sky-400",
+    badgeBg: "bg-sky-500/15 border-sky-500/30 text-sky-500 dark:text-sky-400",
+    iconColor: "text-sky-500 dark:text-sky-400",
     glowBorder: "border-sky-500/30 shadow-sky-500/10",
   },
 };
@@ -59,7 +59,7 @@ function ToastCard({ toast, onClose }: { toast: ToastItem; onClose: () => void }
       exit={{ opacity: 0, y: 10, scale: 0.95 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
       className={cn(
-        "pointer-events-auto p-3.5 sm:p-4 rounded-2xl bg-slate-900/90 backdrop-blur-xl border shadow-2xl flex items-start gap-3 relative overflow-hidden group",
+        "pointer-events-auto p-3.5 sm:p-4 rounded-2xl bg-popover text-popover-foreground backdrop-blur-xl border border-border shadow-2xl flex items-start gap-3 relative overflow-hidden group",
         theme.glowBorder
       )}
     >
@@ -73,11 +73,11 @@ function ToastCard({ toast, onClose }: { toast: ToastItem; onClose: () => void }
 
       {/* Text Info */}
       <div className="space-y-0.5 min-w-0 flex-1 pr-4">
-        <h4 className="text-xs sm:text-sm font-bold text-white leading-tight">
+        <h4 className="text-xs sm:text-sm font-bold text-popover-foreground leading-tight">
           {toast.title}
         </h4>
         {toast.description && (
-          <p className="text-[11px] sm:text-xs text-white/70 font-medium leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-muted-foreground font-medium leading-relaxed">
             {toast.description}
           </p>
         )}
@@ -86,7 +86,7 @@ function ToastCard({ toast, onClose }: { toast: ToastItem; onClose: () => void }
       {/* Close Button */}
       <button
         onClick={onClose}
-        className="p-1 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+        className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
         aria-label="Close notification"
       >
         <X className="w-3.5 h-3.5" />
