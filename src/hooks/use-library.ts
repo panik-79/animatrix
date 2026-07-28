@@ -71,16 +71,71 @@ export function useUpdateLibrary() {
       if (!res.ok) throw new Error("Failed to update library entry");
       return (await res.json()).entry;
     },
+    onMutate: async (payload) => {
+      const normalizedId = normalizeAnimeId(payload.animeId);
+
+      // Cancel in-flight queries so they don't overwrite our optimistic data
+      await queryClient.cancelQueries({ queryKey: ["library"] });
+      await queryClient.cancelQueries({ queryKey: ["library-entry", normalizedId] });
+
+      // Snapshot all currently-cached library list queries for rollback
+      const allLibraryKeys = queryClient
+        .getQueriesData<any[]>({ queryKey: ["library"] });
+
+      const previousEntry = queryClient.getQueryData(["library-entry", normalizedId]);
+
+      // Optimistically patch every cached library list that contains this entry
+      allLibraryKeys.forEach(([queryKey, cachedData]) => {
+        if (!Array.isArray(cachedData)) return;
+        queryClient.setQueryData(
+          queryKey,
+          cachedData.map((entry: any) =>
+            normalizeAnimeId(entry.animeId) === normalizedId
+              ? {
+                  ...entry,
+                  ...(typeof payload.progress === "number" && { progress: payload.progress }),
+                  ...(payload.status !== undefined && { status: payload.status }),
+                  ...(typeof payload.isFavorite === "boolean" && { isFavorite: payload.isFavorite }),
+                  ...(typeof payload.score === "number" && { score: payload.score }),
+                  ...(payload.notes !== undefined && { notes: payload.notes }),
+                }
+              : entry
+          )
+        );
+      });
+
+      // Optimistically update the single-entry cache
+      if (previousEntry) {
+        queryClient.setQueryData(["library-entry", normalizedId], (old: any) => ({
+          ...old,
+          ...(typeof payload.progress === "number" && { progress: payload.progress }),
+          ...(payload.status !== undefined && { status: payload.status }),
+          ...(typeof payload.isFavorite === "boolean" && { isFavorite: payload.isFavorite }),
+          ...(typeof payload.score === "number" && { score: payload.score }),
+        }));
+      }
+
+      return { allLibraryKeys, previousEntry, normalizedId };
+    },
     onSuccess: (updatedEntry) => {
-      queryClient.invalidateQueries({ queryKey: ["library"] });
       if (updatedEntry?.animeId) {
         const canonicalId = normalizeAnimeId(updatedEntry.animeId);
         queryClient.setQueryData(["library-entry", canonicalId], updatedEntry);
       }
+      queryClient.invalidateQueries({ queryKey: ["library"] });
       queryClient.invalidateQueries({ queryKey: ["library-entry"] });
       queryClient.invalidateQueries({ queryKey: ["library-stats"] });
     },
-    onError: (err: any) => {
+    onError: (err: any, _payload, context) => {
+      // Roll back optimistic updates
+      if (context?.allLibraryKeys) {
+        context.allLibraryKeys.forEach(([queryKey, previousData]: [readonly unknown[], any]) => {
+          queryClient.setQueryData(queryKey as unknown[], previousData);
+        });
+      }
+      if (context?.previousEntry) {
+        queryClient.setQueryData(["library-entry", context.normalizedId], context.previousEntry);
+      }
       toast.error("Library Error", err.message || "Failed to update entry");
     },
   });
