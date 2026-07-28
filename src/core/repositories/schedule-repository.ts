@@ -104,45 +104,54 @@ export class ScheduleRepository {
     if (cached) return cached;
 
     try {
-      const url = "https://api.jikan.moe/v4/seasons/upcoming?limit=24";
-      const response = await fetch(url, { next: { revalidate: 3600 } });
-      if (!response.ok) throw new Error("Upcoming season fetch failed");
-
-      const data = await response.json();
-      const rawList = data.data || [];
-
-      const seenIds = new Set<string>();
-      const items: AiringAnimeItem[] = [];
-
-      for (const item of rawList) {
-        const malId = item.mal_id;
-        const animeId = `jikan:${malId}`;
-        if (seenIds.has(animeId)) continue;
-        seenIds.add(animeId);
-
-        items.push({
-          id: animeId,
-          malId,
-          title: item.title_english || item.title || "Upcoming Anime",
-          imageUrl: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || "/placeholder.png",
-          broadcastJst: item.aired?.string || item.status || "Not Yet Aired",
-          broadcastDay: "upcoming",
-          airingStatus: item.status || "Not Yet Aired",
-          episodes: item.episodes || undefined,
-          score: item.score || undefined,
-          genres: Array.isArray(item.genres) ? item.genres.map((g: any) => g.name) : [],
-          synopsis: item.synopsis || undefined,
-          type: item.type || "TV",
-          airingMinutes: 9999,
-        });
-      }
-
+      // Primary: Fetch from AniList GraphQL (Fast, robust, no 504 errors)
+      const items = await this.fetchAniListUpcoming("POPULARITY_DESC");
       const result = { items };
       appCache.set(cacheKey, result, this.CACHE_TTL);
       return result;
     } catch (err) {
-      console.error("Upcoming season error:", err);
-      return { items: [] };
+      console.warn("AniList upcoming season fetch failed, falling back to Jikan:", err);
+      try {
+        const url = "https://api.jikan.moe/v4/seasons/upcoming?limit=24";
+        const response = await fetch(url, { next: { revalidate: 3600 } });
+        if (!response.ok) throw new Error("Upcoming season fetch failed");
+
+        const data = await response.json();
+        const rawList = data.data || [];
+
+        const seenIds = new Set<string>();
+        const items: AiringAnimeItem[] = [];
+
+        for (const item of rawList) {
+          const malId = item.mal_id;
+          const animeId = `jikan:${malId}`;
+          if (seenIds.has(animeId)) continue;
+          seenIds.add(animeId);
+
+          items.push({
+            id: animeId,
+            malId,
+            title: item.title_english || item.title || "Upcoming Anime",
+            imageUrl: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || "/placeholder.png",
+            broadcastJst: item.aired?.string || item.status || "Not Yet Aired",
+            broadcastDay: "upcoming",
+            airingStatus: item.status || "Not Yet Aired",
+            episodes: item.episodes || undefined,
+            score: item.score || undefined,
+            genres: Array.isArray(item.genres) ? item.genres.map((g: any) => g.name) : [],
+            synopsis: item.synopsis || undefined,
+            type: item.type || "TV",
+            airingMinutes: 9999,
+          });
+        }
+
+        const result = { items };
+        appCache.set(cacheKey, result, this.CACHE_TTL);
+        return result;
+      } catch (fallbackErr) {
+        console.error("Jikan fallback failed:", fallbackErr);
+        return { items: [] };
+      }
     }
   }
 
@@ -152,46 +161,139 @@ export class ScheduleRepository {
     if (cached) return cached;
 
     try {
-      const url = "https://api.jikan.moe/v4/top/anime?filter=upcoming&limit=24";
-      const response = await fetch(url, { next: { revalidate: 3600 } });
-      if (!response.ok) throw new Error("Year outlook fetch failed");
-
-      const data = await response.json();
-      const rawList = data.data || [];
-
-      const seenIds = new Set<string>();
-      const items: AiringAnimeItem[] = [];
-
-      for (const item of rawList) {
-        const malId = item.mal_id;
-        const animeId = `jikan:${malId}`;
-        if (seenIds.has(animeId)) continue;
-        seenIds.add(animeId);
-
-        items.push({
-          id: animeId,
-          malId,
-          title: item.title_english || item.title || "Future Anime",
-          imageUrl: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || "/placeholder.png",
-          broadcastJst: item.aired?.string || item.year ? `Year ${item.year}` : "Confirmed Release",
-          broadcastDay: "year",
-          airingStatus: item.status || "Planned",
-          episodes: item.episodes || undefined,
-          score: item.score || undefined,
-          genres: Array.isArray(item.genres) ? item.genres.map((g: any) => g.name) : [],
-          synopsis: item.synopsis || undefined,
-          type: item.type || "TV",
-          airingMinutes: 9999,
-        });
-      }
-
+      // Primary: Fetch from AniList GraphQL (Fast, robust, no 504 errors)
+      const items = await this.fetchAniListUpcoming("FAVOURITES_DESC");
       const result = { items };
       appCache.set(cacheKey, result, this.CACHE_TTL);
       return result;
     } catch (err) {
-      console.error("Year outlook error:", err);
-      return { items: [] };
+      console.warn("AniList year outlook fetch failed, falling back to Jikan:", err);
+      try {
+        const url = "https://api.jikan.moe/v4/top/anime?filter=upcoming&limit=24";
+        const response = await fetch(url, { next: { revalidate: 3600 } });
+        if (!response.ok) throw new Error("Year outlook fetch failed");
+
+        const data = await response.json();
+        const rawList = data.data || [];
+
+        const seenIds = new Set<string>();
+        const items: AiringAnimeItem[] = [];
+
+        for (const item of rawList) {
+          const malId = item.mal_id;
+          const animeId = `jikan:${malId}`;
+          if (seenIds.has(animeId)) continue;
+          seenIds.add(animeId);
+
+          items.push({
+            id: animeId,
+            malId,
+            title: item.title_english || item.title || "Future Anime",
+            imageUrl: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || "/placeholder.png",
+            broadcastJst: item.aired?.string || item.year ? `Year ${item.year}` : "Confirmed Release",
+            broadcastDay: "year",
+            airingStatus: item.status || "Planned",
+            episodes: item.episodes || undefined,
+            score: item.score || undefined,
+            genres: Array.isArray(item.genres) ? item.genres.map((g: any) => g.name) : [],
+            synopsis: item.synopsis || undefined,
+            type: item.type || "TV",
+            airingMinutes: 9999,
+          });
+        }
+
+        const result = { items };
+        appCache.set(cacheKey, result, this.CACHE_TTL);
+        return result;
+      } catch (fallbackErr) {
+        console.error("Jikan fallback failed:", fallbackErr);
+        return { items: [] };
+      }
     }
+  }
+
+  private static async fetchAniListUpcoming(sortParam: string): Promise<AiringAnimeItem[]> {
+    const query = `
+      query {
+        Page(page: 1, perPage: 24) {
+          media(status: NOT_YET_RELEASED, sort: [${sortParam}], type: ANIME) {
+            id
+            idMal
+            title {
+              english
+              romaji
+              native
+            }
+            coverImage {
+              extraLarge
+              large
+            }
+            startDate {
+              year
+              month
+              day
+            }
+            season
+            seasonYear
+            episodes
+            meanScore
+            genres
+            description
+            format
+          }
+        }
+      }
+    `;
+
+    const res = await fetch("https://graphql.anilist.co", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+      next: { revalidate: 3600 },
+    });
+
+    if (!res.ok) throw new Error(`AniList GraphQL error: ${res.status}`);
+    const json = await res.json();
+    const rawList = json.data?.Page?.media || [];
+
+    const seenIds = new Set<string>();
+    const items: AiringAnimeItem[] = [];
+
+    for (const item of rawList) {
+      const animeId = item.idMal ? `jikan:${item.idMal}` : `anilist:${item.id}`;
+      if (seenIds.has(animeId)) continue;
+      seenIds.add(animeId);
+
+      const title = item.title.english || item.title.romaji || item.title.native || "Upcoming Anime";
+      const imageUrl = item.coverImage.extraLarge || item.coverImage.large || "/placeholder.png";
+
+      let releaseDateStr = "Upcoming Premiere";
+      if (item.season && item.seasonYear) {
+        releaseDateStr = `${item.season} ${item.seasonYear}`;
+      } else if (item.startDate?.year) {
+        releaseDateStr = `Year ${item.startDate.year}`;
+      }
+
+      items.push({
+        id: animeId,
+        malId: item.idMal || item.id,
+        title,
+        englishTitle: item.title.english,
+        japaneseTitle: item.title.native,
+        imageUrl,
+        broadcastJst: releaseDateStr,
+        broadcastDay: "upcoming",
+        airingStatus: "Not Yet Aired",
+        episodes: item.episodes || undefined,
+        score: item.meanScore ? Math.round((item.meanScore / 10) * 10) / 10 : undefined,
+        genres: Array.isArray(item.genres) ? item.genres : [],
+        synopsis: item.description || undefined,
+        type: item.format || "TV",
+        airingMinutes: 9999,
+      });
+    }
+
+    return items;
   }
 
   private static extractAiringMinutes(item: any): number {
