@@ -11,6 +11,8 @@ import { KonamiCodeListener } from "@/components/shared/konami-code";
 import { MatrixRainOverlay } from "@/components/shared/matrix-rain";
 import { NarutoEasterEgg } from "@/components/shared/naruto-easter-egg";
 import { AnimeEasterEggs } from "@/components/shared/anime-easter-eggs";
+import { AnimeRouletteModal } from "@/components/anime/anime-roulette-modal";
+import { ShareableCardModal } from "@/components/shared/shareable-card-modal";
 import { ScrollToTop } from "@/components/shared/scroll-to-top";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -39,6 +41,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <MatrixRainOverlay />
         <NarutoEasterEgg />
         <AnimeEasterEggs />
+        <AnimeRouletteModal />
+        <ShareableCardModal />
       </ThemeProvider>
     </QueryClientProvider>
   );

@@ -19,6 +19,8 @@ import { FranchiseTimeline } from "@/components/anime/details/franchise-timeline
 import { ProductionDetails } from "@/components/anime/details/production-details";
 import { TrailerModal } from "@/components/anime/details/trailer-modal";
 import { ReviewsSection } from "@/components/anime/reviews/reviews-section";
+import { BingeCalculator } from "@/components/anime/binge-calculator";
+import { AiringCountdown } from "@/components/anime/airing-countdown";
 
 import { AnimeCarousel } from "@/components/anime/anime-carousel";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
@@ -184,6 +186,21 @@ export default function AnimeDetailPage({ params }: PageProps) {
       {/* ── CONTENT JOURNEY CONTAINER ── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 md:space-y-16 mt-10 md:mt-14">
         
+        {/* ── BINGE CALCULATOR & AIRING COUNTDOWN ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <BingeCalculator
+            totalEpisodes={anime.episodes}
+            episodesWatched={currentEpisodes}
+          />
+          {anime.status === "Airing" && (
+            <AiringCountdown
+              airingAt={Math.floor(Date.now() / 1000) + 86400 * 2} // Ep countdown
+              episodeNumber={(currentEpisodes || 0) + 1}
+              variant="full"
+            />
+          )}
+        </div>
+
         {/* ── CHARACTERS ── */}
         <CharacterCast
           characters={characters}

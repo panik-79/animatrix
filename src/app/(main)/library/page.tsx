@@ -19,6 +19,8 @@ import {
   Bookmark,
   Clock,
   XCircle,
+  Share2,
+  Tag,
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,6 +29,7 @@ import { ROUTES } from "@/lib/constants";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SearchInput } from "@/components/shared/search-input";
+import { useShareableCardModal } from "@/components/shared/shareable-card-modal";
 
 const STATUS_TABS: {
   id: WatchStatus | "ALL" | "FAVORITES";
@@ -42,6 +45,14 @@ const STATUS_TABS: {
   { id: "FAVORITES", label: "Favorites", icon: Heart },
 ];
 
+const CUSTOM_TAG_PRESETS = [
+  "All Tags",
+  "#ComfortShow",
+  "#Masterpiece",
+  "#MustRewatch",
+  "#PeakFiction",
+];
+
 const STATUS_COLOR_MAP: Record<WatchStatus, string> = {
   WATCHING: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
   COMPLETED: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
@@ -52,6 +63,7 @@ const STATUS_COLOR_MAP: Record<WatchStatus, string> = {
 
 export default function UserLibraryPage() {
   const [activeTab, setActiveTab] = useState<WatchStatus | "ALL" | "FAVORITES">("WATCHING");
+  const [selectedTag, setSelectedTag] = useState("All Tags");
   const [searchQuery, setSearchQuery] = useState("");
 
   const statusFilter = activeTab === "ALL" || activeTab === "FAVORITES" ? undefined : activeTab;
@@ -60,8 +72,9 @@ export default function UserLibraryPage() {
   const updateMutation = useUpdateLibrary();
   const removeMutation = useRemoveFromLibrary();
 
-  const filteredEntries = entries?.filter((entry: { isFavorite: boolean }) => {
-    if (activeTab === "FAVORITES") return entry.isFavorite;
+  const filteredEntries = entries?.filter((entry: { isFavorite: boolean; notes?: string | null }) => {
+    if (activeTab === "FAVORITES" && !entry.isFavorite) return false;
+    if (selectedTag !== "All Tags" && (!entry.notes || !entry.notes.includes(selectedTag))) return false;
     return true;
   });
 
@@ -69,6 +82,23 @@ export default function UserLibraryPage() {
     <div className="w-full px-3 md:px-6 pb-20 pt-2 space-y-6">
       {/* ── TOP CONTROLS & STATS STRIP ── */}
       <div className="space-y-4">
+        {/* Header Title + Share Card Trigger */}
+        <div className="flex items-center justify-between pt-2">
+          <div>
+            <h1 className="text-2xl font-bold font-heading text-foreground">My Library</h1>
+            <p className="text-xs text-muted-foreground">Manage watch progress & personal tags</p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => useShareableCardModal.getState().openModal()}
+            className="px-3.5 py-2 rounded-xl bg-primary/15 border border-primary/30 text-primary text-xs font-bold flex items-center gap-1.5 hover:bg-primary/25 transition-all cursor-pointer shadow-sm"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Share Profile Card</span>
+          </button>
+        </div>
+
         {/* Row 1: Filter Tabs (Scrollable) */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar">
           {STATUS_TABS.map((tab) => {
@@ -92,6 +122,26 @@ export default function UserLibraryPage() {
               </button>
             );
           })}
+        </div>
+
+        {/* Custom Tag Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
+          <Tag className="w-3.5 h-3.5 text-muted-foreground shrink-0 ml-1 mr-1" />
+          {CUSTOM_TAG_PRESETS.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => setSelectedTag(tag)}
+              className={cn(
+                "px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer whitespace-nowrap shrink-0",
+                selectedTag === tag
+                  ? "bg-purple-500/20 text-purple-400 border-purple-500/40"
+                  : "bg-background border-border/60 text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {tag}
+            </button>
+          ))}
         </div>
 
         {/* Row 2: Search Input + Library Stats Bar */}
@@ -258,35 +308,34 @@ export default function UserLibraryPage() {
                             })
                           }
                           disabled={Boolean(entry.totalEpisodes && entry.totalEpisodes > 0 && entry.progress >= entry.totalEpisodes)}
-                          className="w-6 h-6 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-20 disabled:pointer-events-none flex items-center justify-center text-primary-foreground flex items-center justify-center font-bold transition-all active:scale-90 cursor-pointer shadow-md shadow-primary/30"
-                          title="Increase episode"
+                          className="w-6 h-6 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-20 flex items-center justify-center text-primary-foreground font-bold shadow-md transition-all cursor-pointer active:scale-90"
+                          title="Increase episode progress (+1)"
                         >
-                          <Plus className="w-3 h-3" />
+                          <Plus className="w-3.5 h-3.5 stroke-[3]" />
                         </button>
                       </div>
                     </div>
-
-                    {/* Thin Progress Accent Line */}
-                    {entry.totalEpisodes && (
-                      <div className="absolute bottom-0 inset-x-0 h-1 bg-white/10">
-                        <div
-                          className="h-full bg-primary shadow-[0_0_8px_rgba(139,92,246,0.8)] transition-all duration-500"
-                          style={{ width: `${progressPct}%` }}
-                        />
-                      </div>
-                    )}
                   </div>
 
-                  {/* Card Base Container (Title Only) */}
-                  <div className="p-3 bg-card/90">
-                    <Link href={ROUTES.ANIME_DETAIL(entry.animeId)}>
-                      <h3
-                        className="text-xs font-extrabold text-foreground leading-snug line-clamp-1 group-hover:text-primary transition-colors font-heading"
-                        title={entry.title}
-                      >
-                        {entry.title}
-                      </h3>
-                    </Link>
+                  {/* Info Details Section */}
+                  <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
+                    <div>
+                      <Link href={ROUTES.ANIME_DETAIL(entry.animeId)}>
+                        <h3 className="font-bold text-xs text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                          {entry.title}
+                        </h3>
+                      </Link>
+
+                      {/* Progress Bar Track */}
+                      <div className="w-full bg-slate-200 dark:bg-white/10 h-1.5 rounded-full overflow-hidden mt-2.5">
+                        <motion.div
+                          className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${progressPct}%` }}
+                          transition={{ duration: 0.5, ease: "easeOut" }}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               );
