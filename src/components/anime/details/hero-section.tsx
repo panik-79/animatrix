@@ -76,8 +76,8 @@ export function HeroSection({
   const title = anime.title.english || anime.title.romaji;
   const bannerSrc = anime.images.banner || anime.images.posterLarge || anime.images.poster;
   const studioName = anime.studios[0]?.name || "Original Production";
-  const totalEpisodes = anime.episodes || 100;
-  const progressPercent = Math.min(100, Math.round((episodesWatched / totalEpisodes) * 100));
+  const realTotalEpisodes = anime.episodes && anime.episodes > 0 ? anime.episodes : null;
+  const progressPercent = realTotalEpisodes ? Math.min(100, Math.round((episodesWatched / realTotalEpisodes) * 100)) : 0;
 
   const displayStatusLabel = status ? (STATUS_LABEL_MAP[status] ?? status) : null;
 
@@ -327,14 +327,16 @@ export function HeroSection({
                 <div className="flex items-center gap-1 border-l border-border pl-2">
                   <button
                     onClick={() => onEpisodesChange(Math.max(0, episodesWatched - 1))}
-                    className="w-5.5 h-5.5 rounded-md bg-muted hover:bg-accent flex items-center justify-center text-foreground transition-colors cursor-pointer"
+                    disabled={episodesWatched <= 0}
+                    className="w-5.5 h-5.5 rounded-md bg-muted hover:bg-accent disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center text-foreground transition-colors cursor-pointer"
                     title="Decrement Episode"
                   >
                     <Minus className="w-3 h-3" />
                   </button>
                   <button
-                    onClick={() => onEpisodesChange(Math.min(totalEpisodes, episodesWatched + 1))}
-                    className="w-5.5 h-5.5 rounded-md bg-primary/20 hover:bg-primary/30 text-primary flex items-center justify-center font-bold transition-colors cursor-pointer"
+                    onClick={() => onEpisodesChange(realTotalEpisodes ? Math.min(realTotalEpisodes, episodesWatched + 1) : episodesWatched + 1)}
+                    disabled={Boolean(realTotalEpisodes && episodesWatched >= realTotalEpisodes)}
+                    className="w-5.5 h-5.5 rounded-md bg-primary/20 hover:bg-primary/30 disabled:opacity-30 disabled:pointer-events-none text-primary flex items-center justify-center font-bold transition-colors cursor-pointer"
                     title="Increment Episode"
                   >
                     <Plus className="w-3 h-3" />

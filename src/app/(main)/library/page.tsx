@@ -252,10 +252,13 @@ export default function UserLibraryPage() {
                             updateMutation.mutate({
                               animeId: entry.animeId,
                               title: entry.title,
-                              progress: entry.progress + 1,
+                              progress: entry.totalEpisodes && entry.totalEpisodes > 0
+                                ? Math.min(entry.totalEpisodes, entry.progress + 1)
+                                : entry.progress + 1,
                             })
                           }
-                          className="w-6 h-6 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center font-bold transition-all active:scale-90 cursor-pointer shadow-md shadow-primary/30"
+                          disabled={Boolean(entry.totalEpisodes && entry.totalEpisodes > 0 && entry.progress >= entry.totalEpisodes)}
+                          className="w-6 h-6 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-20 disabled:pointer-events-none flex items-center justify-center text-primary-foreground flex items-center justify-center font-bold transition-all active:scale-90 cursor-pointer shadow-md shadow-primary/30"
                           title="Increase episode"
                         >
                           <Plus className="w-3 h-3" />

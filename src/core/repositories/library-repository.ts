@@ -77,33 +77,56 @@ export class LibraryRepository {
       };
     }
 
-    return prisma.libraryEntry.findMany({
+    const entries = await prisma.libraryEntry.findMany({
       where,
       orderBy: { createdAt: "desc" },
+    });
+
+    // Auto-fix any legacy entries where progress exceeds totalEpisodes
+    return entries.map((entry) => {
+      if (entry.totalEpisodes && entry.totalEpisodes > 0 && entry.progress > entry.totalEpisodes) {
+        return { ...entry, progress: entry.totalEpisodes };
+      }
+      return entry;
     });
   }
 
   static async getByAnimeId(rawAnimeId: string) {
     const animeId = normalizeAnimeId(rawAnimeId);
-    return prisma.libraryEntry.findUnique({
+    const entry = await prisma.libraryEntry.findUnique({
       where: { animeId },
     });
+    if (entry && entry.totalEpisodes && entry.totalEpisodes > 0 && entry.progress > entry.totalEpisodes) {
+      return { ...entry, progress: entry.totalEpisodes };
+    }
+    return entry;
   }
 
   static async upsertEntry(input: UpsertLibraryEntryInput) {
     const animeId = normalizeAnimeId(input.animeId);
-    
+    const existing = await prisma.libraryEntry.findUnique({ where: { animeId } });
+
+    const finalTotalEpisodes = input.totalEpisodes ?? existing?.totalEpisodes ?? null;
+    let safeProgress = typeof input.progress === "number" ? Math.max(0, input.progress) : (existing?.progress ?? 0);
+    if (finalTotalEpisodes && finalTotalEpisodes > 0) {
+      safeProgress = Math.min(finalTotalEpisodes, safeProgress);
+    }
+
+    const isCompleted = Boolean(finalTotalEpisodes && finalTotalEpisodes > 0 && safeProgress >= finalTotalEpisodes);
+    const newStatus = isCompleted ? "COMPLETED" : (input.status ?? existing?.status ?? "WATCHING");
+
     // Clean null/undefined values
     const updateData: any = { updatedAt: new Date() };
     if (input.title) updateData.title = input.title;
-    if (input.status) updateData.status = input.status;
+    updateData.status = newStatus;
     if (typeof input.score === 'number' || input.score === null) updateData.score = input.score;
-    if (typeof input.progress === 'number') updateData.progress = input.progress;
-    if (typeof input.totalEpisodes === 'number' || input.totalEpisodes === null) updateData.totalEpisodes = input.totalEpisodes;
+    updateData.progress = safeProgress;
+    if (finalTotalEpisodes !== undefined) updateData.totalEpisodes = finalTotalEpisodes;
     if (typeof input.isFavorite === 'boolean') updateData.isFavorite = input.isFavorite;
     if (input.imageUrl) updateData.imageUrl = input.imageUrl;
     if (input.bannerUrl) updateData.bannerUrl = input.bannerUrl;
     if (input.notes !== undefined) updateData.notes = input.notes;
+    if (isCompleted) updateData.completedDate = new Date();
 
     return prisma.libraryEntry.upsert({
       where: { animeId },
@@ -111,16 +134,17 @@ export class LibraryRepository {
       create: {
         animeId,
         title: input.title || "Anime Entry",
-        status: input.status ?? "WATCHING",
-        progress: input.progress ?? 0,
+        status: newStatus,
+        progress: safeProgress,
         malId: input.malId,
         anilistId: input.anilistId,
         imageUrl: input.imageUrl,
         bannerUrl: input.bannerUrl,
         score: input.score,
-        totalEpisodes: input.totalEpisodes,
+        totalEpisodes: finalTotalEpisodes,
         isFavorite: input.isFavorite ?? false,
         notes: input.notes,
+        completedDate: isCompleted ? new Date() : null,
       },
     });
   }
@@ -130,21 +154,25 @@ export class LibraryRepository {
     const existing = await prisma.libraryEntry.findUnique({ where: { animeId } });
 
     const finalTotalEpisodes = totalEpisodes ?? existing?.totalEpisodes ?? null;
-    const isCompleted = finalTotalEpisodes && progress >= finalTotalEpisodes;
+    const safeProgress = finalTotalEpisodes && finalTotalEpisodes > 0 
+      ? Math.min(finalTotalEpisodes, Math.max(0, progress))
+      : Math.max(0, progress);
+
+    const isCompleted = Boolean(finalTotalEpisodes && finalTotalEpisodes > 0 && safeProgress >= finalTotalEpisodes);
     const newStatus = isCompleted ? "COMPLETED" : (existing?.status ?? "WATCHING");
 
     // Track watch history
     await prisma.watchHistory.create({
       data: {
         animeId,
-        episode: progress,
+        episode: safeProgress,
       },
     });
 
     return prisma.libraryEntry.upsert({
       where: { animeId },
       update: {
-        progress,
+        progress: safeProgress,
         status: newStatus,
         totalEpisodes: finalTotalEpisodes,
         completedDate: isCompleted ? new Date() : existing?.completedDate,
@@ -153,7 +181,7 @@ export class LibraryRepository {
       create: {
         animeId,
         title: title || "Anime Entry",
-        progress,
+        progress: safeProgress,
         status: newStatus,
         imageUrl,
         bannerUrl,
