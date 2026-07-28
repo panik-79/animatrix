@@ -92,6 +92,100 @@ export class ScheduleRepository {
     }
   }
 
+  static async getUpcomingSeasonSchedule(): Promise<{ items: AiringAnimeItem[] }> {
+    const cacheKey = "schedule_upcoming_season";
+    const cached = appCache.get(cacheKey) as { items: AiringAnimeItem[] } | null;
+    if (cached) return cached;
+
+    try {
+      const url = "https://api.jikan.moe/v4/seasons/upcoming?limit=24";
+      const response = await fetch(url, { next: { revalidate: 3600 } });
+      if (!response.ok) throw new Error("Upcoming season fetch failed");
+
+      const data = await response.json();
+      const rawList = data.data || [];
+
+      const seenIds = new Set<string>();
+      const items: AiringAnimeItem[] = [];
+
+      for (const item of rawList) {
+        const malId = item.mal_id;
+        const animeId = `jikan:${malId}`;
+        if (seenIds.has(animeId)) continue;
+        seenIds.add(animeId);
+
+        items.push({
+          id: animeId,
+          malId,
+          title: item.title_english || item.title || "Upcoming Anime",
+          imageUrl: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || "/placeholder.png",
+          broadcastJst: item.aired?.string || item.status || "Not Yet Aired",
+          broadcastDay: "upcoming",
+          airingStatus: item.status || "Not Yet Aired",
+          episodes: item.episodes || undefined,
+          score: item.score || undefined,
+          genres: Array.isArray(item.genres) ? item.genres.map((g: any) => g.name) : [],
+          synopsis: item.synopsis || undefined,
+          type: item.type || "TV",
+        });
+      }
+
+      const result = { items };
+      appCache.set(cacheKey, result, this.CACHE_TTL);
+      return result;
+    } catch (err) {
+      console.error("Upcoming season error:", err);
+      return { items: [] };
+    }
+  }
+
+  static async getYearOutlookSchedule(): Promise<{ items: AiringAnimeItem[] }> {
+    const cacheKey = "schedule_year_outlook";
+    const cached = appCache.get(cacheKey) as { items: AiringAnimeItem[] } | null;
+    if (cached) return cached;
+
+    try {
+      const url = "https://api.jikan.moe/v4/top/anime?filter=upcoming&limit=24";
+      const response = await fetch(url, { next: { revalidate: 3600 } });
+      if (!response.ok) throw new Error("Year outlook fetch failed");
+
+      const data = await response.json();
+      const rawList = data.data || [];
+
+      const seenIds = new Set<string>();
+      const items: AiringAnimeItem[] = [];
+
+      for (const item of rawList) {
+        const malId = item.mal_id;
+        const animeId = `jikan:${malId}`;
+        if (seenIds.has(animeId)) continue;
+        seenIds.add(animeId);
+
+        items.push({
+          id: animeId,
+          malId,
+          title: item.title_english || item.title || "Future Anime",
+          imageUrl: item.images?.jpg?.large_image_url || item.images?.jpg?.image_url || "/placeholder.png",
+          broadcastJst: item.aired?.string || item.year ? `Year ${item.year}` : "Confirmed Release",
+          broadcastDay: "year",
+          airingStatus: item.status || "Planned",
+          episodes: item.episodes || undefined,
+          score: item.score || undefined,
+          genres: Array.isArray(item.genres) ? item.genres.map((g: any) => g.name) : [],
+          synopsis: item.synopsis || undefined,
+          type: item.type || "TV",
+        });
+      }
+
+      const result = { items };
+      appCache.set(cacheKey, result, this.CACHE_TTL);
+      return result;
+    } catch (err) {
+      console.error("Year outlook error:", err);
+      return { items: [] };
+    }
+  }
+
   static getCurrentDayName(): string {
     const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
     const now = new Date();

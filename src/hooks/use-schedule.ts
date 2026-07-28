@@ -5,6 +5,8 @@ import { AiringAnimeItem } from "@/core/repositories/schedule-repository";
 import { useLibrary } from "@/hooks/use-library";
 import { normalizeAnimeId } from "@/lib/utils";
 
+export type ScheduleMode = "weekly" | "next_season" | "year_outlook";
+
 export interface ScheduleItemWithLibraryState extends AiringAnimeItem {
   isInUserLibrary: boolean;
   libraryProgress?: number;
@@ -12,6 +14,7 @@ export interface ScheduleItemWithLibraryState extends AiringAnimeItem {
 }
 
 export function useSchedule(initialDay?: string) {
+  const [mode, setMode] = useState<ScheduleMode>("weekly");
   const [activeDay, setActiveDay] = useState<string>(initialDay || getCurrentDayName());
   const [items, setItems] = useState<AiringAnimeItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -19,11 +22,15 @@ export function useSchedule(initialDay?: string) {
 
   const { data: libraryEntries } = useLibrary();
 
-  const fetchSchedule = useCallback(async (day: string) => {
+  const fetchSchedule = useCallback(async (currentMode: ScheduleMode, day: string) => {
     setIsLoading(true);
     setIsError(false);
     try {
-      const res = await fetch(`/api/schedule?day=${day}`);
+      const url = currentMode === "weekly"
+        ? `/api/schedule?mode=weekly&day=${day}`
+        : `/api/schedule?mode=${currentMode}`;
+
+      const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to fetch schedule");
       const data = await res.json();
       setItems(data.items || []);
@@ -36,8 +43,8 @@ export function useSchedule(initialDay?: string) {
   }, []);
 
   useEffect(() => {
-    void fetchSchedule(activeDay);
-  }, [activeDay, fetchSchedule]);
+    void fetchSchedule(mode, activeDay);
+  }, [mode, activeDay, fetchSchedule]);
 
   // Deduplicate and augment schedule items with user library status
   const seenIds = new Set<string>();
@@ -62,12 +69,14 @@ export function useSchedule(initialDay?: string) {
   }
 
   return {
+    mode,
+    setMode,
     activeDay,
     setActiveDay,
     items: enrichedItems,
     isLoading,
     isError,
-    refetch: () => fetchSchedule(activeDay),
+    refetch: () => fetchSchedule(mode, activeDay),
   };
 }
 

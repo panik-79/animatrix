@@ -77,9 +77,23 @@ model UserPreference {
   
   preferredLength  String   @default("NO_PREFERENCE") // MOVIES | 12_EPISODES | 24_EPISODES | LONG_SERIES | NO_PREFERENCE
   preferredEra     String   @default("NO_PREFERENCE") // CLASSICS | MODERN | SEASONAL | NO_PREFERENCE
+
+  emailNotifications Boolean @default(true)
+  emailTiming        String  @default("ON_RELEASE") // ON_RELEASE | ONE_HOUR_BEFORE | WEEKLY_DIGEST
   
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+}
+
+model EpisodeReminder {
+  id        String   @id @default(cuid())
+  userId    String?
+  animeId   String
+  title     String
+  imageUrl  String?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, animeId])
 }
 
 enum WatchStatus {

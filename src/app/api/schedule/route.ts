@@ -4,7 +4,18 @@ import { ScheduleRepository } from "@/core/repositories/schedule-repository";
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
+    const mode = searchParams.get("mode") || "weekly";
     const dayParam = searchParams.get("day") || undefined;
+
+    if (mode === "next_season") {
+      const result = await ScheduleRepository.getUpcomingSeasonSchedule();
+      return NextResponse.json(result);
+    }
+
+    if (mode === "year_outlook") {
+      const result = await ScheduleRepository.getYearOutlookSchedule();
+      return NextResponse.json(result);
+    }
 
     const result = await ScheduleRepository.getScheduleByDay(dayParam);
     return NextResponse.json(result);
