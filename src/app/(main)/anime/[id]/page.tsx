@@ -96,10 +96,30 @@ export default function AnimeDetailPage({ params }: PageProps) {
   const currentEpisodes = optimisticProgress !== null ? optimisticProgress : (libraryEntry?.progress || 0);
   const isFavorite = optimisticFavorite !== null ? optimisticFavorite : (libraryEntry?.isFavorite || false);
 
-  const handleShare = () => {
-    if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(window.location.href);
+  const handleShare = async () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    const shareTitle = anime ? (anime.title.english || anime.title.romaji) : "Anime";
+    const shareText = anime?.synopsis
+      ? anime.synopsis.slice(0, 100) + (anime.synopsis.length > 100 ? "…" : "")
+      : "Check out this anime!";
+
+    // Use native share sheet if available (mobile & modern desktop)
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: shareTitle, text: shareText, url });
+        return;
+      } catch (err) {
+        // User cancelled or share failed — fall through to clipboard
+        if ((err as DOMException)?.name === "AbortError") return;
+      }
+    }
+
+    // Clipboard fallback
+    try {
+      await navigator.clipboard.writeText(url);
       toast.success("Link Copied!", "Direct link saved to your clipboard.");
+    } catch {
+      toast.error("Share Failed", "Could not copy the link. Please copy it manually from the address bar.");
     }
   };
 

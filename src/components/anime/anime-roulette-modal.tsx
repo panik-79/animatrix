@@ -35,39 +35,41 @@ export function AnimeRouletteModal() {
   const [isSpinning, setIsSpinning] = useState(false);
   const [selectedAnime, setSelectedAnime] = useState<AnimeItem | null>(null);
 
-  // Fetch candidate anime from user library or recommendations
-  const { data: candidates = [] } = useQuery<AnimeItem[]>({
+  // Fetch candidate anime from library (PTW) or trending recommendations
+  const { data: candidates = [], isLoading: isCandidatesLoading } = useQuery<AnimeItem[]>({
     queryKey: ["roulette-candidates"],
     queryFn: async () => {
-      // 1. Try library plan to watch
+      // 1. Try library — prefer Plan to Watch, fall back to all library entries
       const libRes = await fetch("/api/library");
       if (libRes.ok) {
         const libData = await libRes.json();
-        const entries = libData.entries || [];
-        const ptw = entries.filter((e: any) => e.status === "PLAN_TO_WATCH");
-        if (ptw.length > 0) {
-          return ptw.map((e: any) => ({
+        const entries: any[] = libData.entries || [];
+        const ptw = entries.filter((e) => e.status === "PLAN_TO_WATCH");
+        const pool = ptw.length > 0 ? ptw : entries;
+        if (pool.length > 0) {
+          return pool.map((e) => ({
             id: String(e.animeId),
             title: e.title,
-            imageUrl: e.imageUrl,
-            score: e.score,
-            episodes: e.totalEpisodes,
+            imageUrl: e.imageUrl ?? null,
+            score: e.score ?? null,
+            episodes: e.totalEpisodes ?? null,
           }));
         }
       }
 
-      // 2. Fallback to trending recommendation API
-      const recRes = await fetch("/api/recommendations?limit=20");
+      // 2. Fallback to recommendation engine (cold start / no library)
+      const recRes = await fetch("/api/recommendations?limit=30");
       if (recRes.ok) {
         const recData = await recRes.json();
-        const items = recData.items || [];
-        return items.map((i: any) => ({
-          id: String(i.anime.id),
-          title: i.anime.title.english || i.anime.title.romaji,
-          imageUrl: i.anime.images.poster,
-          score: i.anime.score,
-          episodes: i.anime.episodes,
-          genres: i.anime.genres?.map((g: any) => g.name),
+        // API returns { recommendations: RecommendedAnime[], meta: {...} }
+        const recs: any[] = recData.recommendations || [];
+        return recs.map((item) => ({
+          id: String(item.anime.id),
+          title: item.anime.title.english || item.anime.title.romaji,
+          imageUrl: item.anime.images?.posterLarge || item.anime.images?.poster || null,
+          score: item.anime.score ?? null,
+          episodes: item.anime.episodes ?? null,
+          genres: item.anime.genres?.map((g: any) => g.name) ?? [],
         }));
       }
 
@@ -75,6 +77,7 @@ export function AnimeRouletteModal() {
     },
     enabled: isOpen,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 
   const handleSpin = () => {
@@ -166,12 +169,18 @@ export function AnimeRouletteModal() {
                     )}
                   </div>
                 </motion.div>
-              ) : (
-                <div className="space-y-2 text-muted-foreground">
-                  <Film className="w-10 h-10 mx-auto stroke-[1.5] text-primary/60 animate-bounce" />
-                  <p className="text-xs font-medium">Press Spin to pick a random title from your watchlist!</p>
-                </div>
-              )}
+                ) : isCandidatesLoading ? (
+                  <div className="space-y-3 text-muted-foreground">
+                    <RefreshCw className="w-8 h-8 mx-auto text-primary/60 animate-spin" />
+                    <p className="text-xs font-medium">Loading your anime pool…</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2 text-muted-foreground">
+                    <Film className="w-10 h-10 mx-auto stroke-[1.5] text-primary/60 animate-bounce" />
+                    <p className="text-xs font-medium">Press Spin to pick a random anime for you!</p>
+                    <p className="text-[10px] text-muted-foreground/60">Add anime to your library to personalize picks.</p>
+                  </div>
+                )}
             </div>
 
             {/* Actions */}
@@ -179,8 +188,8 @@ export function AnimeRouletteModal() {
               <button
                 type="button"
                 onClick={handleSpin}
-                disabled={isSpinning || candidates.length === 0}
-                className="flex-1 py-3 px-4 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                disabled={isSpinning || isCandidatesLoading || candidates.length === 0}
+                className="flex-1 py-3 px-4 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RefreshCw className={cn("w-4 h-4", isSpinning && "animate-spin")} />
                 <span>{isSpinning ? "Spinning..." : "Spin Roulette!"}</span>
