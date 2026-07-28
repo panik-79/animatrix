@@ -25,7 +25,7 @@ export class ScheduleRepository {
     const targetDay = (day || this.getCurrentDayName()).toLowerCase();
     const cacheKey = `${this.CACHE_KEY_PREFIX}${targetDay}`;
 
-    const cached = appCache.get<{ items: AiringAnimeItem[]; day: string }>(cacheKey);
+    const cached = appCache.get(cacheKey) as { items: AiringAnimeItem[]; day: string } | null;
     if (cached) {
       return cached;
     }
@@ -89,6 +89,6 @@ export class ScheduleRepository {
   static getCurrentDayName(): string {
     const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
     const now = new Date();
-    return days[now.getDay()];
+    return days[now.getDay()] || "monday";
   }
 }

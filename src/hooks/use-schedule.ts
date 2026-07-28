@@ -43,7 +43,8 @@ export function useSchedule(initialDay?: string) {
   const enrichedItems: ScheduleItemWithLibraryState[] = items.map((item) => {
     const normItemAnimeId = normalizeAnimeId(item.id);
     const libEntry = libraryEntries?.find(
-      (entry) => normalizeAnimeId(entry.animeId) === normItemAnimeId
+      (entry: { animeId: string; progress?: number; status?: string }) =>
+        normalizeAnimeId(entry.animeId) === normItemAnimeId
     );
 
     return {
@@ -67,5 +68,5 @@ export function useSchedule(initialDay?: string) {
 function getCurrentDayName(): string {
   const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
   const now = new Date();
-  return days[now.getDay()];
+  return days[now.getDay()] || "monday";
 }
