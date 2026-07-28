@@ -39,21 +39,27 @@ export function useSchedule(initialDay?: string) {
     void fetchSchedule(activeDay);
   }, [activeDay, fetchSchedule]);
 
-  // Augment schedule items with user library status
-  const enrichedItems: ScheduleItemWithLibraryState[] = items.map((item) => {
+  // Deduplicate and augment schedule items with user library status
+  const seenIds = new Set<string>();
+  const enrichedItems: ScheduleItemWithLibraryState[] = [];
+
+  for (const item of items) {
     const normItemAnimeId = normalizeAnimeId(item.id);
+    if (seenIds.has(normItemAnimeId)) continue;
+    seenIds.add(normItemAnimeId);
+
     const libEntry = libraryEntries?.find(
       (entry: { animeId: string; progress?: number; status?: string }) =>
         normalizeAnimeId(entry.animeId) === normItemAnimeId
     );
 
-    return {
+    enrichedItems.push({
       ...item,
       isInUserLibrary: Boolean(libEntry),
       libraryProgress: libEntry?.progress,
       libraryStatus: libEntry?.status,
-    };
-  });
+    });
+  }
 
   return {
     activeDay,

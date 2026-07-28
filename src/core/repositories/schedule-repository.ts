@@ -44,9 +44,15 @@ export class ScheduleRepository {
       const data = await response.json();
       const rawList = data.data || [];
 
-      const items: AiringAnimeItem[] = rawList.map((item: any) => {
+      const seenIds = new Set<string>();
+      const items: AiringAnimeItem[] = [];
+
+      for (const item of rawList) {
         const malId = item.mal_id;
         const animeId = `jikan:${malId}`;
+        if (seenIds.has(animeId)) continue;
+        seenIds.add(animeId);
+
         const title = item.title_english || item.title || "Unknown Anime";
         const imageUrl =
           item.images?.jpg?.large_image_url ||
@@ -59,7 +65,7 @@ export class ScheduleRepository {
 
         const broadcast = item.broadcast?.string || undefined;
 
-        return {
+        items.push({
           id: animeId,
           malId,
           title,
@@ -74,8 +80,8 @@ export class ScheduleRepository {
           genres,
           synopsis: item.synopsis || undefined,
           type: item.type || "TV",
-        };
-      });
+        });
+      }
 
       const result = { items, day: targetDay };
       appCache.set(cacheKey, result, this.CACHE_TTL);
