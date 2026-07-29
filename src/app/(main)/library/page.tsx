@@ -326,7 +326,7 @@ function LibraryCardItem({
         </button>
 
         {/* Progress Floating Control Bar (Bottom of Poster) */}
-        <div className="absolute bottom-3 inset-x-3 p-2 rounded-2xl bg-slate-950/85 backdrop-blur-xl border border-white/15 flex items-center justify-between text-xs text-white shadow-xl relative">
+        <div className="absolute bottom-2.5 inset-x-2.5 p-2 rounded-2xl bg-slate-950/90 backdrop-blur-xl border border-white/20 flex items-center justify-between text-xs text-white shadow-2xl z-20">
           
           {/* Floating +1 Ep Particle Bursts */}
           <AnimatePresence>
