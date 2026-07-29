@@ -196,153 +196,223 @@ export default function UserLibraryPage() {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           <AnimatePresence mode="popLayout">
-            {filteredEntries.map((entry: any) => {
-              const progressPct = entry.totalEpisodes
-                ? Math.min(100, Math.round((entry.progress / entry.totalEpisodes) * 100))
-                : 0;
-
-              return (
-                <motion.div
-                  key={entry.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.94 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.94 }}
-                  whileHover={{ y: -6, transition: { type: "spring", stiffness: 400, damping: 25 } }}
-                  className="group relative rounded-3xl overflow-hidden bg-card border border-border/80 hover:border-primary/50 shadow-sm hover:shadow-2xl hover:shadow-primary/15 transition-all duration-300 flex flex-col justify-between"
-                >
-                  {/* Top Poster & Badges Container */}
-                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-950">
-                    <Link href={ROUTES.ANIME_DETAIL(entry.animeId)}>
-                      <img
-                        src={entry.imageUrl || "/placeholder.png"}
-                        alt={entry.title}
-                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 filter group-hover:brightness-105"
-                      />
-                      {/* Vignette Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-black/40 opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
-                    </Link>
-
-                    {/* Watch Status Badge (Top Left) */}
-                    <span
-                      className={cn(
-                        "absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md border shadow-md",
-                        STATUS_COLOR_MAP[entry.status as WatchStatus] || "bg-black/60 text-white border-white/20"
-                      )}
-                    >
-                      {entry.status.replace("_", " ")}
-                    </span>
-
-                    {/* Favorite Button (APPEARS ON HOVER ONLY) */}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        updateMutation.mutate({
-                          animeId: entry.animeId,
-                          title: entry.title,
-                          isFavorite: !entry.isFavorite,
-                        })
-                      }
-                      className={cn(
-                        "absolute top-3 right-3 p-2 rounded-full backdrop-blur-xl transition-all duration-300 cursor-pointer shadow-lg z-10",
-                        "opacity-0 group-hover:opacity-100 translate-y-[-4px] group-hover:translate-y-0",
-                        entry.isFavorite
-                          ? "bg-rose-500 text-white shadow-rose-500/40 opacity-100 translate-y-0"
-                          : "bg-black/60 text-white/80 hover:text-white hover:bg-black/90 hover:scale-110"
-                      )}
-                      title={entry.isFavorite ? "Remove from Favorites" : "Mark as Favorite"}
-                    >
-                      <Heart className={cn("w-3.5 h-3.5", entry.isFavorite && "fill-white text-white")} />
-                    </button>
-
-                    {/* Delete Entry Button (APPEARS ON HOVER ONLY) */}
-                    <button
-                      type="button"
-                      onClick={() => removeMutation.mutate(entry.animeId)}
-                      className="absolute top-3 right-12 p-2 rounded-full bg-black/60 text-white/70 hover:text-rose-400 hover:bg-black/90 backdrop-blur-xl transition-all duration-300 cursor-pointer shadow-lg opacity-0 group-hover:opacity-100 translate-y-[-4px] group-hover:translate-y-0 hover:scale-110 z-10"
-                      title="Remove from library"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* Progress Floating Control Bar (Bottom of Poster) */}
-                    <div className="absolute bottom-3 inset-x-3 p-2 rounded-2xl bg-slate-950/80 backdrop-blur-xl border border-white/15 flex items-center justify-between text-xs text-white shadow-xl">
-                      <div className="flex items-center gap-1.5 pl-1">
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                          Ep
-                        </span>
-                        <span className="font-extrabold text-xs text-white">
-                          {entry.progress}{" "}
-                          <span className="text-white/40 text-[10px] font-medium">
-                            / {entry.totalEpisodes || "?"}
-                          </span>
-                        </span>
-                      </div>
-
-                      {/* Quick - / + Buttons */}
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            updateMutation.mutate({
-                              animeId: entry.animeId,
-                              title: entry.title,
-                              progress: Math.max(0, entry.progress - 1),
-                            })
-                          }
-                          disabled={entry.progress <= 0}
-                          className="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-20 flex items-center justify-center text-white transition-all cursor-pointer active:scale-90"
-                          title="Decrease episode"
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            updateMutation.mutate({
-                              animeId: entry.animeId,
-                              title: entry.title,
-                              progress: entry.totalEpisodes && entry.totalEpisodes > 0
-                                ? Math.min(entry.totalEpisodes, entry.progress + 1)
-                                : entry.progress + 1,
-                            })
-                          }
-                          disabled={Boolean(entry.totalEpisodes && entry.totalEpisodes > 0 && entry.progress >= entry.totalEpisodes)}
-                          className="w-6 h-6 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-20 flex items-center justify-center text-primary-foreground font-bold shadow-md transition-all cursor-pointer active:scale-90"
-                          title="Increase episode progress (+1)"
-                        >
-                          <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Info Details Section */}
-                  <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
-                    <div>
-                      <Link href={ROUTES.ANIME_DETAIL(entry.animeId)}>
-                        <h3 className="font-bold text-xs text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                          {entry.title}
-                        </h3>
-                      </Link>
-
-                      {/* Progress Bar Track */}
-                      <div className="w-full bg-slate-200 dark:bg-white/10 h-1.5 rounded-full overflow-hidden mt-2.5">
-                        <motion.div
-                          className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${progressPct}%` }}
-                          transition={{ duration: 0.5, ease: "easeOut" }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+            {filteredEntries.map((entry: any) => (
+              <LibraryCardItem
+                key={entry.id}
+                entry={entry}
+                updateMutation={updateMutation}
+                removeMutation={removeMutation}
+              />
+            ))}
           </AnimatePresence>
         </div>
       )}
     </div>
+  );
+}
+
+function LibraryCardItem({
+  entry,
+  updateMutation,
+  removeMutation,
+}: {
+  entry: any;
+  updateMutation: any;
+  removeMutation: any;
+}) {
+  const [particles, setParticles] = useState<{ id: number; text: string }[]>([]);
+
+  const progressPct = entry.totalEpisodes
+    ? Math.min(100, Math.round((entry.progress / entry.totalEpisodes) * 100))
+    : 0;
+
+  const handleIncrement = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const isMax = Boolean(entry.totalEpisodes && entry.totalEpisodes > 0 && entry.progress >= entry.totalEpisodes);
+    if (isMax) return;
+
+    const nextProgress = entry.totalEpisodes && entry.totalEpisodes > 0
+      ? Math.min(entry.totalEpisodes, entry.progress + 1)
+      : entry.progress + 1;
+
+    // Trigger floating +1 Ep particle burst
+    const particleId = Date.now() + Math.random();
+    setParticles((prev) => [...prev, { id: particleId, text: "+1 Ep!" }]);
+
+    setTimeout(() => {
+      setParticles((prev) => prev.filter((p) => p.id !== particleId));
+    }, 700);
+
+    updateMutation.mutate({
+      animeId: entry.animeId,
+      title: entry.title,
+      progress: nextProgress,
+    });
+  };
+
+  const handleDecrement = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (entry.progress <= 0) return;
+
+    const nextProgress = Math.max(0, entry.progress - 1);
+    updateMutation.mutate({
+      animeId: entry.animeId,
+      title: entry.title,
+      progress: nextProgress,
+    });
+  };
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.94 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.94 }}
+      whileHover={{ y: -6, transition: { type: "spring", stiffness: 400, damping: 25 } }}
+      className="group relative rounded-3xl overflow-hidden bg-card border border-border/80 hover:border-primary/50 shadow-sm hover:shadow-2xl hover:shadow-primary/15 transition-all duration-300 flex flex-col justify-between"
+    >
+      {/* Top Poster & Badges Container */}
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-950">
+        <Link href={ROUTES.ANIME_DETAIL(entry.animeId)}>
+          <img
+            src={entry.imageUrl || "/placeholder.png"}
+            alt={entry.title}
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 filter group-hover:brightness-105"
+          />
+          {/* Vignette Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-black/40 opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
+        </Link>
+
+        {/* Watch Status Badge (Top Left) */}
+        <span
+          className={cn(
+            "absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md border shadow-md",
+            STATUS_COLOR_MAP[entry.status as WatchStatus] || "bg-black/60 text-white border-white/20"
+          )}
+        >
+          {entry.status.replace("_", " ")}
+        </span>
+
+        {/* Favorite Button (APPEARS ON HOVER ONLY) */}
+        <button
+          type="button"
+          onClick={() =>
+            updateMutation.mutate({
+              animeId: entry.animeId,
+              title: entry.title,
+              isFavorite: !entry.isFavorite,
+            })
+          }
+          className={cn(
+            "absolute top-3 right-3 p-2 rounded-full backdrop-blur-xl transition-all duration-300 cursor-pointer shadow-lg z-10",
+            "opacity-0 group-hover:opacity-100 translate-y-[-4px] group-hover:translate-y-0",
+            entry.isFavorite
+              ? "bg-rose-500 text-white shadow-rose-500/40 opacity-100 translate-y-0"
+              : "bg-black/60 text-white/80 hover:text-white hover:bg-black/90 hover:scale-110"
+          )}
+          title={entry.isFavorite ? "Remove from Favorites" : "Mark as Favorite"}
+        >
+          <Heart className={cn("w-3.5 h-3.5", entry.isFavorite && "fill-white text-white")} />
+        </button>
+
+        {/* Delete Entry Button (APPEARS ON HOVER ONLY) */}
+        <button
+          type="button"
+          onClick={() => removeMutation.mutate(entry.animeId)}
+          className="absolute top-3 right-12 p-2 rounded-full bg-black/60 text-white/70 hover:text-rose-400 hover:bg-black/90 backdrop-blur-xl transition-all duration-300 cursor-pointer shadow-lg opacity-0 group-hover:opacity-100 translate-y-[-4px] group-hover:translate-y-0 hover:scale-110 z-10"
+          title="Remove from library"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
+
+        {/* Progress Floating Control Bar (Bottom of Poster) */}
+        <div className="absolute bottom-3 inset-x-3 p-2 rounded-2xl bg-slate-950/85 backdrop-blur-xl border border-white/15 flex items-center justify-between text-xs text-white shadow-xl relative">
+          
+          {/* Floating +1 Ep Particle Bursts */}
+          <AnimatePresence>
+            {particles.map((p) => (
+              <motion.span
+                key={p.id}
+                initial={{ opacity: 1, y: 0, scale: 0.8 }}
+                animate={{ opacity: 0, y: -32, scale: 1.35 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.65, ease: "easeOut" }}
+                className="absolute -top-7 right-1.5 pointer-events-none text-[11px] font-black text-emerald-400 drop-shadow-[0_2px_10px_rgba(52,211,153,0.9)] z-30 tracking-wide font-mono select-none"
+              >
+                {p.text}
+              </motion.span>
+            ))}
+          </AnimatePresence>
+
+          <div className="flex items-center gap-1.5 pl-1">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              Ep
+            </span>
+            <span className="font-extrabold text-xs text-white flex items-center">
+              <motion.span
+                key={entry.progress}
+                initial={{ scale: 1.45, color: "#34d399" }}
+                animate={{ scale: 1, color: "#ffffff" }}
+                transition={{ type: "spring", stiffness: 500, damping: 22 }}
+                className="inline-block"
+              >
+                {entry.progress}
+              </motion.span>
+              <span className="text-white/40 text-[10px] font-medium ml-1">
+                / {entry.totalEpisodes || "?"}
+              </span>
+            </span>
+          </div>
+
+          {/* Quick - / + Buttons */}
+          <div className="flex items-center gap-1">
+            <motion.button
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.85 }}
+              type="button"
+              onClick={handleDecrement}
+              disabled={entry.progress <= 0}
+              className="w-6.5 h-6.5 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-20 flex items-center justify-center text-white transition-colors cursor-pointer"
+              title="Decrease episode"
+            >
+              <Minus className="w-3 h-3" />
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.18 }}
+              whileTap={{ scale: 0.82 }}
+              type="button"
+              onClick={handleIncrement}
+              disabled={Boolean(entry.totalEpisodes && entry.totalEpisodes > 0 && entry.progress >= entry.totalEpisodes)}
+              className="w-6.5 h-6.5 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-20 flex items-center justify-center text-primary-foreground font-bold shadow-lg shadow-primary/30 transition-colors cursor-pointer relative"
+              title="Increase episode progress (+1)"
+            >
+              <Plus className="w-3.5 h-3.5 stroke-[3]" />
+            </motion.button>
+          </div>
+        </div>
+      </div>
+
+      {/* Info Details Section */}
+      <div className="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
+        <div>
+          <Link href={ROUTES.ANIME_DETAIL(entry.animeId)}>
+            <h3 className="font-bold text-xs text-foreground group-hover:text-primary transition-colors line-clamp-1">
+              {entry.title}
+            </h3>
+          </Link>
+
+          {/* Progress Bar Track */}
+          <div className="w-full bg-slate-200 dark:bg-white/10 h-1.5 rounded-full overflow-hidden mt-2.5">
+            <motion.div
+              className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPct}%` }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            />
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
