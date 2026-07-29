@@ -35,11 +35,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
     if (body.action === "toggleFavorite") {
       const updated = await LibraryRepository.toggleFavorite(decodedId, body.title, body.imageUrl, body.bannerUrl);
-      return NextResponse.json({ entry: updated });
-    }
-
-    if (typeof body.progress === "number") {
-      const updated = await LibraryRepository.updateProgress(decodedId, body.progress, body.title, body.imageUrl, body.bannerUrl, body.totalEpisodes);
+      appCache.clear();
       return NextResponse.json({ entry: updated });
     }
 

@@ -128,6 +128,16 @@ export class LibraryRepository {
     if (input.notes !== undefined) updateData.notes = input.notes;
     if (isCompleted) updateData.completedDate = new Date();
 
+    // Track watch history non-blocking if progress is updated
+    if (typeof input.progress === "number") {
+      prisma.watchHistory.create({
+        data: {
+          animeId,
+          episode: safeProgress,
+        },
+      }).catch((e) => console.warn("WatchHistory logging warning:", e));
+    }
+
     return prisma.libraryEntry.upsert({
       where: { animeId },
       update: updateData,
@@ -150,44 +160,13 @@ export class LibraryRepository {
   }
 
   static async updateProgress(rawAnimeId: string, progress: number, title?: string, imageUrl?: string | null, bannerUrl?: string | null, totalEpisodes?: number | null) {
-    const animeId = normalizeAnimeId(rawAnimeId);
-    const existing = await prisma.libraryEntry.findUnique({ where: { animeId } });
-
-    const finalTotalEpisodes = totalEpisodes ?? existing?.totalEpisodes ?? null;
-    const safeProgress = finalTotalEpisodes && finalTotalEpisodes > 0 
-      ? Math.min(finalTotalEpisodes, Math.max(0, progress))
-      : Math.max(0, progress);
-
-    const isCompleted = Boolean(finalTotalEpisodes && finalTotalEpisodes > 0 && safeProgress >= finalTotalEpisodes);
-    const newStatus = isCompleted ? "COMPLETED" : (existing?.status ?? "WATCHING");
-
-    // Track watch history
-    await prisma.watchHistory.create({
-      data: {
-        animeId,
-        episode: safeProgress,
-      },
-    });
-
-    return prisma.libraryEntry.upsert({
-      where: { animeId },
-      update: {
-        progress: safeProgress,
-        status: newStatus,
-        totalEpisodes: finalTotalEpisodes,
-        completedDate: isCompleted ? new Date() : existing?.completedDate,
-        updatedAt: new Date(),
-      },
-      create: {
-        animeId,
-        title: title || "Anime Entry",
-        progress: safeProgress,
-        status: newStatus,
-        imageUrl,
-        bannerUrl,
-        totalEpisodes: finalTotalEpisodes,
-        completedDate: isCompleted ? new Date() : null,
-      },
+    return this.upsertEntry({
+      animeId: rawAnimeId,
+      progress,
+      title: title || "Anime Entry",
+      imageUrl,
+      bannerUrl,
+      totalEpisodes,
     });
   }
 

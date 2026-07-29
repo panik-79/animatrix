@@ -59,6 +59,15 @@ export default function AnimeDetailPage({ params }: PageProps) {
   const [optimisticProgress, setOptimisticProgress] = useState<number | null>(null);
   const [optimisticStatus, setOptimisticStatus] = useState<string | null>(null);
 
+  // Sync optimistic local overrides when libraryEntry updates
+  useEffect(() => {
+    if (libraryEntry) {
+      setOptimisticProgress(null);
+      setOptimisticStatus(null);
+      setOptimisticFavorite(null);
+    }
+  }, [libraryEntry]);
+
   if (isAnimeLoading) {
     return (
       <div className="min-h-screen pb-16 space-y-6 px-4 md:px-8 pt-6 max-w-6xl mx-auto">

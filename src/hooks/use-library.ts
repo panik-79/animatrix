@@ -107,16 +107,35 @@ export function useUpdateLibrary() {
         );
       });
 
-      // Optimistically update the single-entry cache
-      if (previousEntry) {
-        queryClient.setQueryData(["library-entry", normalizedId], (old: any) => ({
-          ...old,
+      // Optimistically update the single-entry cache (whether previously in cache or new)
+      queryClient.setQueryData(["library-entry", normalizedId], (old: any) => {
+        const base = old || {
+          id: `temp-${normalizedId}`,
+          animeId: normalizedId,
+          title: payload.title,
+          imageUrl: payload.imageUrl ?? null,
+          bannerUrl: payload.bannerUrl ?? null,
+          totalEpisodes: payload.totalEpisodes ?? null,
+          status: payload.status || "WATCHING",
+          progress: 0,
+          isFavorite: false,
+          score: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        return {
+          ...base,
+          ...(payload.title && { title: payload.title }),
+          ...(payload.imageUrl !== undefined && { imageUrl: payload.imageUrl }),
+          ...(payload.bannerUrl !== undefined && { bannerUrl: payload.bannerUrl }),
+          ...(payload.totalEpisodes !== undefined && { totalEpisodes: payload.totalEpisodes }),
           ...(typeof payload.progress === "number" && { progress: payload.progress }),
-          ...(payload.status !== undefined && { status: payload.status }),
+          ...(payload.status !== undefined && payload.status !== null && { status: payload.status }),
           ...(typeof payload.isFavorite === "boolean" && { isFavorite: payload.isFavorite }),
           ...(typeof payload.score === "number" && { score: payload.score }),
-        }));
-      }
+        };
+      });
 
       return { allLibraryKeys, previousEntry, normalizedId };
     },
