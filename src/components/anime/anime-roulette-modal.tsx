@@ -53,57 +53,60 @@ export function AnimeRouletteModal() {
   const [spinKey, setSpinKey] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Fetch candidate anime from library (PTW first, then all, then recommendations)
+  // Fetch candidate anime pool combining user library + top recommendations
   const { data: candidates = [], isLoading: isCandidatesLoading } = useQuery<AnimeItem[]>({
     queryKey: ["roulette-candidates"],
     queryFn: async () => {
-      // 1. Try library — prefer Plan to Watch, fall back to all library entries
+      const candidateMap = new Map<string, AnimeItem>();
+
+      // 1. Fetch library entries (Plan to Watch & Watchlist)
       try {
         const libRes = await fetch("/api/library");
         if (libRes.ok) {
           const libData = await libRes.json();
           const entries: any[] = libData.entries || [];
-          const ptw = entries.filter((e) => e.status === "PLAN_TO_WATCH");
-          const pool = ptw.length > 0 ? ptw : entries;
-          if (pool.length > 0) {
-            return shuffleArray(
-              pool.map((e) => ({
+          entries.forEach((e) => {
+            if (e.animeId) {
+              candidateMap.set(String(e.animeId), {
                 id: String(e.animeId),
                 title: e.title,
                 imageUrl: e.imageUrl ?? null,
                 score: e.score ?? null,
                 episodes: e.totalEpisodes ?? null,
-              }))
-            );
-          }
+              });
+            }
+          });
         }
-      } catch {
-        // Fall through to recommendations
+      } catch (e) {
+        console.warn("Library candidates fetch error:", e);
       }
 
-      // 2. Fallback to recommendation engine (cold start / empty library)
+      // 2. Fetch recommendations & trending anime to build a rich, diverse pool
       try {
-        const recRes = await fetch("/api/recommendations?limit=30");
+        const recRes = await fetch("/api/recommendations?limit=40");
         if (recRes.ok) {
           const recData = await recRes.json();
-          // API returns { recommendations: RecommendedAnime[], meta: {...} }
           const recs: any[] = recData.recommendations || [];
-          return shuffleArray(
-            recs.map((item) => ({
-              id: String(item.anime.id),
-              title: item.anime.title.english || item.anime.title.romaji,
-              imageUrl: item.anime.images?.posterLarge || item.anime.images?.poster || null,
-              score: item.anime.score ?? null,
-              episodes: item.anime.episodes ?? null,
-              genres: item.anime.genres?.map((g: any) => g.name) ?? [],
-            }))
-          );
+          recs.forEach((item) => {
+            const id = String(item.anime.id);
+            if (!candidateMap.has(id)) {
+              candidateMap.set(id, {
+                id,
+                title: item.anime.title.english || item.anime.title.romaji,
+                imageUrl: item.anime.images?.posterLarge || item.anime.images?.poster || null,
+                score: item.anime.score ?? null,
+                episodes: item.anime.episodes ?? null,
+                genres: item.anime.genres?.map((g: any) => g.name) ?? [],
+              });
+            }
+          });
         }
-      } catch {
-        // Nothing to show
+      } catch (e) {
+        console.warn("Recommendation candidates fetch error:", e);
       }
 
-      return [];
+      const allCandidates = Array.from(candidateMap.values());
+      return shuffleArray(allCandidates);
     },
     enabled: isOpen,
     staleTime: 2 * 60 * 1000,
