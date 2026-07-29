@@ -6,9 +6,11 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
+  const rawUrl = process.env.DATABASE_URL;
   const connectionString =
-    process.env.DATABASE_URL ||
-    "postgresql://postgres:postgres@localhost:5432/animatrix";
+    rawUrl && !rawUrl.startsWith("file:") && !rawUrl.startsWith("libsql:")
+      ? rawUrl
+      : "postgresql://postgres:postgres@localhost:5432/animatrix";
 
   const adapter = new PrismaPg({ connectionString });
   return new PrismaClient({ adapter });

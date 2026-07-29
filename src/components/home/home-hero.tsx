@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, ChevronLeft, ChevronRight, Info, Flame } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, ArrowRight, TrendingUp } from "lucide-react";
 import { useTrendingAnime } from "@/hooks/use-anime";
 import { ROUTES } from "@/lib/constants";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
@@ -50,7 +50,7 @@ export function HomeHero() {
 
   return (
     <div
-      className="relative h-[360px] sm:h-[440px] md:h-[500px] lg:h-[540px] overflow-hidden rounded-2xl sm:rounded-3xl w-full group isolate shadow-2xl bg-slate-950 border border-white/15 transition-all duration-300 hover:border-primary/40"
+      className="relative h-[360px] sm:h-[440px] md:h-[500px] lg:h-[540px] overflow-hidden rounded-2xl sm:rounded-3xl w-full group isolate shadow-2xl bg-slate-950 border border-white/10 transition-all duration-300 hover:border-border"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -58,44 +58,44 @@ export function HomeHero() {
       <AnimatePresence initial={false}>
         <motion.div
           key={featured.id}
-          initial={{ opacity: 0, scale: 1.06 }}
+          initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="absolute inset-0 z-0 overflow-hidden rounded-2xl sm:rounded-3xl"
         >
           <img
             src={backdropSrc}
             alt={title}
-            className="w-full h-full object-cover object-center filter contrast-105 brightness-[0.8] rounded-2xl sm:rounded-3xl"
+            className="w-full h-full object-cover object-center filter contrast-105 brightness-[0.75] rounded-2xl sm:rounded-3xl"
           />
           
           {/* Multi-layer Cinematic Vignette Overlays */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent z-10" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/75 to-transparent z-10 w-full md:w-3/4" />
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-slate-950/50 to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent z-10 w-full md:w-3/4" />
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-slate-950/40 to-transparent z-10 pointer-events-none" />
         </motion.div>
       </AnimatePresence>
 
       {/* ── TOP LEFT BADGES ── */}
       <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-10 md:left-10 z-30 flex flex-wrap items-center gap-1.5 sm:gap-2">
-        <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-primary text-primary-foreground text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest shadow-lg shadow-primary/30 flex items-center gap-1">
-          <Flame className="w-3 h-3 fill-current" />
+        <span className="px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md border border-white/15 text-white text-[10px] sm:text-xs font-bold tracking-wide flex items-center gap-1.5 shadow-md">
+          <TrendingUp className="w-3.5 h-3.5 text-primary" />
           #{currentIndex + 1} Trending
         </span>
         {featured.score && (
-          <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-black/70 backdrop-blur-xl border border-white/15 text-amber-400 text-[10px] sm:text-xs font-bold flex items-center gap-1 shadow-md">
-            <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
+          <span className="px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md border border-white/15 text-amber-400 text-[10px] sm:text-xs font-bold flex items-center gap-1 shadow-md">
+            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
             <span className="tabular-nums">{featured.score} / 10</span>
           </span>
         )}
         {featured.type && (
-          <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-black/60 backdrop-blur-xl border border-white/15 text-white/90 text-[10px] sm:text-xs font-semibold">
+          <span className="px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/15 text-slate-200 text-[10px] sm:text-xs font-semibold">
             {featured.type}
           </span>
         )}
         {featured.episodes && (
-          <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-white/10 backdrop-blur-xl border border-white/15 text-white/80 text-xs font-semibold">
+          <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/15 text-slate-300 text-xs font-semibold">
             {featured.episodes} Episodes
           </span>
         )}
@@ -103,9 +103,9 @@ export function HomeHero() {
 
       {/* ── CONTENT OVERLAY (Title & Expanded Synopsis) ── */}
       <div className="relative z-20 h-full flex items-center pt-14 sm:pt-20 pb-16 sm:pb-20 px-4 sm:px-8 md:px-12 lg:px-14">
-        <div className="max-w-2xl space-y-2 sm:space-y-3">
+        <div className="max-w-2xl space-y-2.5 sm:space-y-3.5">
           {/* Title */}
-          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] font-heading line-clamp-2 drop-shadow-lg">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] font-heading line-clamp-2 drop-shadow-md">
             {title}
           </h1>
 
@@ -119,11 +119,9 @@ export function HomeHero() {
           {/* Action CTA Button */}
           <div className="pt-2">
             <Link href={ROUTES.ANIME_DETAIL(featured.id)}>
-              <button className="px-5 py-2.5 rounded-full border-2 border-primary bg-primary/10 hover:bg-primary/20 backdrop-blur-md text-primary font-bold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all cursor-pointer">
-                <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center shrink-0">
-                  <Info className="w-3.5 h-3.5 text-primary" />
-                </div>
-                <span>Know More</span>
+              <button className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs sm:text-sm flex items-center gap-2 shadow-lg transition-all cursor-pointer">
+                <span>View Details</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
           </div>

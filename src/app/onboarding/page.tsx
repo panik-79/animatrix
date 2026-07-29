@@ -9,7 +9,7 @@ import {
   ChevronLeft,
   Search,
   SlidersHorizontal,
-  Flame,
+  TrendingUp,
   Clock,
   Calendar,
   Loader2,

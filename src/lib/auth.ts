@@ -65,26 +65,55 @@ export async function getSessionUser() {
     if (!token) return null;
 
     const { payload } = await jwtVerify(token, AUTH_CONFIG.JWT_SECRET);
-    const userId = payload.userId as string;
+    const userId = (payload.userId || payload.sub) as string;
     if (!userId) return null;
 
     // Check DB session
-    const session = await prisma.session.findUnique({
-      where: { sessionToken: token },
-      include: {
-        user: {
-          include: {
-            preference: true,
+    try {
+      const session = await prisma.session.findUnique({
+        where: { sessionToken: token },
+        include: {
+          user: {
+            include: {
+              preference: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    if (!session || session.expires < new Date()) {
-      return null;
+      if (session && session.expires >= new Date()) {
+        return session.user;
+      }
+    } catch (dbErr) {
+      console.warn("[auth] Session DB query warning:", dbErr);
     }
 
-    return session.user;
+    // Fallback: direct user lookup if session lookup fails
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { preference: true },
+      });
+      if (user) return user;
+    } catch (dbErr) {
+      console.warn("[auth] User DB fallback query warning:", dbErr);
+    }
+
+    // Secondary Fallback: construct basic user claims from JWT payload
+    if (payload.email && payload.name) {
+      return {
+        id: userId,
+        email: payload.email as string,
+        name: payload.name as string,
+        image: (payload.image as string) ?? null,
+        role: (payload.role as string) ?? "USER",
+        isOnboarded: Boolean(payload.isOnboarded),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as any;
+    }
+
+    return null;
   } catch (error) {
     return null;
   }

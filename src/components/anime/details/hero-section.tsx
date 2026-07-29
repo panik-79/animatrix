@@ -14,7 +14,7 @@ import {
   Tag,
   Layers,
   Trophy,
-  Flame,
+  TrendingUp,
   Users,
   Building2,
 } from "lucide-react";
@@ -239,8 +239,8 @@ export function HeroSection({
               </div>
 
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 shrink-0">
-                  <Flame className="w-4 h-4" />
+                <div className="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 shrink-0">
+                  <TrendingUp className="w-4 h-4" />
                 </div>
                 <div>
                   <span className="text-[10px] uppercase font-bold text-muted-foreground block">Popularity</span>
