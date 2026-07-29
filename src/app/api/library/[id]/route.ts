@@ -53,8 +53,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     appCache.clear();
     return NextResponse.json({ entry: updated });
   } catch (error: any) {
-    console.error("Library PATCH Error:", error);
-    return NextResponse.json({ error: "Failed to update entry" }, { status: 500 });
+    const detail = error?.message || String(error);
+    console.error("Library PATCH Error:", detail, "Body:", await request.clone().text().catch(() => "unreadable"));
+    return NextResponse.json({ error: "Failed to update entry", detail }, { status: 500 });
   }
 }
 
