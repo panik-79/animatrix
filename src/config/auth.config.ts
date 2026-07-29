@@ -9,7 +9,7 @@ export const AUTH_CONFIG = {
     );
   },
 
-  PROTECTED_ROUTES: ["/library", "/dashboard", "/collections", "/settings", "/account"],
+  PROTECTED_ROUTES: ["/library", "/stats", "/dashboard", "/collections", "/settings", "/account", "/onboarding"],
   AUTH_ROUTES: ["/login", "/register"],
 
   COOKIE_OPTIONS: {

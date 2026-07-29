@@ -28,9 +28,11 @@ import {
   Award,
   History,
   Film,
+  Lock,
 } from "lucide-react";
 import Link from "next/link";
 import { SkeletonLoader } from "@/components/shared/skeleton-loader";
+import { useAuth } from "@/hooks/use-auth";
 
 interface StatsData {
   totalEntries: number;
@@ -67,6 +69,7 @@ interface StatsData {
 const scoreColors = ["#f87171", "#fb923c", "#fbbf24", "#a3e635", "#818cf8"];
 
 export default function StatsPage() {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: stats, isLoading, isError, refetch } = useLibraryStats() as {
     data: StatsData | undefined;
     isLoading: boolean;
@@ -77,7 +80,7 @@ export default function StatsPage() {
   const [activeChartTab, setActiveChartTab] = useState<"activity" | "scores">("activity");
   const [activeListTab, setActiveListTab] = useState<"top" | "recent">("top");
 
-  if (isLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="w-full px-3 md:px-6 py-4 space-y-4 animate-pulse max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -89,6 +92,27 @@ export default function StatsPage() {
           <SkeletonLoader className="lg:col-span-7 h-96 rounded-2xl" />
           <SkeletonLoader className="lg:col-span-5 h-96 rounded-2xl" />
         </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center px-4 max-w-md mx-auto space-y-4">
+        <div className="w-16 h-16 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg text-primary">
+          <Lock className="w-8 h-8" />
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-lg font-extrabold text-foreground">Sign In Required</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Please sign in to view your personal anime library analytics and viewing statistics.
+          </p>
+        </div>
+        <Link href="/login?from=/stats">
+          <button className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-lg hover:scale-105 transition-all cursor-pointer">
+            Sign In to Animatrix
+          </button>
+        </Link>
       </div>
     );
   }

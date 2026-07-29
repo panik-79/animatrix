@@ -17,15 +17,23 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect unauthenticated users trying to access protected routes to /login
-  if (!isAuthenticated && AUTH_CONFIG.PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {
+// Redirect unauthenticated users trying to access protected routes to /login
+  const isProtectedRoute = AUTH_CONFIG.PROTECTED_ROUTES.some((route) =>
+    pathname === route || pathname.startsWith(`${route}/`)
+  );
+
+  if (!isAuthenticated && isProtectedRoute) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   // Redirect authenticated users away from /login and /register
-  if (isAuthenticated && AUTH_CONFIG.AUTH_ROUTES.some((route) => pathname.startsWith(route))) {
+  const isAuthRoute = AUTH_CONFIG.AUTH_ROUTES.some((route) =>
+    pathname === route || pathname.startsWith(`${route}/`)
+  );
+
+  if (isAuthenticated && isAuthRoute) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -34,11 +42,19 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/library",
     "/library/:path*",
+    "/stats",
+    "/stats/:path*",
+    "/dashboard",
     "/dashboard/:path*",
+    "/collections",
     "/collections/:path*",
+    "/settings",
     "/settings/:path*",
+    "/account",
     "/account/:path*",
+    "/onboarding",
     "/onboarding/:path*",
     "/login",
     "/register",

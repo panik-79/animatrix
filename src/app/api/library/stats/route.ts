@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/auth";
 
 export async function GET() {
   try {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: "Unauthorized. Please sign in to view statistics." }, { status: 401 });
+    }
+
+    const userId = sessionUser.id;
+
     const entries = await prisma.libraryEntry.findMany({
+      where: { userId },
       orderBy: { updatedAt: "desc" },
     });
 
@@ -75,6 +84,7 @@ export async function GET() {
     
     const recentHistory = await prisma.watchHistory.findMany({
       where: {
+        userId,
         watchedAt: { gte: sevenDaysAgo },
       },
       orderBy: { watchedAt: "desc" },

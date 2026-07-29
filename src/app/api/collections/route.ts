@@ -5,10 +5,12 @@ import { getSessionUser } from "@/lib/auth";
 export async function GET() {
   try {
     const sessionUser = await getSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ collections: [] });
+    }
     
-    // Fetch collections for authenticated user or default system collections
     const collections = await prisma.collection.findMany({
-      where: sessionUser ? { userId: sessionUser.id } : { userId: null },
+      where: { userId: sessionUser.id },
       include: {
         items: {
           orderBy: { createdAt: "desc" },
@@ -30,8 +32,11 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const sessionUser = await getSessionUser();
-    const body = await req.json();
+    if (!sessionUser) {
+      return NextResponse.json({ error: "Unauthorized. Please sign in." }, { status: 401 });
+    }
 
+    const body = await req.json();
     const { name, description, coverImage, isPinned } = body;
 
     if (!name || typeof name !== "string") {
@@ -40,7 +45,7 @@ export async function POST(req: Request) {
 
     const collection = await prisma.collection.create({
       data: {
-        userId: sessionUser?.id || null,
+        userId: sessionUser.id,
         name: name.trim(),
         description: description?.trim() || null,
         coverImage: coverImage || null,

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, FolderPlus, Pin, Trash2, Edit3, Search, Layers, ChevronRight, X, Check, Grid, List } from "lucide-react";
+import { Plus, FolderPlus, Pin, Trash2, Edit3, Search, Layers, ChevronRight, X, Check, Grid, List, Lock } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,7 @@ import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { toast } from "@/store/toast-store";
 import { confirmDialog } from "@/store/confirm-store";
 import { SearchInput } from "@/components/shared/search-input";
+import { useAuth } from "@/hooks/use-auth";
 
 interface CollectionItem {
   id: string;
@@ -31,6 +32,7 @@ interface Collection {
 }
 
 export default function CollectionsPage() {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,8 +59,33 @@ export default function CollectionsPage() {
   };
 
   useEffect(() => {
-    fetchCollections();
-  }, []);
+    if (isAuthenticated) {
+      fetchCollections();
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  if (!authLoading && !isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center px-4 max-w-md mx-auto space-y-4">
+        <div className="w-16 h-16 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg text-primary">
+          <Lock className="w-8 h-8" />
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-lg font-extrabold text-foreground">Sign In Required</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Please sign in to view and create your custom anime collections.
+          </p>
+        </div>
+        <Link href="/login?from=/collections">
+          <button className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-lg hover:scale-105 transition-all cursor-pointer">
+            Sign In to Animatrix
+          </button>
+        </Link>
+      </div>
+    );
+  }
 
   // Seed starter collections if empty
   const handleSeedDefaults = async () => {

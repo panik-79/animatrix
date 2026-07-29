@@ -21,6 +21,7 @@ import {
   XCircle,
   Share2,
   Tag,
+  Lock,
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,6 +31,7 @@ import { SkeletonLoader } from "@/components/shared/skeleton-loader";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SearchInput } from "@/components/shared/search-input";
 import { useShareableCardModal } from "@/components/shared/shareable-card-modal";
+import { useAuth } from "@/hooks/use-auth";
 
 const STATUS_TABS: {
   id: WatchStatus | "ALL" | "FAVORITES";
@@ -62,6 +64,7 @@ const STATUS_COLOR_MAP: Record<WatchStatus, string> = {
 };
 
 export default function UserLibraryPage() {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<WatchStatus | "ALL" | "FAVORITES">("WATCHING");
   const [selectedTag, setSelectedTag] = useState("All Tags");
   const [searchQuery, setSearchQuery] = useState("");
@@ -71,6 +74,27 @@ export default function UserLibraryPage() {
   const { data: stats } = useLibraryStats();
   const updateMutation = useUpdateLibrary();
   const removeMutation = useRemoveFromLibrary();
+
+  if (!authLoading && !isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center px-4 max-w-md mx-auto space-y-4">
+        <div className="w-16 h-16 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg text-primary">
+          <Lock className="w-8 h-8" />
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-lg font-extrabold text-foreground">Sign In Required</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Please sign in to view and manage your personal anime library.
+          </p>
+        </div>
+        <Link href="/login?from=/library">
+          <button className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-lg hover:scale-105 transition-all cursor-pointer">
+            Sign In to Animatrix
+          </button>
+        </Link>
+      </div>
+    );
+  }
 
   const filteredEntries = entries?.filter((entry: { isFavorite: boolean; notes?: string | null }) => {
     if (activeTab === "FAVORITES" && !entry.isFavorite) return false;

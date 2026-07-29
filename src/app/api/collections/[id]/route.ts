@@ -7,10 +7,15 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: "Unauthorized. Please sign in." }, { status: 401 });
+    }
+
     const { id } = await params;
 
-    const collection = await prisma.collection.findUnique({
-      where: { id },
+    const collection = await prisma.collection.findFirst({
+      where: { id, userId: sessionUser.id },
       include: {
         items: {
           orderBy: { createdAt: "desc" },
@@ -34,12 +39,25 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: "Unauthorized. Please sign in." }, { status: 401 });
+    }
+
     const { id } = await params;
+
+    const existing = await prisma.collection.findFirst({
+      where: { id, userId: sessionUser.id },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "Collection not found or access denied" }, { status: 404 });
+    }
+
     const body = await req.json();
     const { name, description, coverImage, isPinned } = body;
 
     const updatedCollection = await prisma.collection.update({
-      where: { id },
+      where: { id: existing.id },
       data: {
         ...(name && { name: name.trim() }),
         ...(description !== undefined && { description: description?.trim() || null }),
@@ -63,10 +81,22 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const sessionUser = await getSessionUser();
+    if (!sessionUser) {
+      return NextResponse.json({ error: "Unauthorized. Please sign in." }, { status: 401 });
+    }
+
     const { id } = await params;
 
+    const existing = await prisma.collection.findFirst({
+      where: { id, userId: sessionUser.id },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "Collection not found or access denied" }, { status: 404 });
+    }
+
     await prisma.collection.delete({
-      where: { id },
+      where: { id: existing.id },
     });
 
     return NextResponse.json({ success: true });

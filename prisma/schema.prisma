@@ -112,7 +112,8 @@ model LibraryEntry {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
-  @@unique([animeId])
+  @@unique([userId, animeId])
+  @@index([userId])
 }
 
 model Collection {
