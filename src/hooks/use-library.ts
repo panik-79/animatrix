@@ -68,7 +68,10 @@ export function useUpdateLibrary() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...payload, animeId: normalizedId }),
       });
-      if (!res.ok) throw new Error("Failed to update library entry");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.detail || errData.error || `HTTP ${res.status}: Failed to update library entry`);
+      }
       return (await res.json()).entry;
     },
     onMutate: async (payload) => {
