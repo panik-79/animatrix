@@ -137,20 +137,21 @@ export function ShareableCardModal() {
             {/* Printable Visual Card Area */}
             <div
               ref={cardRef}
-              className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 border border-purple-500/30 shadow-2xl space-y-5 sm:space-y-6 relative overflow-hidden text-white"
+              className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-6 relative overflow-hidden text-white"
             >
-              {/* Background Glow Orbs */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-primary/20 rounded-full blur-[60px] pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/20 rounded-full blur-[60px] pointer-events-none" />
+              {/* Background Glow Orbs & Ambient Mesh */}
+              <div className="absolute -top-12 -right-12 w-56 h-56 bg-gradient-to-br from-indigo-500/30 to-purple-500/20 rounded-full blur-[70px] pointer-events-none" />
+              <div className="absolute -bottom-12 -left-12 w-56 h-56 bg-gradient-to-tr from-purple-600/30 to-amber-500/15 rounded-full blur-[70px] pointer-events-none" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/10 via-transparent to-transparent pointer-events-none" />
 
               {/* Card Header */}
               <div className="flex items-center justify-between gap-3 relative z-10 min-w-0">
-                <div className="shrink-0">
-                  <Logo height={28} />
+                <div className="shrink-0 drop-shadow-md">
+                  <Logo height={30} />
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 border border-white/15 text-xs font-bold shrink-0 whitespace-nowrap">
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold shrink-0 whitespace-nowrap shadow-[0_0_15px_rgba(245,158,11,0.2)]">
                   <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span className="whitespace-nowrap leading-none">
+                  <span className="whitespace-nowrap leading-none tracking-wide">
                     {(stats?.completedCount || 0) >= 100
                       ? "Elite Otaku"
                       : (stats?.completedCount || 0) >= 50
@@ -163,58 +164,60 @@ export function ShareableCardModal() {
               </div>
 
               {/* User Identity Info */}
-              <div className="flex items-center gap-3.5 sm:gap-4 relative z-10">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border-2 border-primary shadow-lg bg-gradient-to-br from-primary/40 to-purple-600/40 shrink-0 flex items-center justify-center">
-                  <span className="font-extrabold text-xl sm:text-2xl text-white select-none">
-                    {user?.name?.[0]?.toUpperCase() || "A"}
-                  </span>
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="p-0.5 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-amber-400 shadow-[0_0_20px_rgba(139,92,246,0.3)] shrink-0">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[14px] overflow-hidden bg-slate-950 flex items-center justify-center">
+                    <span className="font-extrabold text-xl sm:text-2xl text-white select-none">
+                      {user?.name?.[0]?.toUpperCase() || "A"}
+                    </span>
+                  </div>
                 </div>
                 <div className="space-y-0.5 min-w-0">
-                  <h4 className="text-lg sm:text-xl font-extrabold font-heading text-white truncate">
+                  <h4 className="text-lg sm:text-xl font-black font-heading text-white tracking-tight truncate drop-shadow-sm">
                     {user?.name || "Anime Fan"}
                   </h4>
-                  <p className="text-xs text-purple-300 font-medium truncate">
-                    {user?.email || "animatrix.app"}
+                  <p className="text-xs text-indigo-300/90 font-mono font-medium truncate">
+                    {user?.email || "animatrix-space.vercel.app"}
                   </p>
                 </div>
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-4 gap-2 relative z-10">
-                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
+              <div className="grid grid-cols-4 gap-2.5 relative z-10">
+                <div className="p-3 rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md">
                   <Film className="w-4 h-4 mx-auto mb-1 text-indigo-400" />
                   <span className="text-sm sm:text-base font-extrabold text-white block">
                     {stats?.completedCount ?? "—"}
                   </span>
-                  <p className="text-[9px] text-slate-400 uppercase font-bold">Done</p>
+                  <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Done</p>
                 </div>
-                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
-                  <Trophy className="w-4 h-4 mx-auto mb-1 text-primary" />
-                  <span className="text-sm sm:text-base font-extrabold text-primary font-mono block">
+                <div className="p-3 rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md">
+                  <Trophy className="w-4 h-4 mx-auto mb-1 text-purple-400" />
+                  <span className="text-sm sm:text-base font-extrabold text-purple-300 font-mono block">
                     {stats?.totalEpisodesWatched ?? "—"}
                   </span>
-                  <p className="text-[9px] text-slate-400 uppercase font-bold">Eps</p>
+                  <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Eps</p>
                 </div>
-                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
-                  <Clock className="w-4 h-4 mx-auto mb-1 text-purple-400" />
-                  <span className="text-sm sm:text-base font-extrabold text-purple-300 block">
+                <div className="p-3 rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md">
+                  <Clock className="w-4 h-4 mx-auto mb-1 text-sky-400" />
+                  <span className="text-sm sm:text-base font-extrabold text-sky-300 block">
                     {stats ? watchLabel : "—"}
                   </span>
-                  <p className="text-[9px] text-slate-400 uppercase font-bold">Watch</p>
+                  <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Watch</p>
                 </div>
-                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
+                <div className="p-3 rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md">
                   <Star className="w-4 h-4 mx-auto mb-1 text-amber-400" />
                   <span className="text-sm sm:text-base font-extrabold text-amber-400 block">
                     {stats?.meanScore ? stats.meanScore.toFixed(1) : "—"}
                   </span>
-                  <p className="text-[9px] text-slate-400 uppercase font-bold">Score</p>
+                  <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Score</p>
                 </div>
               </div>
 
               {/* Footer Stamp */}
-              <div className="pt-2 flex items-center justify-between text-[11px] text-purple-300/70 border-t border-white/10 relative z-10">
-                <span>Verified Animatrix Profile</span>
-                <span>animatrix.app</span>
+              <div className="pt-2 flex items-center justify-between text-[11px] text-indigo-300/80 border-t border-white/10 relative z-10 font-mono">
+                <span className="font-semibold">Verified Animatrix Profile</span>
+                <span className="text-slate-400">animatrix-space.vercel.app</span>
               </div>
             </div>
 
