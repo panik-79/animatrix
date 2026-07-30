@@ -76,12 +76,19 @@ export function ShareableCardModal() {
   };
 
   const handleNativeShare = async () => {
-    const url = typeof window !== "undefined" ? window.location.origin + "/library" : "";
+    const url = user?.id
+      ? `${typeof window !== "undefined" ? window.location.origin : ""}/u/${user.id}`
+      : typeof window !== "undefined"
+      ? window.location.origin
+      : "";
+
+    const shareText = `Check out ${user?.name || "Anime Fan"}'s Anime Profile on Animatrix! ${stats?.completedCount || 0} completed, ${stats?.totalEpisodesWatched || 0} episodes watched.`;
+
     if (navigator.share) {
       try {
         await navigator.share({
           title: `${user?.name || "Anime Fan"}'s Anime Profile`,
-          text: `Check out my anime stats on Animatrix! ${stats?.completedCount || 0} completed, ${stats?.totalEpisodesWatched || 0} episodes watched.`,
+          text: shareText,
           url,
         });
       } catch (err) {
@@ -91,8 +98,8 @@ export function ShareableCardModal() {
       }
     } else {
       try {
-        await navigator.clipboard.writeText(url);
-        toast.success("Link Copied!", "Profile link saved to clipboard.");
+        await navigator.clipboard.writeText(`${shareText} ${url}`);
+        toast.success("Link Copied!", "Public profile link saved to clipboard.");
       } catch {
         toast.error("Share Failed", "Could not copy the link.");
       }
@@ -102,7 +109,7 @@ export function ShareableCardModal() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -115,25 +122,25 @@ export function ShareableCardModal() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-lg bg-card border border-border/80 rounded-3xl p-4 sm:p-6 shadow-2xl z-10 space-y-4 sm:space-y-6 overflow-hidden max-h-[90vh] overflow-y-auto"
+            className="relative w-full max-w-lg bg-card border border-border/80 rounded-3xl p-3.5 sm:p-6 shadow-2xl z-10 space-y-3.5 sm:space-y-6 overflow-hidden max-h-[92vh] overflow-y-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
-                  <Share2 className="w-5 h-5" />
+                  <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
                 </span>
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold font-heading text-foreground">
+                  <h3 className="text-base sm:text-lg font-bold font-heading text-foreground leading-tight">
                     Shareable Profile Card
                   </h3>
-                  <p className="text-xs text-muted-foreground">Download your custom Anime Card to share!</p>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">Download your custom Anime Card to share!</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={closeModal}
-                className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
+                className="p-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -142,7 +149,7 @@ export function ShareableCardModal() {
             {/* Printable Visual Card Area */}
             <div
               ref={cardRef}
-              className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-955 border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-6 relative overflow-hidden text-white"
+              className="p-4 sm:p-7 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-955 border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-4 sm:space-y-6 relative overflow-hidden text-white"
             >
               {/* Background Glow Orbs & Ambient Mesh */}
               <div className="absolute -top-12 -right-12 w-56 h-56 bg-gradient-to-br from-indigo-500/30 to-purple-500/20 rounded-full blur-[70px] pointer-events-none" />
@@ -150,12 +157,12 @@ export function ShareableCardModal() {
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/10 via-transparent to-transparent pointer-events-none" />
 
               {/* Card Header */}
-              <div className="flex items-center justify-between gap-3 relative z-10 min-w-0">
+              <div className="flex items-center justify-between gap-2 relative z-10 min-w-0">
                 <div className="shrink-0 drop-shadow-md">
-                  <Logo height={30} />
+                  <Logo height={24} />
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold shrink-0 whitespace-nowrap shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                  <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-0.5 sm:px-3.5 sm:py-1 rounded-full bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] sm:text-xs font-bold shrink-0 whitespace-nowrap shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                  <Trophy className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400 shrink-0" />
                   <span className="whitespace-nowrap leading-none tracking-wide">
                     {(stats?.completedCount || 0) >= 100
                       ? "Elite Otaku"
@@ -169,9 +176,9 @@ export function ShareableCardModal() {
               </div>
 
               {/* User Identity Info */}
-              <div className="flex items-center gap-4 relative z-10">
+              <div className="flex items-center gap-3 sm:gap-4 relative z-10 min-w-0">
                 <div className="p-0.5 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-amber-400 shadow-[0_0_20px_rgba(139,92,246,0.3)] shrink-0">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[14px] overflow-hidden bg-slate-950 flex items-center justify-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-[14px] overflow-hidden bg-slate-950 flex items-center justify-center">
                     {user?.image && !avatarError ? (
                       <img
                         src={user.image}
@@ -182,58 +189,58 @@ export function ShareableCardModal() {
                         crossOrigin="anonymous"
                       />
                     ) : (
-                      <span className="font-extrabold text-xl sm:text-2xl text-white select-none">
+                      <span className="font-extrabold text-lg sm:text-2xl text-white select-none">
                         {user?.name?.[0]?.toUpperCase() || "A"}
                       </span>
                     )}
                   </div>
                 </div>
-                <div className="space-y-0.5 min-w-0">
-                  <h4 className="text-lg sm:text-xl font-black font-heading text-white tracking-tight truncate drop-shadow-sm">
+                <div className="space-y-0.5 min-w-0 flex-1">
+                  <h4 className="text-base sm:text-xl font-black font-heading text-white tracking-tight truncate drop-shadow-sm">
                     {user?.name || "Anime Fan"}
                   </h4>
-                  <p className="text-xs text-indigo-300/90 font-mono font-medium truncate">
+                  <p className="text-[10px] sm:text-xs text-indigo-300/90 font-mono font-medium truncate">
                     {user?.email || "animatrix-space.vercel.app"}
                   </p>
                 </div>
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-4 gap-2.5 relative z-10">
-                <div className="p-3 rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md">
-                  <Film className="w-4 h-4 mx-auto mb-1 text-indigo-400" />
-                  <span className="text-sm sm:text-base font-extrabold text-white block">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2.5 relative z-10">
+                <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md min-w-0">
+                  <Film className="w-3.5 h-3.5 sm:w-4 sm:h-4 mx-auto mb-0.5 text-indigo-400" />
+                  <span className="text-xs sm:text-base font-extrabold text-white block truncate">
                     {stats?.completedCount ?? "—"}
                   </span>
-                  <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Done</p>
+                  <p className="text-[8px] sm:text-[9px] text-slate-400 uppercase font-bold tracking-tight sm:tracking-wider">Done</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md">
-                  <Trophy className="w-4 h-4 mx-auto mb-1 text-purple-400" />
-                  <span className="text-sm sm:text-base font-extrabold text-purple-300 font-mono block">
+                <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md min-w-0">
+                  <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 mx-auto mb-0.5 text-purple-400" />
+                  <span className="text-xs sm:text-base font-extrabold text-purple-300 font-mono block truncate">
                     {stats?.totalEpisodesWatched ?? "—"}
                   </span>
-                  <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Eps</p>
+                  <p className="text-[8px] sm:text-[9px] text-slate-400 uppercase font-bold tracking-tight sm:tracking-wider">Eps</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md">
-                  <Clock className="w-4 h-4 mx-auto mb-1 text-sky-400" />
-                  <span className="text-sm sm:text-base font-extrabold text-sky-300 block">
+                <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md min-w-0">
+                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 mx-auto mb-0.5 text-sky-400" />
+                  <span className="text-xs sm:text-base font-extrabold text-sky-300 block truncate">
                     {stats ? watchLabel : "—"}
                   </span>
-                  <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Watch</p>
+                  <p className="text-[8px] sm:text-[9px] text-slate-400 uppercase font-bold tracking-tight sm:tracking-wider">Watch</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md">
-                  <Star className="w-4 h-4 mx-auto mb-1 text-amber-400" />
-                  <span className="text-sm sm:text-base font-extrabold text-amber-400 block">
+                <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/[0.05] border border-white/10 text-center backdrop-blur-md min-w-0">
+                  <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 mx-auto mb-0.5 text-amber-400" />
+                  <span className="text-xs sm:text-base font-extrabold text-amber-400 block truncate">
                     {stats?.meanScore ? stats.meanScore.toFixed(1) : "—"}
                   </span>
-                  <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Score</p>
+                  <p className="text-[8px] sm:text-[9px] text-slate-400 uppercase font-bold tracking-tight sm:tracking-wider">Score</p>
                 </div>
               </div>
 
               {/* Footer Stamp */}
-              <div className="pt-2 flex items-center justify-between text-[11px] text-indigo-300/80 border-t border-white/10 relative z-10 font-mono">
-                <span className="font-semibold">Verified Animatrix Profile</span>
-                <span className="text-slate-400">animatrix-space.vercel.app</span>
+              <div className="pt-2 flex items-center justify-between gap-1 text-[9px] sm:text-[11px] text-indigo-300/80 border-t border-white/10 relative z-10 font-mono min-w-0">
+                <span className="font-semibold truncate max-w-[50%]">Verified Animatrix Profile</span>
+                <span className="text-slate-400 truncate max-w-[50%] text-right">animatrix-space.vercel.app</span>
               </div>
             </div>
 
