@@ -27,6 +27,7 @@ export function ShareableCardModal() {
   const { data: stats } = useLibraryStats();
   const cardRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
 
   // Compute watch time in days (assumes ~24 min per episode)
   const watchHours = stats
@@ -44,17 +45,21 @@ export function ShareableCardModal() {
 
     try {
       const { toPng } = await import("html-to-image");
-      const dataUrl = await toPng(cardRef.current, {
-        quality: 0.95,
-        pixelRatio: 2, // High DPI for crisp export
-        // Skip external images that may fail CORS
-        filter: (node) => {
-          if (node instanceof HTMLImageElement) {
-            return false; // Exclude img tags from export (avatar can cause CORS)
-          }
-          return true;
-        },
-      });
+      let dataUrl: string;
+
+      try {
+        dataUrl = await toPng(cardRef.current, {
+          quality: 0.95,
+          pixelRatio: 2,
+        });
+      } catch (firstErr) {
+        // Fallback without external img tags if CORS prevents canvas rendering
+        dataUrl = await toPng(cardRef.current, {
+          quality: 0.95,
+          pixelRatio: 2,
+          filter: (node) => !(node instanceof HTMLImageElement && node.src.startsWith("http")),
+        });
+      }
 
       const link = document.createElement("a");
       link.download = `${user?.name?.replace(/\s+/g, "-").toLowerCase() || "animatrix"}-anime-card.png`;
@@ -137,7 +142,7 @@ export function ShareableCardModal() {
             {/* Printable Visual Card Area */}
             <div
               ref={cardRef}
-              className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-6 relative overflow-hidden text-white"
+              className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-955 border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-6 relative overflow-hidden text-white"
             >
               {/* Background Glow Orbs & Ambient Mesh */}
               <div className="absolute -top-12 -right-12 w-56 h-56 bg-gradient-to-br from-indigo-500/30 to-purple-500/20 rounded-full blur-[70px] pointer-events-none" />
@@ -167,9 +172,20 @@ export function ShareableCardModal() {
               <div className="flex items-center gap-4 relative z-10">
                 <div className="p-0.5 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-amber-400 shadow-[0_0_20px_rgba(139,92,246,0.3)] shrink-0">
                   <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[14px] overflow-hidden bg-slate-950 flex items-center justify-center">
-                    <span className="font-extrabold text-xl sm:text-2xl text-white select-none">
-                      {user?.name?.[0]?.toUpperCase() || "A"}
-                    </span>
+                    {user?.image && !avatarError ? (
+                      <img
+                        src={user.image}
+                        alt={user.name || "Avatar"}
+                        className="w-full h-full object-cover"
+                        onError={() => setAvatarError(true)}
+                        referrerPolicy="no-referrer"
+                        crossOrigin="anonymous"
+                      />
+                    ) : (
+                      <span className="font-extrabold text-xl sm:text-2xl text-white select-none">
+                        {user?.name?.[0]?.toUpperCase() || "A"}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-0.5 min-w-0">
