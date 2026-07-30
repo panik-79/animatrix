@@ -14,12 +14,15 @@ import {
   ChevronDown,
   AlertCircle,
   ArrowLeft,
+  Share2,
+  Download,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "@/store/toast-store";
 import { AvatarPickerModal } from "@/components/account/avatar-picker-modal";
 import { UnsavedChangesModal } from "@/components/account/unsaved-changes-modal";
 import { CustomDropdown } from "@/components/shared/custom-dropdown";
+import { useShareableCardModal } from "@/components/shared/shareable-card-modal";
 import { cn } from "@/lib/utils";
 
 const GENDER_OPTIONS = [
@@ -348,15 +351,26 @@ export default function AccountPage() {
                 </button>
               </div>
 
-              {/* Avatar Picker CTA */}
-              <button
-                type="button"
-                onClick={() => setIsAvatarModalOpen(true)}
-                className="px-4 py-2.5 text-xs font-bold rounded-2xl bg-muted/60 hover:bg-muted text-foreground transition-all duration-200 cursor-pointer inline-flex items-center gap-2 border border-border shadow-sm"
-              >
-                <UserIcon className="w-4 h-4 text-primary" />
-                <span>Choose Anime Avatar</span>
-              </button>
+              {/* Action CTAs */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setIsAvatarModalOpen(true)}
+                  className="px-4 py-2.5 text-xs font-bold rounded-2xl bg-muted/60 hover:bg-muted text-foreground transition-all duration-200 cursor-pointer inline-flex items-center gap-2 border border-border shadow-sm active:scale-95"
+                >
+                  <UserIcon className="w-4 h-4 text-primary" />
+                  <span>Choose Anime Avatar</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => useShareableCardModal.getState().openModal()}
+                  className="px-4 py-2.5 text-xs font-bold rounded-2xl bg-primary/15 hover:bg-primary/25 border border-primary/30 text-primary transition-all duration-200 cursor-pointer inline-flex items-center gap-2 shadow-sm active:scale-95"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Anime Card</span>
+                </button>
+              </div>
             </div>
 
             {/* Profile Overview Banner Details */}
@@ -454,6 +468,27 @@ export default function AccountPage() {
                   placeholder="Share your favorite genres, anime quote, or watching goals..."
                   className="w-full px-4 py-3 text-xs bg-muted/30 border border-border rounded-2xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none"
                 />
+              </div>
+
+              {/* Shareable Anime Card Banner */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-primary/10 via-purple-500/10 to-indigo-500/10 border border-primary/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="space-y-0.5">
+                  <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <Share2 className="w-4 h-4 text-primary" />
+                    <span>Shareable Anime Profile Card</span>
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground">
+                    Generate an official high-res PNG card of your watch progress and stats to share on social media.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => useShareableCardModal.getState().openModal()}
+                  className="w-full sm:w-auto px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-md hover:scale-105 transition-all cursor-pointer shrink-0 flex items-center justify-center gap-2"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download Card</span>
+                </button>
               </div>
             </div>
 

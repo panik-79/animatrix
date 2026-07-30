@@ -110,16 +110,16 @@ export function ShareableCardModal() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-lg bg-card border border-border/80 rounded-3xl p-6 shadow-2xl z-10 space-y-6 overflow-hidden"
+            className="relative w-full max-w-lg bg-card border border-border/80 rounded-3xl p-4 sm:p-6 shadow-2xl z-10 space-y-4 sm:space-y-6 overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20">
+                <span className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
                   <Share2 className="w-5 h-5" />
                 </span>
                 <div>
-                  <h3 className="text-lg font-bold font-heading text-foreground">
+                  <h3 className="text-base sm:text-lg font-bold font-heading text-foreground">
                     Shareable Profile Card
                   </h3>
                   <p className="text-xs text-muted-foreground">Download your custom Anime Card to share!</p>
@@ -128,7 +128,7 @@ export function ShareableCardModal() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -137,18 +137,20 @@ export function ShareableCardModal() {
             {/* Printable Visual Card Area */}
             <div
               ref={cardRef}
-              className="p-6 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 border border-purple-500/30 shadow-2xl space-y-6 relative overflow-hidden text-white"
+              className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 border border-purple-500/30 shadow-2xl space-y-5 sm:space-y-6 relative overflow-hidden text-white"
             >
               {/* Background Glow Orbs */}
               <div className="absolute top-0 right-0 w-48 h-48 bg-primary/20 rounded-full blur-[60px] pointer-events-none" />
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/20 rounded-full blur-[60px] pointer-events-none" />
 
               {/* Card Header */}
-              <div className="flex items-center justify-between relative z-10">
-                <Logo height={28} />
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 border border-white/15 text-xs font-bold">
-                  <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                  <span>
+              <div className="flex items-center justify-between gap-3 relative z-10 min-w-0">
+                <div className="shrink-0">
+                  <Logo height={28} />
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/10 border border-white/15 text-xs font-bold shrink-0 whitespace-nowrap">
+                  <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span className="whitespace-nowrap leading-none">
                     {(stats?.completedCount || 0) >= 100
                       ? "Elite Otaku"
                       : (stats?.completedCount || 0) >= 50
@@ -161,14 +163,14 @@ export function ShareableCardModal() {
               </div>
 
               {/* User Identity Info */}
-              <div className="flex items-center gap-4 relative z-10">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-primary shadow-lg bg-gradient-to-br from-primary/40 to-purple-600/40 shrink-0 flex items-center justify-center">
-                  <span className="font-extrabold text-2xl text-white select-none">
+              <div className="flex items-center gap-3.5 sm:gap-4 relative z-10">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border-2 border-primary shadow-lg bg-gradient-to-br from-primary/40 to-purple-600/40 shrink-0 flex items-center justify-center">
+                  <span className="font-extrabold text-xl sm:text-2xl text-white select-none">
                     {user?.name?.[0]?.toUpperCase() || "A"}
                   </span>
                 </div>
                 <div className="space-y-0.5 min-w-0">
-                  <h4 className="text-xl font-extrabold font-heading text-white truncate">
+                  <h4 className="text-lg sm:text-xl font-extrabold font-heading text-white truncate">
                     {user?.name || "Anime Fan"}
                   </h4>
                   <p className="text-xs text-purple-300 font-medium truncate">
@@ -179,30 +181,30 @@ export function ShareableCardModal() {
 
               {/* Stats Grid */}
               <div className="grid grid-cols-4 gap-2 relative z-10">
-                <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
+                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
                   <Film className="w-4 h-4 mx-auto mb-1 text-indigo-400" />
-                  <span className="text-base font-extrabold text-white block">
+                  <span className="text-sm sm:text-base font-extrabold text-white block">
                     {stats?.completedCount ?? "—"}
                   </span>
                   <p className="text-[9px] text-slate-400 uppercase font-bold">Done</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
+                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
                   <Trophy className="w-4 h-4 mx-auto mb-1 text-primary" />
-                  <span className="text-base font-extrabold text-primary font-mono block">
+                  <span className="text-sm sm:text-base font-extrabold text-primary font-mono block">
                     {stats?.totalEpisodesWatched ?? "—"}
                   </span>
                   <p className="text-[9px] text-slate-400 uppercase font-bold">Eps</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
+                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
                   <Clock className="w-4 h-4 mx-auto mb-1 text-purple-400" />
-                  <span className="text-base font-extrabold text-purple-300 block">
+                  <span className="text-sm sm:text-base font-extrabold text-purple-300 block">
                     {stats ? watchLabel : "—"}
                   </span>
                   <p className="text-[9px] text-slate-400 uppercase font-bold">Watch</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
+                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/5 border border-white/10 text-center">
                   <Star className="w-4 h-4 mx-auto mb-1 text-amber-400" />
-                  <span className="text-base font-extrabold text-amber-400 block">
+                  <span className="text-sm sm:text-base font-extrabold text-amber-400 block">
                     {stats?.meanScore ? stats.meanScore.toFixed(1) : "—"}
                   </span>
                   <p className="text-[9px] text-slate-400 uppercase font-bold">Score</p>
@@ -217,13 +219,13 @@ export function ShareableCardModal() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
               <button
                 type="button"
                 onClick={handleNativeShare}
-                className="flex-1 py-3 px-4 rounded-2xl bg-secondary hover:bg-secondary/80 text-secondary-foreground font-bold text-xs border border-border transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 py-3 px-4 rounded-2xl bg-secondary hover:bg-secondary/80 text-secondary-foreground font-bold text-xs border border-border transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
               >
-                <Share2 className="w-4 h-4" />
+                <Share2 className="w-4 h-4 shrink-0" />
                 <span>Share Link</span>
               </button>
 
@@ -231,9 +233,9 @@ export function ShareableCardModal() {
                 type="button"
                 onClick={handleDownload}
                 disabled={isExporting}
-                className="flex-1 py-3.5 px-4 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-3.5 px-4 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-4 h-4 shrink-0" />
                 <span>{isExporting ? "Generating PNG…" : "Download Card"}</span>
               </button>
             </div>

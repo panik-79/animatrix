@@ -107,7 +107,7 @@ export default function UserLibraryPage() {
       {/* ── TOP CONTROLS & STATS STRIP ── */}
       <div className="space-y-4">
         {/* Header Title + Share Card Trigger */}
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
           <div>
             <h1 className="text-2xl font-bold font-heading text-foreground">My Library</h1>
             <p className="text-xs text-muted-foreground">Manage watch progress & personal tags</p>
@@ -116,9 +116,9 @@ export default function UserLibraryPage() {
           <button
             type="button"
             onClick={() => useShareableCardModal.getState().openModal()}
-            className="px-3.5 py-2 rounded-xl bg-primary/15 border border-primary/30 text-primary text-xs font-bold flex items-center gap-1.5 hover:bg-primary/25 transition-all cursor-pointer shadow-sm"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-primary/15 border border-primary/30 text-primary text-xs font-bold flex items-center justify-center gap-2 hover:bg-primary/25 transition-all cursor-pointer shadow-sm shrink-0 active:scale-95"
           >
-            <Share2 className="w-3.5 h-3.5" />
+            <Share2 className="w-4 h-4 shrink-0" />
             <span>Share Profile Card</span>
           </button>
         </div>
